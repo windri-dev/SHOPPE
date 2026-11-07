@@ -1,0 +1,30 @@
+/* ==========================================================================
+   SHOPPE - Master UI Components & Pages Orchestrator
+   Modular Architecture (Production-Grade CSS)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Reusable Global UI Components
+   -------------------------------------------------------------------------- */
+@import url('components/base.css');
+@import url('components/header.css');
+@import url('components/hero.css');
+@import url('components/product-card.css');
+@import url('components/drawers.css');
+@import url('components/modals.css');
+@import url('components/livechat.css');
+@import url('components/footer.css');
+
+/* --------------------------------------------------------------------------
+   2. Feature-First Page Styles
+   -------------------------------------------------------------------------- */
+@import url('pages/shop.css');
+@import url('pages/product.css');
+@import url('pages/cart.css');
+@import url('pages/checkout.css');
+@import url('pages/order-details.css');
+@import url('pages/account.css');
+@import url('pages/blog.css');
+@import url('pages/contact.css');
+@import url('pages/static-pages.css');
+@import url('pages/dashboard.css');

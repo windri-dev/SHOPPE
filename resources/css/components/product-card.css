@@ -1,0 +1,200 @@
+/* --------------------------------------------------------------------------
+   Featured Products Grid
+   -------------------------------------------------------------------------- */
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-medium);
+  color: var(--color-black);
+}
+
+.section-link {
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-bold);
+  color: var(--color-accent);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.section-link:hover {
+  color: var(--color-accent-hover);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px 32px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.product-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #F8F8F8;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.product-media-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 4;
+}
+
+/* Hover Action Bar */
+.product-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 4;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all var(--transition-normal);
+}
+
+.product-card:hover .product-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.action-icon-btn {
+  width: 36px;
+  height: 36px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-black);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.action-icon-btn:hover {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  transform: scale(1.08);
+}
+
+.action-icon-btn.active {
+  color: var(--color-error);
+}
+
+.action-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.action-icon-btn.active svg {
+  fill: var(--color-error);
+}
+
+/* Add to Cart Overlay Button */
+.product-quick-add {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  color: var(--color-black);
+  font-family: var(--font-primary);
+  font-size: var(--fs-body-md);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all var(--transition-normal);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.product-quick-add:hover {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+.product-card:hover .product-quick-add {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-title {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-regular);
+  color: var(--color-black);
+  transition: color var(--transition-fast);
+}
+
+.product-title a:hover {
+  color: var(--color-accent);
+}
+
+.product-price {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--color-accent);
+}
+
+.product-price .old-price {
+  font-size: var(--fs-body-md);
+  color: var(--color-dark-gray);
+  text-decoration: line-through;
+  margin-left: 8px;
+}
+

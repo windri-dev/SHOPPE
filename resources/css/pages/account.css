@@ -1,0 +1,810 @@
+/* --------------------------------------------------------------------------
+   My Account Page
+   -------------------------------------------------------------------------- */
+.account-page {
+  padding-top: 60px;
+  padding-bottom: 120px;
+  min-height: calc(100vh - 400px);
+}
+
+.account-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.account-title {
+  font-size: 33px;
+  font-weight: 500;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.account-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Segmented Pill Tabs */
+.account-tabs {
+  display: flex;
+  background-color: #F0F0F0;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 56px;
+}
+
+.account-tab-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 13px 0;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #707070;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.account-tab-btn.active {
+  background-color: #FFFFFF;
+  color: var(--color-black);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Form Panels */
+.account-form-panel {
+  display: none;
+}
+
+.account-form-panel.active {
+  display: block;
+  animation: accountFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes accountFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.account-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.account-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #D8D8D8;
+  padding: 12px 0;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-black);
+  background: transparent;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.account-input::placeholder {
+  color: #707070;
+  font-size: 14px;
+}
+
+.account-input:focus {
+  border-bottom-color: var(--color-black);
+}
+
+/* Checkbox */
+.account-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  margin-top: -12px;
+}
+
+.account-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-black);
+  user-select: none;
+}
+
+.account-checkbox-input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #707070;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  transition: all var(--transition-fast);
+  margin: 0;
+}
+
+.account-checkbox-input:checked {
+  background-color: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.account-checkbox-input:checked::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Submit Button */
+.account-submit-btn {
+  width: 100%;
+  height: 52px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: 1px solid var(--color-black);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 8px;
+}
+
+.account-submit-btn:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+/* Forgotten Password Link */
+.account-forgot-link {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-black);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  margin-top: -16px;
+}
+
+.account-forgot-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.account-feedback-msg {
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  display: none;
+}
+
+.account-feedback-msg.success {
+  display: block;
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.account-feedback-msg.error {
+  display: block;
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Input Hints */
+.account-input-hint {
+  font-size: 12px;
+  color: #707070;
+  margin-top: 6px;
+  display: block;
+  line-height: 1.4;
+}
+
+/* OTP Inline Row */
+.account-otp-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  position: relative;
+  width: 100%;
+}
+
+.account-otp-input-wrap {
+  flex: 1;
+}
+
+.account-otp-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-black);
+  background-color: transparent;
+  border: 1px solid var(--color-black);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+  margin-bottom: 2px;
+}
+
+.account-otp-btn:hover:not(:disabled) {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+.account-otp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: #D8D8D8;
+  color: #707070;
+}
+
+/* Password Toggle Icon */
+.account-password-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #707070;
+  cursor: pointer;
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.account-password-toggle:hover {
+  color: var(--color-black);
+}
+
+/* Real-Time Password Match Badge / Indicator */
+.password-match-badge {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+  animation: badgeSlideDown 0.25s ease forwards;
+}
+
+.password-match-badge.show {
+  display: inline-flex;
+}
+
+.password-match-badge.match {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.password-match-badge.no-match {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+@keyframes badgeSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Password Match/Mismatch Pop-up Modal */
+.password-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.password-modal-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.password-modal-box {
+  background-color: var(--color-white);
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  padding: 36px 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.password-modal-backdrop.open .password-modal-box {
+  transform: scale(1);
+}
+
+.password-modal-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.password-modal-icon.match {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.password-modal-icon.no-match {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.password-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-black);
+  margin-bottom: 12px;
+}
+
+.password-modal-desc {
+  font-size: 14px;
+  color: #707070;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.password-modal-btn {
+  width: 100%;
+  height: 48px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: 1px solid var(--color-black);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.password-modal-btn:hover {
+  background-color: transparent;
+  color: var(--color-black);
+}
+
+@media (max-width: 768px) {
+  .account-page {
+    padding-top: 40px;
+    padding-bottom: 80px;
+  }
+
+  .account-title {
+    font-size: 26px;
+  }
+
+  .account-tabs {
+    margin-bottom: 40px;
+  }
+}
+
+/* ==========================================================================
+   User Account Dashboard
+   ========================================================================== */
+
+.user-dashboard-wrap {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.user-dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.user-dashboard-title {
+  font-size: 33px;
+  font-weight: 500;
+  color: var(--color-black);
+}
+
+/* Horizontal Nav Tabs */
+.dashboard-nav-bar {
+  border-bottom: 1px solid #D8D8D8;
+  margin-bottom: 48px;
+}
+
+.dashboard-nav-list {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.dashboard-nav-link {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  color: #707070;
+  text-decoration: none;
+  padding-bottom: 14px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dashboard-nav-link:hover {
+  color: var(--color-black);
+}
+
+.dashboard-nav-link.active {
+  color: var(--color-black);
+  font-weight: 500;
+  border-bottom-color: var(--color-black);
+}
+
+/* Panels */
+.dashboard-panel {
+  display: none;
+}
+
+.dashboard-panel.active {
+  display: block;
+  animation: accountFadeIn 0.25s ease;
+}
+
+/* Dashboard Panel (Home) */
+.dashboard-welcome-box {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--color-black);
+}
+
+.dashboard-welcome-box p {
+  margin-bottom: 16px;
+}
+
+.dashboard-welcome-sub {
+  color: #707070;
+}
+
+.dashboard-accent-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.dashboard-accent-link:hover {
+  text-decoration: underline;
+}
+
+/* Orders & Downloads Notice Bar */
+.dashboard-notice-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #F0F0F0;
+  border-top: 2px solid var(--color-accent);
+  padding: 16px 24px;
+  border-radius: 0 0 4px 4px;
+  gap: 16px;
+}
+
+.dashboard-notice-text {
+  font-size: 14px;
+  color: var(--color-black);
+}
+
+.dashboard-notice-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  white-space: nowrap;
+}
+
+.dashboard-notice-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Addresses Panel */
+.addresses-intro-text {
+  font-size: 14px;
+  color: var(--color-black);
+  margin-bottom: 40px;
+}
+
+.addresses-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.address-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.address-box-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-black);
+  margin-bottom: 16px;
+}
+
+.address-add-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.address-add-link:hover {
+  text-decoration: underline;
+}
+
+.address-empty-desc {
+  font-size: 14px;
+  color: #707070;
+  line-height: 1.6;
+}
+
+/* Address Form */
+.address-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.address-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.address-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.address-select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #D8D8D8;
+  padding: 12px 28px 12px 0;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-black);
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color var(--transition-fast);
+}
+
+.address-select:focus {
+  border-bottom-color: var(--color-black);
+}
+
+.address-select-arrow {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-black);
+  display: flex;
+  align-items: center;
+}
+
+.btn-save-address {
+  height: 48px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background-color var(--transition-fast);
+  align-self: flex-start;
+  padding: 0 32px;
+}
+
+.btn-save-address:hover {
+  background-color: #333333;
+}
+
+/* Dashboard Tables (Orders & Downloads Figma 1:1 Spec) */
+.dashboard-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dashboard-table th {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 16px 16px 22px 0;
+  border-bottom: 1.5px solid var(--color-black);
+  white-space: nowrap;
+}
+
+.dashboard-table td {
+  font-size: 15px;
+  color: var(--color-black);
+  padding: 24px 16px 24px 0;
+  border-bottom: 1px solid #EAEAEA;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table-gold-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--transition-fast);
+}
+
+.table-gold-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.table-link-divider {
+  color: #D8D8D8;
+  margin: 0 6px;
+}
+
+/* Account Details Form */
+.account-details-form-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.account-details-heading {
+  font-size: 33px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--color-black);
+  margin-bottom: 48px;
+}
+
+.account-details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.account-details-note {
+  font-size: 12px;
+  color: #707070;
+  margin-top: -16px;
+  line-height: 1.4;
+}
+
+.password-change-heading {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-black);
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+.btn-save-account {
+  height: 48px;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-save-account:hover {
+  background-color: #333333;
+}
+
+@media (max-width: 768px) {
+  .dashboard-nav-list {
+    gap: 20px;
+  }
+
+  .addresses-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .dashboard-notice-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+

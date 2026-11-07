@@ -1,0 +1,433 @@
+/* --------------------------------------------------------------------------
+   Header / Navigation
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: var(--z-header);
+  border-bottom: 1px solid var(--color-border);
+  transition: box-shadow var(--transition-normal);
+}
+
+.site-header.scrolled {
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-logo {
+  font-family: var(--font-primary);
+  font-size: 1.625rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.12em;
+  color: var(--color-black);
+  text-decoration: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.nav-item a {
+  font-size: var(--fs-body-lg);
+  font-weight: var(--fw-regular);
+  color: var(--color-black);
+  position: relative;
+  padding: 8px 0;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.nav-item a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-black);
+  transition: width var(--transition-normal);
+}
+
+.nav-item a:hover::after,
+.nav-item a.active::after {
+  width: 100%;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 18px;
+  background-color: var(--color-gray);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  color: var(--color-black);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  position: relative;
+}
+
+.icon-btn:hover {
+  background-color: var(--color-light-gray);
+  color: var(--color-accent);
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  fill: none;
+}
+
+.cart-badge-count {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  width: 17px;
+  height: 17px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.cart-badge-count.bump {
+  animation: badgeBump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgeBump {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+}
+
+.hamburger-btn span {
+  width: 22px;
+  height: 2px;
+  background-color: var(--color-black);
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+/* --------------------------------------------------------------------------
+   Search Bar Dropdown (Luxury Minimalist Design)
+   -------------------------------------------------------------------------- */
+.search-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-white, #FFFFFF);
+  border-bottom: 1px solid var(--color-border, #EAEAEA);
+  padding: 16px 0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+  display: none;
+  z-index: var(--z-overlay, 200);
+  animation: searchSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.search-overlay.open {
+  display: block;
+}
+
+.search-overlay-container,
+.search-container,
+.search-form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  background-color: #F8F8F8;
+  border: 1px solid #DFDFDF;
+  border-radius: var(--radius-full, 9999px);
+  padding: 4px 6px 4px 16px;
+  transition: all var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.search-form:hover {
+  border-color: #CCCCCC;
+  background-color: #FFFFFF;
+}
+
+.search-form:focus-within {
+  border-color: var(--color-accent, #A18A68);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(161, 138, 104, 0.18);
+}
+
+/* Submit / Search Icon Button */
+.search-submit-btn,
+.search-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-right: 10px;
+  color: var(--color-dark-gray, #707070);
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.search-submit-btn svg,
+.search-submit svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.search-submit-btn:hover,
+.search-submit:hover {
+  color: var(--color-accent, #A18A68);
+  transform: scale(1.08);
+}
+
+/* Search Input Field */
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: none !important;
+  background: transparent !important;
+  padding: 8px 10px 8px 0;
+  font-family: var(--font-primary, 'DM Sans', sans-serif);
+  font-size: 14.5px;
+  color: var(--color-black, #000000);
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.search-input::placeholder {
+  color: #8E8E93;
+  font-weight: 400;
+}
+
+/* Remove default browser clear search button */
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-results-button,
+.search-input::-webkit-search-results-decoration {
+  display: none;
+}
+
+/* Close Button (X) */
+.search-close,
+.search-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #777777;
+  border-radius: var(--radius-full, 9999px);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 20px;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.search-close svg,
+.search-close-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
+.search-close:hover,
+.search-close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: var(--color-black, #000000);
+  transform: rotate(90deg);
+}
+
+/* Fallback if close button placed outside form in container */
+.search-overlay-container > .search-close,
+.search-container > .search-close,
+.search-form-container > .search-close {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-overlay-container > .search-close:hover,
+.search-container > .search-close:hover,
+.search-form-container > .search-close:hover {
+  transform: translateY(-50%) rotate(90deg);
+}
+
+@keyframes searchSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Mobile Header (Figma 1:1 Spec)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .header-container {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .hamburger-btn span {
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-black);
+    display: block;
+  }
+
+  .header-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1;
+  }
+
+  .site-header .desktop-nav,
+  .site-header .nav-links,
+  .site-header .nav-divider,
+  .site-header .header-actions .icon-btn:not(.cart-btn) {
+    display: none !important;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .cart-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cart-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cart-badge-count {
+    top: 2px;
+    right: 2px;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    min-width: 17px;
+    height: 17px;
+    border-radius: var(--radius-full);
+  }
+}
+
+
