@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Privacy Policy & Terms - SHOPPE')
+@section('title', 'Privacy Policy & Terms - PUTRI.J')
 
 @section('content')
 <div class="container policy-page">
@@ -12,7 +12,7 @@
     <section id="terms">
       <h2 class="policy-section-title">Terms of Services</h2>
       <p>
-        Dengan mengakses situs SHOPPE, Anda menyetujui seluruh syarat dan ketentuan transaksi yang berlaku. Semua produk yang ditampilkan di etalase dibuat dengan spesifikasi bahan yang transparan dan dapat dipesan sesuai ketersediaan stok aktual.
+        Dengan mengakses situs PUTRI.J, Anda menyetujui seluruh syarat dan ketentuan transaksi yang berlaku. Semua produk yang ditampilkan di etalase dibuat dengan spesifikasi bahan yang transparan dan dapat dipesan sesuai ketersediaan stok aktual.
       </p>
     </section>
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\OrderStatus;
@@ -25,6 +27,9 @@ class Order extends Model
         'customer_phone',
         'shipping_address',
         'payment_method',
+        'payment_status',
+        'payment_proof',
+        'paid_at',
         'tracking_number',
         'notes',
     ];
@@ -38,6 +43,7 @@ class Order extends Model
             'discount_amount' => 'decimal:2',
             'grand_total' => 'decimal:2',
             'shipping_address' => 'array',
+            'paid_at' => 'datetime',
         ];
     }
 
@@ -53,6 +59,26 @@ class Order extends Model
 
     public function getFormattedGrandTotalAttribute(): string
     {
-        return '$ ' . number_format($this->grand_total, 2);
+        return '$ '.number_format((float) $this->grand_total, 2);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
+    }
+
+    public function isWaitingVerification(): bool
+    {
+        return $this->payment_status === 'waiting_verification';
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        return match ($this->payment_status) {
+            'paid' => 'Lunas',
+            'waiting_verification' => 'Verifikasi Bukti',
+            'refunded' => 'Dikembalikan (Refund)',
+            default => 'Belum Dibayar',
+        };
     }
 }

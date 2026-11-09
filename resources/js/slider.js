@@ -1,5 +1,5 @@
 /**
- * Shoppe - Hero Carousel Slider
+ * PUTRI.J - Hero Carousel Slider
  * Smooth transitions, autoplay with pause on hover, pagination dots & touch swipe.
  */
 
@@ -16,7 +16,7 @@ class HeroSlider {
     this.currentIndex = 0;
     this.totalSlides = this.slides.length;
     this.autoplayInterval = null;
-    this.autoplayDelay = 5500;
+    this.autoplayDelay = 5000;
 
     // Touch swipe coordinates
     this.touchStartX = 0;
@@ -26,11 +26,12 @@ class HeroSlider {
   }
 
   init() {
-    if (this.totalSlides === 0) return;
+    if (this.totalSlides <= 1) return;
 
     // Dot click events
     this.dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => {
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
         this.goToSlide(index);
         this.resetAutoplay();
       });
@@ -38,14 +39,16 @@ class HeroSlider {
 
     // Arrow button events
     if (this.prevBtn) {
-      this.prevBtn.addEventListener('click', () => {
+      this.prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         this.prevSlide();
         this.resetAutoplay();
       });
     }
 
     if (this.nextBtn) {
-      this.nextBtn.addEventListener('click', () => {
+      this.nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         this.nextSlide();
         this.resetAutoplay();
       });
@@ -81,16 +84,23 @@ class HeroSlider {
   }
 
   goToSlide(index) {
-    if (index === this.currentIndex) return;
+    if (this.totalSlides <= 1) return;
 
-    this.slides[this.currentIndex].classList.remove('active');
+    const newIndex = ((index % this.totalSlides) + this.totalSlides) % this.totalSlides;
+    if (newIndex === this.currentIndex) return;
+
+    if (this.slides[this.currentIndex]) {
+      this.slides[this.currentIndex].classList.remove('active');
+    }
     if (this.dots[this.currentIndex]) {
       this.dots[this.currentIndex].classList.remove('active');
     }
 
-    this.currentIndex = (index + this.totalSlides) % this.totalSlides;
+    this.currentIndex = newIndex;
 
-    this.slides[this.currentIndex].classList.add('active');
+    if (this.slides[this.currentIndex]) {
+      this.slides[this.currentIndex].classList.add('active');
+    }
     if (this.dots[this.currentIndex]) {
       this.dots[this.currentIndex].classList.add('active');
     }
@@ -105,7 +115,7 @@ class HeroSlider {
   }
 
   handleSwipe() {
-    const swipeThreshold = 50;
+    const swipeThreshold = 40;
     const diff = this.touchStartX - this.touchEndX;
 
     if (Math.abs(diff) > swipeThreshold) {
@@ -120,9 +130,11 @@ class HeroSlider {
 
   startAutoplay() {
     this.stopAutoplay();
-    this.autoplayInterval = setInterval(() => {
-      this.nextSlide();
-    }, this.autoplayDelay);
+    if (this.totalSlides > 1) {
+      this.autoplayInterval = setInterval(() => {
+        this.nextSlide();
+      }, this.autoplayDelay);
+    }
   }
 
   stopAutoplay() {
@@ -138,6 +150,17 @@ class HeroSlider {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  window.heroSlider = new HeroSlider('heroSlider');
-});
+function initHeroSlider() {
+  const container = document.getElementById('heroSlider');
+  if (container) {
+    window.heroSlider = new HeroSlider('heroSlider');
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeroSlider);
+} else {
+  initHeroSlider();
+}
+
+export default HeroSlider;

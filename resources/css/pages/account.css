@@ -691,7 +691,10 @@
 /* Dashboard Tables (Orders & Downloads Figma 1:1 Spec) */
 .dashboard-table-wrap {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .dashboard-table {

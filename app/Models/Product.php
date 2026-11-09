@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
 {
@@ -64,17 +66,33 @@ class Product extends Model
         if (is_array($this->images) && count($this->images) > 0) {
             return $this->images[0];
         }
+
         return 'images/product-1.png';
+    }
+
+    public function getFirstImageUrlAttribute(): string
+    {
+        return asset($this->primary_image);
     }
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$ ' . number_format($this->price, 2);
+        return '$ '.number_format((float) $this->price, 2);
+    }
+
+    public function getPriceFormattedAttribute(): string
+    {
+        return $this->formatted_price;
     }
 
     public function getFormattedOriginalPriceAttribute(): ?string
     {
-        return $this->original_price ? '$ ' . number_format($this->original_price, 2) : null;
+        return $this->original_price ? '$ '.number_format((float) $this->original_price, 2) : null;
+    }
+
+    public function getOriginalPriceFormattedAttribute(): ?string
+    {
+        return $this->formatted_original_price;
     }
 
     public function isInStock(): bool

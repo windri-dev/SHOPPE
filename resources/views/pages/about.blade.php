@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Our Story - SHOPPE')
+@section('title', 'Our Story - PUTRI.J')
 
 @section('content')
 <div class="container about-page">
@@ -13,11 +13,11 @@
 
   <div class="about-content">
     <p>
-      SHOPPE didirikan atas dasar keyakinan bahwa keindahan sejati terletak pada kesederhanaan garis bentuk, kemurnian material, dan sentuhan artisan yang teliti. Kami menciptakan perhiasan kontemporer mulai dari anting lingkaran berlapis emas 18k, kalung minimalis, hingga aksesori rambut berbahan kuningan organik.
+      PUTRI.J didirikan atas dasar keyakinan bahwa keindahan sejati terletak pada kesederhanaan garis bentuk, kemurnian material, dan sentuhan artisan yang teliti. Kami menciptakan perhiasan kontemporer mulai dari anting lingkaran berlapis emas 18k, kalung minimalis, hingga aksesori rambut berbahan kuningan organik.
     </p>
 
     <div class="about-media">
-      <img src="{{ asset('images/hero-1.png') }}" alt="SHOPPE Artisan Studio" loading="lazy">
+      <img src="{{ asset('images/hero-1.png') }}" alt="PUTRI.J Artisan Studio" loading="lazy">
     </div>
 
     <h2 class="about-section-title">Filosofi & Pengerjaan</h2>

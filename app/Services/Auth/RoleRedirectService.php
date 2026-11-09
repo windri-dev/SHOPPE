@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Auth;
 
 use App\Models\User;
@@ -15,7 +17,7 @@ class RoleRedirectService
     {
         $user = $user ?? Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return route('login');
         }
 
@@ -77,4 +79,3 @@ class RoleRedirectService
         return str_contains($url, '/admin');
     }
 }
-

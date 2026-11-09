@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\InquiryStatus;
@@ -20,6 +22,7 @@ class Inquiry extends Model
         'phone',
         'subject',
         'channel',
+        'handling_mode',
         'status',
     ];
 

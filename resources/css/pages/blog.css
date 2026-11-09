@@ -15,9 +15,12 @@
 
 .blog-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 56px;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Sidebar */
@@ -278,8 +281,11 @@
 
 @media (max-width: 992px) {
   .blog-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 40px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 }
 

@@ -1,44 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Checkout\ProcessCheckoutRequest;
 use App\Services\CheckoutService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CheckoutController extends Controller
 {
+    public function __construct(
+        protected CheckoutService $checkoutService
+    ) {}
+
     public function index(): View
     {
         return view('pages.checkout');
     }
 
-    public function process(Request $request, CheckoutService $checkoutService)
+    public function process(ProcessCheckoutRequest $request): JsonResponse|RedirectResponse
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'email' => 'required|email|max:150',
-            'phone' => 'nullable|string|max:30',
-            'country' => 'required|string',
-            'street_address' => 'required|string',
-            'city' => 'required|string',
-            'postcode' => 'required|string',
-            'payment_method' => 'required|string',
-            'shipping_cost' => 'nullable|numeric',
-            'discount_amount' => 'nullable|numeric',
-            'order_notes' => 'nullable|string',
-            'items' => 'required|array|min:1',
-            'items.*.id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         try {
             $userId = auth()->id();
-            $order = $checkoutService->processCheckout($validated, $validated['items'], $userId);
+            $order = $this->checkoutService->processCheckout(
+                $validated,
+                $validated['items'],
+                $userId ? (int) $userId : null
+            );
 
             if ($request->wantsJson()) {
                 return response()->json([
@@ -49,7 +44,9 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            return redirect()->route('order.show', $order->order_number)->with('success', 'Pesanan Anda berhasil dibuat!');
+            return redirect()
+                ->route('order.show', $order->order_number)
+                ->with('success', 'Pesanan Anda berhasil dibuat!');
         } catch (Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json([

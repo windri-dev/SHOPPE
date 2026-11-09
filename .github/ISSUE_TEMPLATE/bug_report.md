@@ -19,3 +19,4 @@ Penjelasan tentang apa yang seharusnya terjadi jika tidak ada bug.
 
 **Tangkapan Layar (Opsional)**
 Jika memungkinkan, sertakan screenshot untuk membantu menjelaskan masalah Anda.
+

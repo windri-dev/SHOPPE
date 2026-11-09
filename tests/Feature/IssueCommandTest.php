@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\Inquiry;
-use App\Models\InquiryMessage;
 use App\Enums\InquiryStatus;
+use App\Models\Inquiry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class IssueCommandTest extends TestCase
 {

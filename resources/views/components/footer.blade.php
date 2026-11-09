@@ -4,6 +4,7 @@
     <div class="footer-top">
       <nav class="footer-nav" aria-label="Footer Navigation">
         <a href="{{ route('contact.index') }}">CONTACT</a>
+        <a href="{{ route('faq') }}">FAQ</a>
         <a href="{{ route('privacy') }}#terms">TERMS OF SERVICES</a>
         <a href="{{ route('privacy') }}#shipping">SHIPPING AND RETURNS</a>
       </nav>
@@ -25,7 +26,7 @@
     <!-- Footer Bottom: Copyright (Left) & Social Links (Right) -->
     <div class="footer-bottom">
       <p class="footer-copyright">
-        &copy; {{ date('Y') }} SHOPPE. <a href="{{ route('privacy') }}#terms">Terms of use</a> and <a href="{{ route('privacy') }}">privacy policy</a>.
+        &copy; {{ date('Y') }} PUTRI.J. <a href="{{ route('privacy') }}#terms">Terms of use</a> and <a href="{{ route('privacy') }}">privacy policy</a>.
       </p>
 
       <div class="social-links" aria-label="Social media links">

@@ -7,7 +7,7 @@
         <span></span>
         <span></span>
       </button>
-      <a href="{{ route('home') }}" class="header-logo" aria-label="Shoppe Home">SHOPPE</a>
+      <a href="{{ route('home') }}" class="header-logo" aria-label="PUTRI.J Home">PUTRI.J</a>
     </div>
 
     <!-- Right: Navigation Links & Action Icons -->
@@ -17,6 +17,8 @@
           <li class="nav-item"><a href="{{ route('shop.index') }}" class="{{ request()->routeIs('shop.*') ? 'active' : '' }}">Shop</a></li>
           <li class="nav-item"><a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">Blog</a></li>
           <li class="nav-item"><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">Our Story</a></li>
+          <li class="nav-item"><a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">FAQ</a></li>
+          <li class="nav-item"><a href="{{ route('contact.index') }}" class="{{ request()->routeIs('contact.*') ? 'active' : '' }}">Contact</a></li>
           @if(auth()->check() && auth()->user()->isAdmin())
             <li class="nav-item">
               <a href="{{ route('admin.dashboard') }}" style="color: #A18A68; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
@@ -69,19 +71,35 @@
 <div class="drawer-backdrop" id="mobileNavBackdrop"></div>
 <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation Menu">
   <div class="mobile-nav-header">
-    <span class="header-logo">SHOPPE</span>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <span class="header-logo">PUTRI.J</span>
+      <span style="font-size: 10.5px; color: #8C8273; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">Fine Artisan Jewelry</span>
+    </div>
     <button class="drawer-close-btn" id="mobileNavClose" aria-label="Close Navigation">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </button>
   </div>
   <ul class="mobile-nav-links">
-    <li><a href="{{ route('shop.index') }}" class="mobile-nav-link">Shop <span>&rarr;</span></a></li>
-    <li><a href="{{ route('blog.index') }}" class="mobile-nav-link">Blog <span>&rarr;</span></a></li>
-    <li><a href="{{ route('about') }}" class="mobile-nav-link">Our Story <span>&rarr;</span></a></li>
-    <li><a href="{{ route('account.index') }}" class="mobile-nav-link">My Account <span>&rarr;</span></a></li>
-    <li><a href="{{ route('contact.index') }}" class="mobile-nav-link">Contact Us <span>&rarr;</span></a></li>
+    <li><a href="{{ route('home') }}" class="mobile-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home <span>&rarr;</span></a></li>
+    <li><a href="{{ route('shop.index') }}" class="mobile-nav-link {{ request()->routeIs('shop.*') ? 'active' : '' }}">Shop Collection <span>&rarr;</span></a></li>
+    <li><a href="{{ route('blog.index') }}" class="mobile-nav-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">Journal &amp; Blog <span>&rarr;</span></a></li>
+    <li><a href="{{ route('about') }}" class="mobile-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">Our Story <span>&rarr;</span></a></li>
+    <li><a href="{{ route('faq') }}" class="mobile-nav-link {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ &amp; Care Guide <span>&rarr;</span></a></li>
+    <li><a href="{{ route('account.index') }}" class="mobile-nav-link {{ request()->routeIs('account.*') ? 'active' : '' }}">My Account <span>&rarr;</span></a></li>
+    <li><a href="{{ route('contact.index') }}" class="mobile-nav-link {{ request()->routeIs('contact.*') ? 'active' : '' }}">Contact &amp; Concierge <span>&rarr;</span></a></li>
+    @if(auth()->check() && auth()->user()->isAdmin())
+      <li>
+        <a href="{{ route('admin.dashboard') }}" class="mobile-nav-link" style="color: #A18A68; font-weight: 700;">
+          Dashboard Admin <span>&rarr;</span>
+        </a>
+      </li>
+    @endif
   </ul>
+  <div class="mobile-nav-footer">
+    <a href="{{ route('shop.index') }}" class="btn btn-primary btn-block" style="height: 44px; font-size: 12.5px; border-radius: 8px;">Explore New Arrivals</a>
+    <p style="font-size: 11px; color: #8C8C8C; text-align: center; margin-top: 12px;">18k Gold-Dipped Vermeil &bull; Free Exchange 14 Days</p>
+  </div>
 </aside>

@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Product;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
@@ -22,7 +25,7 @@ class CheckoutService
             foreach ($cartItems as $item) {
                 $product = Product::where('id', $item['id'])->lockForUpdate()->first();
 
-                if (!$product) {
+                if (! $product) {
                     throw new Exception("Produk dengan ID {$item['id']} tidak ditemukan.");
                 }
 
@@ -52,7 +55,8 @@ class CheckoutService
             $discountAmount = (float) ($data['discount_amount'] ?? 0);
             $grandTotal = max(0, $subtotal + $shippingCost - $discountAmount);
 
-            $orderNumber = 'SHP-' . strtoupper(uniqid());
+            $orderNumber = 'SHP-'.strtoupper(uniqid());
+            $fullName = trim(($data['first_name'] ?? '').' '.(($data['last_name'] ?? '') !== '-' ? ($data['last_name'] ?? '') : ''));
 
             $order = Order::create([
                 'user_id' => $userId,
@@ -62,20 +66,40 @@ class CheckoutService
                 'shipping_cost' => $shippingCost,
                 'discount_amount' => $discountAmount,
                 'grand_total' => $grandTotal,
-                'customer_name' => $data['first_name'] . ' ' . $data['last_name'],
+                'customer_name' => $fullName,
                 'customer_email' => $data['email'],
                 'customer_phone' => $data['phone'] ?? null,
                 'shipping_address' => [
+                    'label' => $data['address_label'] ?? 'Rumah',
                     'country' => $data['country'] ?? 'Indonesia',
-                    'street' => $data['street_address'] ?? '',
+                    'province' => $data['province'] ?? '',
                     'city' => $data['city'] ?? '',
+                    'district' => $data['district'] ?? '',
                     'postcode' => $data['postcode'] ?? '',
+                    'street' => $data['street_address'] ?? '',
                 ],
                 'payment_method' => $data['payment_method'] ?? 'bank_transfer',
                 'notes' => $data['order_notes'] ?? null,
             ]);
 
             $order->items()->createMany($itemsToCreate);
+
+            // Sinkronisasi otomatis ke profil pengiriman pengguna jika dicentang atau alamat profil masih kosong
+            if ($userId) {
+                $user = User::find($userId);
+                if ($user && (! empty($data['save_to_profile']) || empty($user->address) || empty($user->city))) {
+                    $user->update([
+                        'phone' => $data['phone'] ?: $user->phone,
+                        'country' => $data['country'] ?? ($user->country ?: 'Indonesia'),
+                        'province' => $data['province'] ?? $user->province,
+                        'city' => $data['city'] ?? $user->city,
+                        'district' => $data['district'] ?? $user->district,
+                        'postcode' => $data['postcode'] ?? $user->postcode,
+                        'address' => $data['street_address'] ?? $user->address,
+                        'address_label' => $data['address_label'] ?? ($user->address_label ?: 'Rumah'),
+                    ]);
+                }
+            }
 
             return $order;
         });

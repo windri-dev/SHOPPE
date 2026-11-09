@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
-use App\Models\Inquiry;
-use App\Models\InquiryMessage;
 use App\Enums\InquiryStatus;
+use App\Models\Inquiry;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 class IssueCommand extends Command
@@ -31,7 +32,7 @@ class IssueCommand extends Command
      *
      * @var string
      */
-    protected $description = 'CLI Manajemen Issues / Tiket Pelanggan dan GitHub Issues untuk SHOPPE';
+    protected $description = 'CLI Manajemen Issues / Tiket Pelanggan dan GitHub Issues untuk PUTRI.J';
 
     /**
      * Execute the console command.
@@ -69,6 +70,7 @@ class IssueCommand extends Command
 
         if ($issues->isEmpty()) {
             $this->info('Tidak ada issue/tiket pelanggan yang ditemukan.');
+
             return self::SUCCESS;
         }
 
@@ -101,8 +103,8 @@ class IssueCommand extends Command
             $tableData
         );
 
-        $this->line("Gunakan <fg=cyan>php artisan issue show <ticket_number></> untuk membaca detail & percakapan.");
-        $this->line("Gunakan <fg=cyan>php artisan issue reply <ticket_number></> untuk mengirim balasan.");
+        $this->line('Gunakan <fg=cyan>php artisan issue show <ticket_number></> untuk membaca detail & percakapan.');
+        $this->line('Gunakan <fg=cyan>php artisan issue reply <ticket_number></> untuk mengirim balasan.');
         $this->newLine();
 
         return self::SUCCESS;
@@ -115,30 +117,32 @@ class IssueCommand extends Command
     {
         $ticket = $this->argument('ticket') ?: $this->ask('Masukkan Nomor Tiket atau ID Issue:');
 
-        if (!$ticket) {
+        if (! $ticket) {
             $this->error('Nomor tiket wajib diisi.');
+
             return self::FAILURE;
         }
 
         $issue = $this->findInquiry($ticket);
 
-        if (!$issue) {
+        if (! $issue) {
             $this->error("Tiket issue '{$ticket}' tidak ditemukan.");
+
             return self::FAILURE;
         }
 
         $this->newLine();
-        $this->info("==============================================================");
+        $this->info('==============================================================');
         $this->info("DETAIL ISSUE / TIKET: {$issue->ticket_number}");
-        $this->info("==============================================================");
+        $this->info('==============================================================');
         $this->line("<fg=gray>ID Database   :</> {$issue->id}");
         $this->line("<fg=gray>Nama Pelapor  :</> <fg=yellow;options=bold>{$issue->name}</>");
         $this->line("<fg=gray>Email         :</> {$issue->email}");
-        $this->line("<fg=gray>Telepon       :</> " . ($issue->phone ?: '-'));
+        $this->line('<fg=gray>Telepon       :</> '.($issue->phone ?: '-'));
         $this->line("<fg=gray>Subjek        :</> <options=bold>{$issue->subject}</>");
-        $this->line("<fg=gray>Saluran       :</> " . strtoupper($issue->channel ?? 'WEB'));
-        $this->line("<fg=gray>Status        :</> " . $this->formatStatusBadge($issue->status));
-        $this->line("<fg=gray>Dibuat Pada   :</> " . ($issue->created_at?->format('d F Y, H:i:s') ?? '-'));
+        $this->line('<fg=gray>Saluran       :</> '.strtoupper($issue->channel ?? 'WEB'));
+        $this->line('<fg=gray>Status        :</> '.$this->formatStatusBadge($issue->status));
+        $this->line('<fg=gray>Dibuat Pada   :</> '.($issue->created_at?->format('d F Y, H:i:s') ?? '-'));
         $this->newLine();
 
         $this->info("--- RIWAYAT PERCAKAPAN ({$issue->messages->count()} pesan) ---");
@@ -148,12 +152,12 @@ class IssueCommand extends Command
         } else {
             foreach ($issue->messages as $index => $msg) {
                 $isCustomer = ($msg->sender_type === 'customer' || $msg->sender_type === 'user');
-                $senderBadge = $isCustomer 
-                    ? '<fg=cyan;options=bold>[PELANGGAN]</>' 
+                $senderBadge = $isCustomer
+                    ? '<fg=cyan;options=bold>[PELANGGAN]</>'
                     : '<fg=green;options=bold>[ADMIN STORE]</>';
-                
+
                 $time = $msg->created_at ? Carbon::parse($msg->created_at)->format('d M Y H:i') : '-';
-                
+
                 $this->line("{$senderBadge} <fg=gray>({$time})</>:");
                 $this->line("  {$msg->message}");
                 $this->newLine();
@@ -170,15 +174,17 @@ class IssueCommand extends Command
     {
         $ticket = $this->argument('ticket') ?: $this->ask('Masukkan Nomor Tiket atau ID Issue:');
 
-        if (!$ticket) {
+        if (! $ticket) {
             $this->error('Nomor tiket wajib diisi.');
+
             return self::FAILURE;
         }
 
         $issue = $this->findInquiry($ticket);
 
-        if (!$issue) {
+        if (! $issue) {
             $this->error("Tiket issue '{$ticket}' tidak ditemukan.");
+
             return self::FAILURE;
         }
 
@@ -186,6 +192,7 @@ class IssueCommand extends Command
 
         if (blank($replyMessage)) {
             $this->error('Pesan balasan tidak boleh kosong.');
+
             return self::FAILURE;
         }
 
@@ -200,7 +207,7 @@ class IssueCommand extends Command
         ]);
 
         $this->info("✓ Balasan berhasil dikirim ke tiket {$issue->ticket_number}.");
-        $this->line("Status tiket otomatis diubah menjadi: <fg=yellow>RESPONDED</>");
+        $this->line('Status tiket otomatis diubah menjadi: <fg=yellow>RESPONDED</>');
 
         return self::SUCCESS;
     }
@@ -212,15 +219,17 @@ class IssueCommand extends Command
     {
         $ticket = $this->argument('ticket') ?: $this->ask('Masukkan Nomor Tiket atau ID Issue:');
 
-        if (!$ticket) {
+        if (! $ticket) {
             $this->error('Nomor tiket wajib diisi.');
+
             return self::FAILURE;
         }
 
         $issue = $this->findInquiry($ticket);
 
-        if (!$issue) {
+        if (! $issue) {
             $this->error("Tiket issue '{$ticket}' tidak ditemukan.");
+
             return self::FAILURE;
         }
 
@@ -243,12 +252,13 @@ class IssueCommand extends Command
         $subject = $this->option('subject') ?: $this->ask('Subjek / Masalah:');
         $message = $this->option('message') ?: $this->ask('Isi Pesan / Keluhan:');
 
-        if (!$name || !$email || !$subject || !$message) {
+        if (! $name || ! $email || ! $subject || ! $message) {
             $this->error('Semua data (nama, email, subjek, pesan) wajib diisi.');
+
             return self::FAILURE;
         }
 
-        $ticketNumber = 'INQ-' . date('Ymd') . '-' . strtoupper(Str::random(4));
+        $ticketNumber = 'INQ-'.date('Ymd').'-'.strtoupper(Str::random(4));
 
         $inquiry = Inquiry::create([
             'ticket_number' => $ticketNumber,
@@ -281,7 +291,7 @@ class IssueCommand extends Command
         $resolved = Inquiry::where('status', 'resolved')->count();
 
         $this->newLine();
-        $this->info("=== STATISTIK ISSUES & TIKET CUSTOMER CARE ===");
+        $this->info('=== STATISTIK ISSUES & TIKET CUSTOMER CARE ===');
         $this->line("Total Tiket Masuk : <options=bold>{$total}</>");
         $this->line("Belum Dibaca      : <fg=red;options=bold>{$unread}</>");
         $this->line("Sudah Dibalas     : <fg=yellow;options=bold>{$responded}</>");
@@ -296,20 +306,22 @@ class IssueCommand extends Command
      */
     protected function manageGitHubIssues(): int
     {
-        $this->info("=== GITHUB ISSUES INTEGRATION ===");
-        
+        $this->info('=== GITHUB ISSUES INTEGRATION ===');
+
         $subaction = $this->argument('ticket') ?: 'list';
 
         $process = new Process(['gh', 'issue', $subaction]);
         $process->run();
 
-        if (!$process->isSuccessful()) {
-            $this->warn("GitHub CLI report: " . trim($process->getErrorOutput() ?: $process->getOutput()));
-            $this->line("Tip: Pastikan Anda sudah login GitHub CLI dengan: <fg=cyan>gh auth login</>");
+        if (! $process->isSuccessful()) {
+            $this->warn('GitHub CLI report: '.trim($process->getErrorOutput() ?: $process->getOutput()));
+            $this->line('Tip: Pastikan Anda sudah login GitHub CLI dengan: <fg=cyan>gh auth login</>');
+
             return self::FAILURE;
         }
 
         $this->line($process->getOutput());
+
         return self::SUCCESS;
     }
 
@@ -345,14 +357,14 @@ class IssueCommand extends Command
     protected function unknownAction(string $action): int
     {
         $this->error("Aksi '{$action}' tidak dikenali.");
-        $this->line("Aksi yang tersedia:");
-        $this->line(" - <fg=cyan>php artisan issue list</>                 : Lihat semua issue tiket pelanggan");
-        $this->line(" - <fg=cyan>php artisan issue show <ticket></>          : Lihat detail & pesan tiket");
-        $this->line(" - <fg=cyan>php artisan issue reply <ticket></>         : Balas tiket langsung dari CLI");
-        $this->line(" - <fg=cyan>php artisan issue resolve <ticket></>       : Tandai tiket selesai");
-        $this->line(" - <fg=cyan>php artisan issue create</>                 : Buat tiket baru dari CLI");
-        $this->line(" - <fg=cyan>php artisan issue stats</>                  : Lihat ringkasan metrik tiket");
-        $this->line(" - <fg=cyan>php artisan issue github</>                 : Lihat daftar GitHub Issues repo");
+        $this->line('Aksi yang tersedia:');
+        $this->line(' - <fg=cyan>php artisan issue list</>                 : Lihat semua issue tiket pelanggan');
+        $this->line(' - <fg=cyan>php artisan issue show <ticket></>          : Lihat detail & pesan tiket');
+        $this->line(' - <fg=cyan>php artisan issue reply <ticket></>         : Balas tiket langsung dari CLI');
+        $this->line(' - <fg=cyan>php artisan issue resolve <ticket></>       : Tandai tiket selesai');
+        $this->line(' - <fg=cyan>php artisan issue create</>                 : Buat tiket baru dari CLI');
+        $this->line(' - <fg=cyan>php artisan issue stats</>                  : Lihat ringkasan metrik tiket');
+        $this->line(' - <fg=cyan>php artisan issue github</>                 : Lihat daftar GitHub Issues repo');
 
         return self::FAILURE;
     }

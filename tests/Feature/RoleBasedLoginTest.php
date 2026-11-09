@@ -2,19 +2,22 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 
 class RoleBasedLoginTest extends TestCase
 {
     use RefreshDatabase;
 
     protected User $adminUser;
+
     protected User $storeAdminUser;
+
     protected User $regularUser;
+
     protected User $customerUser;
 
     protected function setUp(): void
@@ -170,4 +173,3 @@ class RoleBasedLoginTest extends TestCase
         $response->assertSessionHasErrors('email');
     }
 }
-

@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'ai_concierge' => [
+        'provider' => env('AI_CONCIERGE_PROVIDER', 'gemini'),
+        'api_key' => env('AI_CONCIERGE_API_KEY'),
+        'model' => env('AI_CONCIERGE_MODEL', 'ag/gemini-3.8-flash-low'),
+        'endpoint' => env('AI_CONCIERGE_ENDPOINT'),
+    ],
+
 ];
