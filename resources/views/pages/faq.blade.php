@@ -4,54 +4,15 @@
 @section('meta_description', 'Pertanyaan yang sering diajukan (FAQ) seputar cara pemesanan, konfirmasi pembayaran, buku alamat pengiriman, pelacakan resi, garansi tukar ukuran, dan perawatan perhiasan PUTRI.J.')
 
 @section('content')
-<div class="container" style="padding-top: 48px; padding-bottom: 80px; max-width: 920px;">
+<div class="container" style="padding-top: 48px; padding-bottom: 80px; max-width: 860px;">
   <!-- Header Title -->
-  <div style="text-align: center; margin-bottom: 36px;">
-    <span style="display: inline-block; padding: 4px 12px; border-radius: 9999px; background: #FAF9F6; border: 1px solid #E5E7EB; color: #A18A68; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;">
-      PUTRI.J Help Center &amp; Concierge
-    </span>
+  <div style="text-align: center; margin-bottom: 38px;">
     <h1 style="font-size: 32px; font-weight: 700; color: #111827; margin: 0 0 10px;">
       Frequently Asked Questions (FAQ)
     </h1>
     <p style="font-size: 15px; color: #6B7280; max-width: 600px; margin: 0 auto;">
       Temukan jawaban instan seputar pemesanan, verifikasi pembayaran, manajemen lokasi pengiriman, hingga panduan perawatan perhiasan.
     </p>
-  </div>
-
-  <!-- Interactive Search Input -->
-  <div style="position: relative; max-width: 620px; margin: 0 auto 28px;">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); pointer-events: none;">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-    <input
-      type="search"
-      id="faqSearchInput"
-      placeholder="Ketik kata kunci pertanyaan (misal: resi, pembayaran, alamat, ukuran cincin)..."
-      style="width: 100%; padding: 14px 18px 14px 46px; border-radius: 10px; border: 1px solid #D1D5DB; font-size: 14px; color: #111827; background: #FFFFFF; box-shadow: 0 2px 8px rgba(0,0,0,0.03); outline: none;"
-    >
-  </div>
-
-  <!-- Category Filter Pills -->
-  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 32px;" role="tablist" aria-label="Filter Kategori FAQ">
-    <button type="button" class="faq-cat-btn active" data-faq-cat="all" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #111827; background: #111827; color: #FFFFFF; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Semua Topik ({{ count($faqs) }})
-    </button>
-    <button type="button" class="faq-cat-btn" data-faq-cat="orders" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Pemesanan &amp; Akun
-    </button>
-    <button type="button" class="faq-cat-btn" data-faq-cat="payment" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Pembayaran &amp; Konfirmasi
-    </button>
-    <button type="button" class="faq-cat-btn" data-faq-cat="shipping" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Pengiriman &amp; Resi
-    </button>
-    <button type="button" class="faq-cat-btn" data-faq-cat="warranty" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Garansi &amp; Tukar Ukuran
-    </button>
-    <button type="button" class="faq-cat-btn" data-faq-cat="care" style="padding: 8px 16px; border-radius: 9999px; border: 1px solid #E5E7EB; background: #FFFFFF; color: #374151; font-size: 12px; font-weight: 600; cursor: pointer;">
-      Perawatan Perhiasan
-    </button>
   </div>
 
   <!-- FAQ Accordion List -->
@@ -89,12 +50,6 @@
         </div>
       </div>
     @endforeach
-  </div>
-
-  <!-- Empty State when Search has no matches -->
-  <div id="faqEmptyState" style="display: none; text-align: center; padding: 40px 20px; background: #FAF9F6; border: 1px dashed #D1D5DB; border-radius: 10px; margin-top: 16px;">
-    <div style="font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 6px;">Pertanyaan tidak ditemukan</div>
-    <p style="font-size: 13px; color: #6B7280; margin: 0;">Coba kata kunci lain atau tanyakan langsung kepada tim Concierge kami melalui Live Chat.</p>
   </div>
 
   <!-- Still Need Help CTA Box -->
@@ -138,12 +93,6 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const toggleBtns = document.querySelectorAll('.faq-toggle-btn');
-    const catBtns = document.querySelectorAll('.faq-cat-btn');
-    const searchInput = document.getElementById('faqSearchInput');
-    const cards = document.querySelectorAll('.faq-item-card');
-    const emptyState = document.getElementById('faqEmptyState');
-
-    let activeCategory = 'all';
 
     // Accordion Toggle
     toggleBtns.forEach(function (btn) {
@@ -158,50 +107,6 @@
         chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
       });
     });
-
-    function filterFaqs() {
-      const query = (searchInput.value || '').trim().toLowerCase();
-      let visibleCount = 0;
-
-      cards.forEach(function (card) {
-        const cat = card.getAttribute('data-category');
-        const text = card.getAttribute('data-search') || '';
-        const matchesCat = activeCategory === 'all' || cat === activeCategory;
-        const matchesSearch = !query || text.indexOf(query) !== -1;
-
-        if (matchesCat && matchesSearch) {
-          card.style.display = '';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      if (emptyState) {
-        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-      }
-    }
-
-    catBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        activeCategory = this.getAttribute('data-faq-cat');
-
-        catBtns.forEach(function (b) {
-          b.style.background = '#FFFFFF';
-          b.style.color = '#374151';
-          b.style.borderColor = '#E5E7EB';
-        });
-        this.style.background = '#111827';
-        this.style.color = '#FFFFFF';
-        this.style.borderColor = '#111827';
-
-        filterFaqs();
-      });
-    });
-
-    if (searchInput) {
-      searchInput.addEventListener('input', filterFaqs);
-    }
   });
 </script>
 @endpush

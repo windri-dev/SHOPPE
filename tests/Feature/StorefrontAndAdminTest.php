@@ -714,6 +714,23 @@ class StorefrontAndAdminTest extends TestCase
         $this->assertStringContainsString('24 pcs', $aiReply);
     }
 
+    public function test_ai_livechat_provides_styling_recommendation_with_ready_stock_products(): void
+    {
+        $response = $this->postJson(route('livechat.send'), [
+            'name' => 'Maya Aesthetic',
+            'email' => 'maya@example.com',
+            'message' => 'carikkan aku perhiasan yang cocok dan rekomendasi yang tepat',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('success', true);
+        $response->assertJsonPath('data.handled_by', 'ai');
+        $reply = (string) $response->json('data.ai_reply');
+
+        $this->assertStringContainsString('rekomendasi perhiasan pilihan terfavorit', $reply);
+        $this->assertStringNotContainsString('Habis', $reply);
+    }
+
     public function test_ai_livechat_enforces_boundary_guardrails_and_escalates_to_human_admin(): void
     {
         AiKnowledgeEntry::create([

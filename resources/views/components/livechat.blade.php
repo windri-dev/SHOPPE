@@ -10,8 +10,7 @@
 >
   <div class="shoppe-livechat-teaser" id="shoppeLiveChatTeaser" style="display: none;">
     <span class="shoppe-livechat-teaser-text">
-      Cek stok, harga, atau tanya Stylist kami
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      Butuh bantuan perhiasan? Chat kami di sini ✨
     </span>
     <button type="button" class="shoppe-livechat-teaser-close" id="shoppeLiveChatTeaserClose" aria-label="Tutup notifikasi">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -36,12 +35,12 @@
     <header class="shoppe-livechat-header">
       <div class="shoppe-livechat-agent">
         <div class="shoppe-livechat-avatar-wrap">
-          <span id="shoppeLiveChatAvatarText">AI</span>
+          <span id="shoppeLiveChatAvatarText">PJ</span>
           <span class="shoppe-livechat-avatar-status"></span>
         </div>
         <div class="shoppe-livechat-agent-info">
           <h4>PUTRI.J Concierge</h4>
-          <span id="shoppeLiveChatModeLabel">Aria AI • Hybrid CS</span>
+          <span id="shoppeLiveChatModeLabel">Online • Siap Membantu</span>
         </div>
       </div>
 
@@ -50,14 +49,14 @@
           type="button"
           id="shoppeLiveChatHumanBtn"
           class="shoppe-livechat-btn-mode"
-          title="Alihkan ke Staf Admin Manusia"
-          aria-label="Minta Bantuan Admin Manusia"
+          title="Hubungkan ke Customer Service"
+          aria-label="Hubungkan ke Customer Service"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <span id="shoppeLiveChatHumanBtnText">Minta Admin</span>
+          <span id="shoppeLiveChatHumanBtnText">Bicara CS</span>
         </button>
 
         <a
@@ -88,7 +87,7 @@
         <line x1="12" y1="16" x2="12" y2="12"></line>
         <line x1="12" y1="8" x2="12.01" y2="8"></line>
       </svg>
-      <span id="shoppeLiveChatNoticeText">Cek stok &amp; harga real-time. Klik <strong>Minta Admin</strong> kapan saja untuk bicara dengan staf manusia.</span>
+      <span id="shoppeLiveChatNoticeText">Ada pertanyaan seputar perhiasan atau pesanan? Tim kami siap melayani Anda.</span>
     </div>
 
     <div class="shoppe-livechat-body" id="shoppeLiveChatBody" tabindex="0"></div>
@@ -99,7 +98,7 @@
           type="text"
           class="shoppe-livechat-input"
           id="shoppeLiveChatInput"
-          placeholder="Tanya harga, stok produk, atau ketik pesan..."
+          placeholder="Ketik pesan Anda di sini..."
           autocomplete="off"
           aria-label="Pesan Live Chat"
         />

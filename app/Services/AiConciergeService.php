@@ -11,6 +11,7 @@ use App\Models\Inquiry;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -48,7 +49,7 @@ class AiConciergeService
 
         // 2. Cek permintaan eksplisit untuk berbicara dengan Admin / CS Manusia
         if ($this->isExplicitHumanRequest($q)) {
-            $handoffReply = 'Baik Kak, percakapan ini telah saya alihkan ke **Staf Admin Concierge (Manusia)** kami. Mohon tunggu sebentar, tim kami akan segera membalas pesan Anda secara langsung di ruang obrolan ini.';
+            $handoffReply = 'Tentu Kak, percakapan Anda sedang kami hubungkan ke **Customer Service PUTRI.J**. Mohon tunggu sebentar, tim kami akan segera merespons pesan Anda di sini.';
 
             if ($inquiry) {
                 $inquiry->update([
@@ -63,7 +64,7 @@ class AiConciergeService
                 'handling_mode' => 'human',
                 'reply' => $handoffReply,
                 'action_btn' => null,
-                'rule_applied' => 'Eskalasi Manual ke Admin Manusia',
+                'rule_applied' => 'Eskalasi Manual ke Customer Service',
             ];
         }
 
@@ -111,10 +112,19 @@ class AiConciergeService
             ];
         }
 
-        // 5. Cek Pengecekan Barang, Harga & Stok Real-Time dari Database Katalog
+        // 5. Cek Pengecekan Barang, Harga & Stok Real-Time dari Database Katalog (0 Token - Langsung Database)
         $catalogResult = $this->checkProductAndPriceCatalog($q);
         if ($catalogResult !== null) {
-            $finalReply = $this->callExternalAiApi($cleanMessage, $catalogResult['reply'], $user, $inquiry) ?? $catalogResult['reply'];
+            $finalReply = $catalogResult['reply'];
+
+            // Jika pelanggan meminta rekomendasi / konsultasi gaya dan external AI API aktif,
+            // beri sentuhan AI personal yang ringkas dengan referensi produk ready stock di atas
+            if (! empty($catalogResult['is_recommendation'])) {
+                $aiStylistReply = $this->callExternalAiApi($cleanMessage, $catalogResult['reply'], $user, $inquiry);
+                if ($aiStylistReply !== null && trim($aiStylistReply) !== '') {
+                    $finalReply = $aiStylistReply;
+                }
+            }
 
             if ($inquiry) {
                 $inquiry->update(['status' => InquiryStatus::RESPONDED]);
@@ -127,16 +137,14 @@ class AiConciergeService
                 'reply' => $finalReply,
                 'action_btn' => $catalogResult['action_btn'],
                 'matched_products' => $catalogResult['matched_products'] ?? [],
-                'rule_applied' => 'Pengecekan Katalog Barang & Harga Real-Time',
+                'rule_applied' => ! empty($catalogResult['is_recommendation']) ? 'Rekomendasi Gaya & Produk Terfavorit' : 'Pengecekan Katalog Barang & Harga Real-Time',
             ];
         }
 
-        // 6. Cek Knowledge Base & Aturan Respons Pelanggan (ai_knowledge_entries)
+        // 6. Cek Knowledge Base & Aturan Respons Toko (0 Token - Langsung Database)
         $knowledgeMatch = $this->findMatchingKnowledge($q, ['knowledge', 'response_rule']);
         if ($knowledgeMatch) {
-            $reply = $knowledgeMatch->requires_human_handoff
-                ? $knowledgeMatch->content
-                : ($this->callExternalAiApi($cleanMessage, $knowledgeMatch->content, $user, $inquiry) ?? $knowledgeMatch->content);
+            $reply = $knowledgeMatch->content;
             $mode = $knowledgeMatch->requires_human_handoff ? 'human' : 'ai';
 
             if ($inquiry) {
@@ -164,13 +172,13 @@ class AiConciergeService
             ];
         }
 
-        // 7. Sapaan atau Pertanyaan Umum -> Gunakan LLM Eksternal (jika API Key diisi) atau ringkasan katalog lokal
+        // 7. Sapaan atau Pertanyaan Umum -> Gunakan LLM Eksternal Ringkas atau Salam Bawaan Toko
         $totalActive = Product::where('is_active', true)->where('stock', '>', 0)->count();
         $minPrice = (float) (Product::where('is_active', true)->min('price') ?? 18);
         $maxPrice = (float) (Product::where('is_active', true)->max('price') ?? 120);
 
         $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-        $fallbackReply = "{$customerGreeting} Saya **Aria (AI Stylist PUTRI.J)**. Saat ini tersedia **{$totalActive} koleksi perhiasan siap kirim** dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAnda dapat menanyakan langsung:\n• **Cek barang & harga** (contoh: *\"cek harga Lira Earrings\"* atau *\"anting di bawah $30\"*)\n• **Cek status pesanan** (ketik nomor order *SHP-...*)\n• Atau ketik **\"Hubungi Admin\"** jika ingin dibantu langsung oleh staf manusia kami.";
+        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRI.J** ✨\n\nSaat ini tersedia **{$totalActive} koleksi perhiasan pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi perhiasan atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
 
         $defaultReply = $this->callExternalAiApi($cleanMessage, $fallbackReply, $user, $inquiry) ?? $fallbackReply;
 
@@ -251,7 +259,7 @@ class AiConciergeService
      */
     protected function findMatchingKnowledge(string $q, array $types): ?AiKnowledgeEntry
     {
-        /** @var \Illuminate\Database\Eloquent\Collection<int, AiKnowledgeEntry> $entries */
+        /** @var Collection<int, AiKnowledgeEntry> $entries */
         $entries = AiKnowledgeEntry::query()
             ->where('is_active', true)
             ->whereIn('type', $types)
@@ -286,14 +294,14 @@ class AiConciergeService
      */
     protected function checkProductAndPriceCatalog(string $q): ?array
     {
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Product> $allProducts */
+        /** @var Collection<int, Product> $allProducts */
         $allProducts = Product::with('category')->where('is_active', true)->get();
         if ($allProducts->isEmpty()) {
             return null;
         }
 
         // A. Cek apakah pelanggan menyebut nama produk spesifik atau SKU
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Product> $directMatches */
+        /** @var Collection<int, Product> $directMatches */
         $directMatches = $allProducts->filter(function (Product $product) use ($q): bool {
             $nameLower = strtolower($product->name);
             $skuLower = strtolower((string) $product->sku);
@@ -406,9 +414,14 @@ class AiConciergeService
             }
         }
 
-        $isPriceOrCatalogIntent = $matchedCategorySlug !== null || $this->containsAny($q, [
+        $isRecommendationIntent = $this->containsAny($q, [
+            'rekomendasi', 'cocok', 'saran', 'pilihkan', 'carikan', 'kado', 'hadiah', 'bagus yang mana', 'tips', 'ide',
+            'pas untuk', 'buat acara', 'kondangan', 'pesta', 'wisuda', 'lamaran', 'ulang tahun',
+        ]);
+
+        $isPriceOrCatalogIntent = $isRecommendationIntent || $matchedCategorySlug !== null || $this->containsAny($q, [
             'harga', 'price', 'berapa', 'cek barang', 'cek stok', 'stok', 'stock', 'katalog',
-            'koleksi', 'produk', 'barang', 'termurah', 'termahal', 'rekomendasi', 'best seller',
+            'koleksi', 'produk', 'barang', 'termurah', 'termahal', 'best seller',
             'terlaris', 'promo', 'diskon', 'discount', 'ready',
         ]);
 
@@ -427,6 +440,11 @@ class AiConciergeService
             }
         }
 
+        // Jika pelanggan meminta rekomendasi atau saran gaya, WAJIB hanya rekomendasikan produk yang READY STOCK (stok > 0)
+        if ($isRecommendationIntent) {
+            $query->where('stock', '>', 0);
+        }
+
         // Cek filter batas harga (misal: "di bawah 30" atau "dibawah $25" atau "maksimal 50")
         if (preg_match('/(?:di\s*bawah|dibawah|under|kurang\s*dari|maksimal|max)\s*\$?\s*(\d+(?:\.\d+)?)/i', $q, $m)) {
             $maxPrice = (float) $m[1];
@@ -443,31 +461,44 @@ class AiConciergeService
         } elseif (str_contains($q, 'diskon') || str_contains($q, 'promo') || str_contains($q, 'sale')) {
             $query->whereNotNull('original_price');
             $filterLabel .= ' — Sedang Promo / Diskon';
+        } elseif ($isRecommendationIntent) {
+            $query->orderByDesc('is_featured')->orderByDesc('sales_count');
         } else {
             $query->orderBy('sales_count', 'desc');
         }
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Product> $results */
-        $results = $query->take(4)->get();
+        /** @var Collection<int, Product> $results */
+        $results = $query->take(3)->get();
         if ($results->isEmpty()) {
             return [
-                'reply' => "Saat ini belum ada produk yang sesuai dengan kriteria **{$filterLabel}**. Silakan lihat seluruh koleksi perhiasan kami di halaman Shop atau ketik **\"Hubungi Admin\"** untuk bantuan pencarian khusus.",
+                'reply' => "Saat ini belum ada produk yang sesuai dengan kriteria **{$filterLabel}**. Silakan lihat seluruh koleksi perhiasan kami di halaman Shop atau hubungi kami untuk bantuan pencarian khusus.",
                 'action_btn' => [
                     'label' => 'Buka Katalog Lengkap',
                     'url' => route('shop.index'),
                     'external' => false,
                 ],
                 'matched_products' => [],
+                'is_recommendation' => $isRecommendationIntent,
             ];
         }
 
-        $lines = ["Berikut hasil pengecekan barang & harga untuk **{$filterLabel}**:"];
-        foreach ($results as $p) {
-            $stockBadge = $p->stock > 0 ? "Ready {$p->stock} pcs" : 'Habis';
-            $promoInfo = ($p->original_price && (float) $p->original_price > (float) $p->price)
-                ? " *(dari {$p->formatted_original_price})*"
-                : '';
-            $lines[] = "• **{$p->name}** — **{$p->formatted_price}**{$promoInfo} | {$stockBadge}";
+        if ($isRecommendationIntent) {
+            $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi perhiasan pilihan terfavorit di butik **PUTRI.J** yang siap kirim (*ready stock*):'];
+            foreach ($results as $p) {
+                $descClean = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $p->description)));
+                $descShort = Str::limit($descClean, 80);
+                $lines[] = "✨ **{$p->name}** — **{$p->formatted_price}**\n   _{$descShort}_";
+            }
+            $lines[] = "\nKoleksi di atas dibuat dengan material emas vermeil 18k dan bahan *hypoallergenic* yang aman serta nyaman digunakan. Apakah ada model yang paling sesuai dengan selera Kakak?";
+        } else {
+            $lines = ["Berikut pilihan koleksi perhiasan untuk **{$filterLabel}** di butik PUTRI.J:"];
+            foreach ($results as $p) {
+                $stockBadge = $p->stock > 0 ? "Ready {$p->stock} pcs" : 'Habis';
+                $promoInfo = ($p->original_price && (float) $p->original_price > (float) $p->price)
+                    ? " *(dari {$p->formatted_original_price})*"
+                    : '';
+                $lines[] = "• **{$p->name}** — **{$p->formatted_price}**{$promoInfo} | {$stockBadge}";
+            }
         }
 
         $shopUrl = $matchedCategorySlug
@@ -477,7 +508,7 @@ class AiConciergeService
         return [
             'reply' => implode("\n", $lines),
             'action_btn' => [
-                'label' => 'Lihat di Etalase Toko',
+                'label' => $isRecommendationIntent ? 'Lihat Rekomendasi di Toko' : 'Lihat di Etalase Toko',
                 'url' => $shopUrl,
                 'external' => false,
             ],
@@ -489,6 +520,7 @@ class AiConciergeService
                 'stock' => $p->stock,
                 'url' => route('shop.show', $p->slug),
             ])->values()->all(),
+            'is_recommendation' => $isRecommendationIntent,
         ];
     }
 
@@ -563,7 +595,7 @@ class AiConciergeService
             || str_contains($customEndpoint, 'chat/completions')
             || str_contains($model, '/');
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, AiKnowledgeEntry> $boundaryEntries */
+        /** @var Collection<int, AiKnowledgeEntry> $boundaryEntries */
         $boundaryEntries = AiKnowledgeEntry::where('is_active', true)
             ->where('type', 'boundary')
             ->get(['title', 'content']);
@@ -572,7 +604,7 @@ class AiConciergeService
             ->map(fn (AiKnowledgeEntry $b): string => "{$b->title}: {$b->content}")
             ->implode("\n- ");
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, AiKnowledgeEntry> $knowledgeRuleEntries */
+        /** @var Collection<int, AiKnowledgeEntry> $knowledgeRuleEntries */
         $knowledgeRuleEntries = AiKnowledgeEntry::where('is_active', true)
             ->whereIn('type', ['knowledge', 'response_rule'])
             ->get(['title', 'content']);
@@ -581,27 +613,24 @@ class AiConciergeService
             ->map(fn (AiKnowledgeEntry $k): string => "{$k->title}: {$k->content}")
             ->implode("\n- ");
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Product> $allCatalogProducts */
+        /** @var Collection<int, Product> $allCatalogProducts */
         $allCatalogProducts = Product::with('category')
             ->where('is_active', true)
-            ->orderByDesc('sales_count')
+            ->where('is_featured', true)
+            ->take(5)
             ->get();
 
         $catalogSnapshot = $allCatalogProducts
-            ->map(fn (Product $p): string => "- {$p->name} [Kategori: ".($p->category->name ?? 'Perhiasan').", SKU: {$p->sku}]: Harga {$p->formatted_price}, Stok: {$p->stock} pcs")
+            ->map(fn (Product $p): string => "- {$p->name}: {$p->formatted_price} (Stok: {$p->stock})")
             ->implode("\n");
 
         $customerName = $user?->name ?? $inquiry?->name ?? 'Pelanggan';
-        $systemPrompt = "Anda adalah Aria, AI Stylist & Concierge resmi untuk butik perhiasan mewah PUTRI.J.\n"
-            ."Tugas utama Anda: menjawab pertanyaan pelanggan dengan ramah, sopan, akurat, dan ringkas dalam Bahasa Indonesia.\n\n"
-            ."=== DATA KATALOG BARANG, HARGA & STOK REAL-TIME DARI DATABASE ===\n{$catalogSnapshot}\n\n"
-            ."=== HASIL PENGECEKAN SISTEM UNTUK PERTANYAAN INI ===\n{$localContext}\n\n"
-            ."=== KNOWLEDGE BASE & ATURAN RESPONS TOKO ===\n- {$knowledgeRules}\n\n"
-            ."=== BATASAN KETAT AI (Wajib Dipatuhi & Tidak Boleh Dilanggar) ===\n- {$boundaries}\n\n"
-            ."Panduan tambahan:\n"
-            ."1. Selalu sebutkan harga dan jumlah stok persis sesuai Data Katalog Real-Time di atas (jangan mengarang harga/stok).\n"
-            ."2. Gunakan format tebal **nama produk** dan **harga** agar mudah dibaca.\n"
-            ."3. Jika pelanggan ingin komplain berat, refund, atau bicara dengan manusia, arahkan untuk menekan tombol 'Minta Admin' di pojok kanan atas chat.";
+        $systemPrompt = "Anda adalah asisten konsultan butik perhiasan mewah PUTRI.J.\n"
+            ."Jawab pertanyaan pelanggan dengan ramah, elegan, sopan, dan ringkas (maksimal 2-3 kalimat) dalam Bahasa Indonesia.\n\n"
+            ."Koleksi Utama:\n{$catalogSnapshot}\n\n"
+            ."Aturan:\n"
+            ."1. Jawab singkat dan padat (maksimal 2-3 kalimat).\n"
+            .'2. Jika pelanggan membutuhkan bantuan pesanan atau komplain, arahkan untuk menghubungi Customer Service kami.';
 
         try {
             $httpClient = Http::timeout(12);
@@ -625,8 +654,8 @@ class AiConciergeService
                         ],
                     ],
                     'generationConfig' => [
-                        'temperature' => 0.3,
-                        'maxOutputTokens' => 450,
+                        'temperature' => 0.5,
+                        'maxOutputTokens' => 180,
                     ],
                 ]);
 
@@ -658,7 +687,7 @@ class AiConciergeService
             if ($inquiry) {
                 $recentHistory = $inquiry->messages()
                     ->latest('id')
-                    ->take(6)
+                    ->take(2)
                     ->get()
                     ->reverse();
 
@@ -678,9 +707,9 @@ class AiConciergeService
             $response = $httpClient->withToken($apiKey)->post($url, [
                 'model' => $model,
                 'messages' => $messagesPayload,
+                'temperature' => 0.5,
+                'max_tokens' => 180,
                 'stream' => false,
-                'temperature' => 0.3,
-                'max_tokens' => 450,
             ]);
 
             if ($response->successful()) {

@@ -6,9 +6,9 @@
 
 class LiveChatManager {
   constructor() {
-    this.storageKey = 'shoppe_livechat_history_v3';
-    this.ticketStorageKey = 'shoppe_livechat_ticket_v3';
-    this.modeStorageKey = 'shoppe_livechat_mode_v3';
+    this.storageKey = 'shoppe_livechat_history_v4';
+    this.ticketStorageKey = 'shoppe_livechat_ticket_v4';
+    this.modeStorageKey = 'shoppe_livechat_mode_v4';
 
     const settings = this.loadStoreSettings();
     this.whatsappNumber = String(settings.whatsappNumber || 'https://www.whatsapp.com/').replace(/\D/g, '');
@@ -97,7 +97,7 @@ class LiveChatManager {
         this.syncThreadFromServer();
         return;
       }
-      this.submitMessage('Saya ingin berbicara langsung dengan Staf Admin Manusia (CS).', true);
+      this.submitMessage('Saya ingin berbicara langsung dengan Customer Service.', true);
     });
 
     this.resetBtn?.addEventListener('click', () => {
@@ -125,19 +125,19 @@ class LiveChatManager {
 
     if (this.handlingMode === 'human') {
       if (this.avatarText) this.avatarText.textContent = 'CS';
-      if (this.modeLabel) this.modeLabel.textContent = 'Admin CS • Mode Manual';
-      if (this.humanBtnText) this.humanBtnText.textContent = 'Admin Aktif';
+      if (this.modeLabel) this.modeLabel.textContent = 'Customer Service • Staf Aktif';
+      if (this.humanBtnText) this.humanBtnText.textContent = 'CS Aktif';
       this.humanBtn?.classList.add('is-human');
       if (this.noticeText) {
-        this.noticeText.innerHTML = 'Ditangani langsung oleh <strong>Staf Admin Manusia</strong>. AI otomatis nonaktif.';
+        this.noticeText.innerHTML = 'Percakapan Anda terhubung langsung dengan <strong>Customer Service</strong>.';
       }
     } else {
-      if (this.avatarText) this.avatarText.textContent = 'AI';
-      if (this.modeLabel) this.modeLabel.textContent = 'Aria AI • Hybrid CS';
-      if (this.humanBtnText) this.humanBtnText.textContent = 'Minta Admin';
+      if (this.avatarText) this.avatarText.textContent = 'PJ';
+      if (this.modeLabel) this.modeLabel.textContent = 'Online • Siap Membantu';
+      if (this.humanBtnText) this.humanBtnText.textContent = 'Bicara CS';
       this.humanBtn?.classList.remove('is-human');
       if (this.noticeText) {
-        this.noticeText.innerHTML = 'Cek stok &amp; harga real-time. Klik <strong>Minta Admin</strong> kapan saja untuk bicara dengan staf manusia.';
+        this.noticeText.innerHTML = 'Ada pertanyaan seputar perhiasan atau pesanan? Tim kami siap melayani Anda.';
       }
     }
 
@@ -229,8 +229,8 @@ class LiveChatManager {
       this.messages = [
         {
           sender: 'agent',
-          senderBadge: 'Aria AI Stylist',
-          text: 'Halo! Selamat datang di **PUTRI.J Concierge**.\nSaya **Aria (AI Stylist)** yang terhubung langsung ke database stok & harga katalog kami. Anda juga dapat menekan tombol **Minta Admin** kapan saja jika ingin dilayani langsung oleh staf manusia.',
+          senderBadge: 'PUTRI.J Assistant',
+          text: 'Halo! Selamat datang di **PUTRI.J** ✨\nAda yang bisa kami bantu seputar koleksi perhiasan, ukuran, atau pesanan Anda hari ini?',
           time: this.getCurrentTime()
         }
       ];
@@ -386,8 +386,8 @@ class LiveChatManager {
 
         if (data.ai_reply) {
           const badge = data.handled_by === 'handoff'
-            ? 'Sistem Eskalasi Admin'
-            : (data.handled_by === 'ai_boundary' ? 'Batasan AI (Guardrail)' : 'Aria AI Stylist');
+            ? 'Customer Service'
+            : (data.handled_by === 'ai_boundary' ? 'Informasi Layanan' : 'PUTRI.J Assistant');
 
           this.sendAgentMessage(data.ai_reply, data.action_btn || null, badge);
         }
@@ -485,7 +485,7 @@ class LiveChatManager {
     }
   }
 
-  sendAgentMessage(text, actionBtn = null, senderBadge = 'Aria AI Stylist') {
+  sendAgentMessage(text, actionBtn = null, senderBadge = 'PUTRI.J Assistant') {
     this.removeTypingIndicator();
 
     const msg = {
