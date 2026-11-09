@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E7CD" />
+      <stop offset="50%" stop-color="#C5A880" />
+      <stop offset="100%" stop-color="#8F7451" />
+    </linearGradient>
+  </defs>
+
+  <!-- Luxury Midnight Squircle Base -->
+  <rect width="512" height="512" rx="112" fill="#111827" />
+
+  <!-- Subtle Gold Border -->
+  <rect x="18" y="18" width="476" height="476" rx="98" fill="none" stroke="url(#goldGrad)" stroke-width="6" opacity="0.45" />
+
+  <!-- Main Monogram P . J (Bold Geometric Sans-Serif) -->
+  <text
+    x="256"
+    y="280"
+    font-family="'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif"
+    font-size="205"
+    font-weight="800"
+    text-anchor="middle"
+    dominant-baseline="central"
+    fill="#FFFFFF"
+    letter-spacing="-0.02em"
+  >P<tspan fill="url(#goldGrad)" font-size="220">.</tspan>J</text>
+
+  <!-- Brand Signature Subtitle in Gold Tracked Caps -->
+  <text
+    x="256"
+    y="418"
+    font-family="'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif"
+    font-size="34"
+    font-weight="700"
+    text-anchor="middle"
+    fill="url(#goldGrad)"
+    letter-spacing="0.28em"
+  >PUTRI.J</text>
+</svg>

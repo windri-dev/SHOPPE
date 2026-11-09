@@ -10,6 +10,12 @@
   <meta name="description" content="@yield('meta_description', 'Discover handcrafted minimalist jewelry, earrings, necklaces, and artisan accessories.')">
   <meta name="theme-color" content="#A18A68">
 
+  <!-- Favicons & Touch Icons -->
+  <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
+  <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+
   <!-- User Auth State for Client Scripts -->
   <script>
     window.ShoppeUser = {

@@ -7,6 +7,11 @@
   <title>@yield('title', 'PUTRI.J - Master Store Dashboard')</title>
   <meta name="robots" content="noindex, nofollow">
 
+  <!-- Favicons & Touch Icons -->
+  <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
+  <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
   <!-- Google Fonts: DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
