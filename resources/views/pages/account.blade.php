@@ -18,8 +18,9 @@
     @endif
 
     @if(session('info'))
-      <div style="background: #E3F2FD; border: 1px solid #BBDEFB; color: #1565C0; padding: 14px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
-        {{ session('info') }}
+      <div style="background: #FAF8F5; border: 1px solid #EAE4DA; color: #785A28; padding: 14px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5" style="flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span style="font-weight: 500;">{{ session('info') }}</span>
       </div>
     @endif
 
@@ -255,7 +256,7 @@
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px;">Tanggal Lahir</label>
-                <input type="date" name="birth_date" value="{{ old('birth_date', auth()->user()->birth_date?->format('Y-m-d')) }}" class="checkout-input" style="margin: 0;">
+                <input type="date" name="birth_date" value="{{ old('birth_date', auth()->user()->birth_date ? \Illuminate\Support\Carbon::parse(auth()->user()->birth_date)->format('Y-m-d') : '') }}" class="checkout-input" style="margin: 0;">
               </div>
             </div>
 

@@ -6,7 +6,7 @@
 <div class="container shop-page">
   <div class="shop-header-wrap">
     <h1 class="shop-page-title">Shop The Latest</h1>
-    <p class="shop-page-subtitle">Koleksi perhiasan artisan modern berlapis emas 18k dan perak murni.</p>
+    <p class="shop-page-subtitle mobile-only">Koleksi perhiasan artisan modern berlapis emas 18k dan perak murni.</p>
   </div>
 
   <div class="shop-layout">
@@ -15,20 +15,15 @@
       <form action="{{ route('shop.index') }}" method="GET" class="filter-form" id="shopFilterForm">
         <!-- 1. Search Bar -->
         <div class="filter-search-wrap">
-          <span class="filter-search-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </span>
           <input
             type="search"
             name="search"
             id="shopSearchInput"
             value="{{ request('search') }}"
-            placeholder="Cari anting, kalung, cincin..."
+            placeholder="Search..."
             class="filter-search-input"
             autocomplete="off"
+            aria-label="Search jewelry"
           >
           <a
             href="{{ route('shop.index', request()->except('search', 'page')) }}"
@@ -37,32 +32,15 @@
             aria-label="Clear search"
             style="{{ request('search') ? 'display: inline-flex;' : 'display: none;' }}"
           >&times;</a>
+          <span class="filter-search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
         </div>
 
-        <!-- 2. Categories Horizontal Scrollable Pills -->
-        <div class="filter-group filter-group-categories">
-          <div class="filter-heading-row">
-            <h3 class="filter-heading">Categories</h3>
-            <span class="filter-heading-count">{{ $products->total() }} pieces</span>
-          </div>
-          <ul class="category-filter-list">
-            <li>
-              <a href="{{ route('shop.index', request()->except('category', 'page')) }}" class="category-filter-link {{ !request('category') ? 'active' : '' }}">
-                <span>All Products</span>
-              </a>
-            </li>
-            @foreach($categories as $category)
-              <li>
-                <a href="{{ route('shop.index', array_merge(request()->except('page'), ['category' => $category->slug])) }}" class="category-filter-link {{ request('category') === $category->slug ? 'active' : '' }}">
-                  <span>{{ $category->name }}</span>
-                  <span class="category-filter-count">({{ $category->products_count }})</span>
-                </a>
-              </li>
-            @endforeach
-          </ul>
-        </div>
-
-        <!-- 3. Sort By Dropdown & Active Chips Toolbar -->
+        <!-- 2. Sort By Dropdown (Desktop: below search; Mobile: toolbar below categories) -->
         <div class="filter-group filter-group-sort">
           <div class="filter-heading-row desktop-only">
             <h3 class="filter-heading">Sort By</h3>
@@ -85,6 +63,29 @@
               </span>
             </div>
           </div>
+        </div>
+
+        <!-- 3. Categories (Desktop: vertical text list; Mobile: horizontal scrollable pills) -->
+        <div class="filter-group filter-group-categories">
+          <div class="filter-heading-row">
+            <h3 class="filter-heading">Categories</h3>
+            <span class="filter-heading-count desktop-only">{{ $products->total() }} pieces</span>
+          </div>
+          <ul class="category-filter-list">
+            <li>
+              <a href="{{ route('shop.index', request()->except('category', 'page')) }}" class="category-filter-link {{ !request('category') ? 'active' : '' }}">
+                <span>All Products</span>
+              </a>
+            </li>
+            @foreach($categories as $category)
+              <li>
+                <a href="{{ route('shop.index', array_merge(request()->except('page'), ['category' => $category->slug])) }}" class="category-filter-link {{ request('category') === $category->slug ? 'active' : '' }}">
+                  <span>{{ $category->name }}</span>
+                  <span class="category-filter-count">({{ $category->products_count }})</span>
+                </a>
+              </li>
+            @endforeach
+          </ul>
         </div>
 
         @if(request()->anyFilled(['search', 'category', 'sort']))

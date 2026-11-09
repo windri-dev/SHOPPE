@@ -18,13 +18,31 @@ class CheckoutController extends Controller
         protected CheckoutService $checkoutService
     ) {}
 
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
+        if (! auth()->check()) {
+            return redirect()->guest(route('login'))
+                ->with('info', 'Silakan masuk (login) atau mendaftar akun terlebih dahulu untuk melanjutkan proses checkout pesanan Anda.');
+        }
+
         return view('pages.checkout');
     }
 
     public function process(ProcessCheckoutRequest $request): JsonResponse|RedirectResponse
     {
+        if (! auth()->check()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Silakan masuk atau mendaftar akun terlebih dahulu untuk melanjutkan checkout.',
+                    'redirect_url' => route('login'),
+                ], 401);
+            }
+
+            return redirect()->guest(route('login'))
+                ->with('info', 'Silakan masuk (login) atau mendaftar akun terlebih dahulu untuk melanjutkan proses checkout pesanan Anda.');
+        }
+
         $validated = $request->validated();
 
         try {

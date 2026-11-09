@@ -4,9 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="user-auth" content="{{ auth()->check() ? '1' : '0' }}">
+  <meta name="login-url" content="{{ route('login') }}">
   <title>@yield('title', 'PUTRI.J - Modern Luxury Jewelry & Accessories')</title>
   <meta name="description" content="@yield('meta_description', 'Discover handcrafted minimalist jewelry, earrings, necklaces, and artisan accessories.')">
   <meta name="theme-color" content="#A18A68">
+
+  <!-- User Auth State for Client Scripts -->
+  <script>
+    window.ShoppeUser = {
+      isAuthenticated: {{ auth()->check() ? 'true' : 'false' }},
+      loginUrl: "{{ route('login') }}"
+    };
+  </script>
 
   <!-- Technical SEO & Indexability -->
   <link rel="canonical" href="{{ url()->current() }}">
@@ -57,8 +67,10 @@
     </div>
   </div>
 
-  <!-- LiveChat Concierge Component -->
-  <x-livechat />
+  <!-- LiveChat Concierge Component (Hanya tampil di Halaman Depan / Home) -->
+  @if(request()->routeIs('home'))
+    <x-livechat />
+  @endif
 
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>

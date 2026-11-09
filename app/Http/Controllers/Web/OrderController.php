@@ -8,17 +8,66 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\ConfirmPaymentRequest;
 use App\Models\Order;
+use App\Services\Payment\PaymentGatewayManager;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        protected PaymentGatewayManager $paymentManager
+    ) {}
+
     public function show(string $orderNumber): View
     {
-        $order = Order::with('items.product')->where('order_number', $orderNumber)->firstOrFail();
+        $order = Order::with('items.product', 'transactions')->where('order_number', $orderNumber)->firstOrFail();
 
-        return view('pages.order-details', compact('order'));
+        // Inisialisasi token PGA jika pesanan belum lunas dan belum memiliki reference
+        $paymentSession = null;
+        if (! $order->isPaid()) {
+            try {
+                $paymentSession = $this->paymentManager->initiatePayment($order);
+            } catch (\Exception $e) {
+                // Abaikan jika offline / dev fallback
+            }
+        }
+
+        return view('pages.order-details', compact('order', 'paymentSession'));
+    }
+
+    /**
+     * Endpoint API status pesanan untuk polling frontend saat modal bayar aktif.
+     */
+    public function checkStatus(string $orderNumber): JsonResponse
+    {
+        $order = Order::where('order_number', $orderNumber)->firstOrFail();
+
+        return response()->json([
+            'order_number' => $order->order_number,
+            'payment_status' => $order->payment_status,
+            'status' => $order->status->value ?? (string) $order->status,
+            'is_paid' => $order->isPaid(),
+            'paid_at' => $order->paid_at?->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * Endpoint inisialisasi / generate ulang sesi pembayaran PGA.
+     */
+    public function initiatePgaPayment(Request $request, string $orderNumber): JsonResponse
+    {
+        $order = Order::with('items')->where('order_number', $orderNumber)->firstOrFail();
+
+        $provider = $request->input('provider');
+        $session = $this->paymentManager->initiatePayment($order, $provider);
+
+        return response()->json([
+            'success' => true,
+            'session' => $session,
+        ]);
     }
 
     public function confirmPayment(ConfirmPaymentRequest $request, string $orderNumber): RedirectResponse

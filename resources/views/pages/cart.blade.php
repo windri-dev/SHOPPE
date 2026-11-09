@@ -36,9 +36,24 @@
         <span class="cart-grand-total-val" id="cartPageTotal">$ 0.00</span>
       </div>
 
-      <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout">
-        PROCEED TO CHECKOUT
-      </a>
+      @guest
+        <div style="background: #FAF8F5; border: 1px solid #EAE4DA; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #5C5243; line-height: 1.5;">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #111827; margin-bottom: 4px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Perhatian: Perlu Masuk / Mendaftar</span>
+          </div>
+          Anda harus masuk ke akun Anda atau mendaftar terlebih dahulu sebelum dapat melanjutkan ke proses checkout pesanan.
+        </div>
+
+        <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          LOGIN UNTUK CHECKOUT
+        </a>
+      @else
+        <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout">
+          PROCEED TO CHECKOUT
+        </a>
+      @endguest
     </div>
   </div>
 </div>

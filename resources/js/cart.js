@@ -27,6 +27,18 @@ class CartManager {
     this.init();
   }
 
+  isUserAuthenticated() {
+    if (window.ShoppeUser && typeof window.ShoppeUser.isAuthenticated === 'boolean') {
+      return window.ShoppeUser.isAuthenticated;
+    }
+    const meta = document.querySelector('meta[name="user-auth"]');
+    return meta ? meta.getAttribute('content') === '1' : false;
+  }
+
+  getLoginUrl() {
+    return window.ShoppeUser?.loginUrl || document.querySelector('meta[name="login-url"]')?.getAttribute('content') || '/login';
+  }
+
   normalizeProductId(rawId) {
     if (typeof rawId === 'number' && Number.isInteger(rawId)) return rawId;
     const str = String(rawId || '').trim();
@@ -43,6 +55,14 @@ class CartManager {
   }
 
   loadCart() {
+    // Tamu (guest) yang belum login tidak memiliki item aktif
+    if (!this.isUserAuthenticated()) {
+      try {
+        localStorage.removeItem(this.storageKey);
+      } catch (e) {}
+      return [];
+    }
+
     try {
       const saved = localStorage.getItem(this.storageKey);
       if (saved) {
@@ -60,33 +80,7 @@ class CartManager {
       console.error('Error loading cart:', e);
     }
 
-    // Default initial items matching seeded Product IDs (1, 11, 3)
-    return [
-      {
-        id: 1,
-        title: 'Lira Earrings',
-        price: 20.00,
-        variant: '18k Gold / Standard',
-        image: '/images/product-1.png',
-        quantity: 2
-      },
-      {
-        id: 11,
-        title: 'Ollie Hoop Earrings',
-        price: 20.00,
-        variant: '18k Gold / Standard',
-        image: '/images/product-4.png',
-        quantity: 1
-      },
-      {
-        id: 3,
-        title: 'Kaede Hair Pin Set Of 3',
-        price: 30.00,
-        variant: '18k Gold / Standard',
-        image: '/images/product-3.png',
-        quantity: 1
-      }
-    ];
+    return [];
   }
 
   saveCart() {
@@ -153,6 +147,15 @@ class CartManager {
 
   addItem(product) {
     if (!product) return;
+
+    if (!this.isUserAuthenticated()) {
+      (window.ShoppeApp || window.appController)?.showToast('Silakan masuk (login) atau mendaftar terlebih dahulu untuk menambah produk!');
+      setTimeout(() => {
+        window.location.href = this.getLoginUrl();
+      }, 900);
+      return;
+    }
+
     const normalizedId = this.normalizeProductId(product.id);
     const variant = product.variant || '18k Gold / Standard';
     const qtyToAdd = Math.max(1, parseInt(product.quantity, 10) || 1);

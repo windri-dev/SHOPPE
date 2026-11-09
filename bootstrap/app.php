@@ -25,6 +25,18 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureUserHasRole::class,
             'admin.ip' => AdminIpWhitelistMiddleware::class,
         ]);
+
+        $middleware->redirectGuestsTo(function () {
+            session()->flash('info', 'Silakan masuk (login) atau mendaftar akun terlebih dahulu untuk melanjutkan proses checkout pesanan Anda.');
+
+            return route('login');
+        });
+
+        // Pengecualian CSRF untuk endpoint callback Webhook Payment Gateway
+        $middleware->validateCsrfTokens(except: [
+            'payment/webhook',
+            'payment/webhook/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

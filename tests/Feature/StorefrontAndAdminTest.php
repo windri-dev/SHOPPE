@@ -108,12 +108,57 @@ class StorefrontAndAdminTest extends TestCase
         $showResponse->assertSee('ANNY JOHNSON');
     }
 
+    public function test_guest_cannot_access_checkout_and_is_redirected_to_login(): void
+    {
+        $response = $this->get('/checkout');
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHas('info');
+
+        $jsonResponse = $this->postJson('/checkout', [
+            'first_name' => 'Tamu',
+            'last_name' => 'Anonim',
+            'email' => 'guest@example.com',
+            'phone' => '08123456789',
+            'country' => 'Indonesia',
+            'street_address' => 'Jl. Test No. 1',
+            'city' => 'Jakarta',
+            'postcode' => '12345',
+            'payment_method' => 'bank_transfer',
+            'items' => [
+                ['id' => $this->product->id, 'quantity' => 1],
+            ],
+        ]);
+        $jsonResponse->assertStatus(401);
+
+        // Intended redirect verification: after login, customer is redirected back to /checkout
+        $loginResponse = $this->post(route('account.login'), [
+            'email' => 'buyer@shoppe.com',
+            'password' => 'buyer123',
+        ]);
+        $loginResponse->assertRedirect(route('checkout.index'));
+
+        // Logout and verify new registration also redirects back to /checkout
+        $this->post(route('account.logout'));
+        $this->get('/checkout'); // set intended URL again
+        $registerResponse = $this->post(route('account.register'), [
+            'name' => 'Dewi Sartika',
+            'email' => 'dewi@example.com',
+            'password' => 'dewi12345',
+            'password_confirmation' => 'dewi12345',
+        ]);
+        $registerResponse->assertRedirect(route('checkout.index'));
+    }
+
     public function test_cart_and_checkout_flow_creates_order_and_decrements_stock(): void
     {
         $this->get('/cart')->assertStatus(200);
-        $this->get('/checkout')->assertStatus(200);
 
-        $checkoutResponse = $this->post('/checkout', [
+        /** @var User $customer */
+        $customer = User::where('email', 'buyer@shoppe.com')->first();
+
+        $this->actingAs($customer)->get('/checkout')->assertStatus(200);
+
+        $checkoutResponse = $this->actingAs($customer)->post('/checkout', [
             'first_name' => 'Clara',
             'last_name' => 'Aurelia',
             'email' => 'buyer@shoppe.com',

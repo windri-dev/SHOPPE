@@ -27,6 +27,18 @@ class AppController {
     this.init();
   }
 
+  isUserAuthenticated() {
+    if (window.ShoppeUser && typeof window.ShoppeUser.isAuthenticated === 'boolean') {
+      return window.ShoppeUser.isAuthenticated;
+    }
+    const meta = document.querySelector('meta[name="user-auth"]');
+    return meta ? meta.getAttribute('content') === '1' : false;
+  }
+
+  getLoginUrl() {
+    return window.ShoppeUser?.loginUrl || document.querySelector('meta[name="login-url"]')?.getAttribute('content') || '/login';
+  }
+
   ensureToastContainer() {
     let container = document.getElementById('toastContainer');
     if (!container && document.body) {
@@ -166,6 +178,15 @@ class AppController {
       const quickAddBtn = e.target.closest('[data-action="quick-add"]');
       if (quickAddBtn) {
         e.preventDefault();
+
+        if (!this.isUserAuthenticated()) {
+          this.showToast('Silakan masuk (login) atau mendaftar terlebih dahulu untuk menambah produk!');
+          setTimeout(() => {
+            window.location.href = this.getLoginUrl();
+          }, 900);
+          return;
+        }
+
         const product = this.extractProductData(quickAddBtn);
         if (!product.id) return;
 
@@ -241,6 +262,14 @@ class AppController {
     modalAddBtn?.addEventListener('click', () => {
       if (!this.currentQuickViewProduct) return;
       const product = this.currentQuickViewProduct;
+
+      if (!this.isUserAuthenticated()) {
+        this.showToast('Silakan masuk (login) atau mendaftar terlebih dahulu untuk menambah produk!');
+        setTimeout(() => {
+          window.location.href = this.getLoginUrl();
+        }, 900);
+        return;
+      }
 
       if (!product.inStock) {
         this.showToast(`Sorry, "${product.title}" is currently out of stock.`);

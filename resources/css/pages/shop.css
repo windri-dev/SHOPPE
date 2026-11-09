@@ -1,36 +1,31 @@
 /* ==========================================================================
    Shop Catalog Page Layout & Sidebar Filters
-   PUTRI.J Luxury Design System (Desktop & Mobile Refined)
+   PUTRI.J Luxury Design System (Figma Desktop & Refined Mobile Ergonomics)
    ========================================================================== */
 
 .shop-page {
-  padding-top: 48px;
+  padding-top: 56px;
   padding-bottom: 96px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
 }
 
 .shop-header-wrap {
-  margin-bottom: 36px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
+  margin-bottom: 48px;
 }
 
 .shop-page-title {
   font-size: var(--fs-h1);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   color: var(--color-black);
-  margin-bottom: 6px;
+  margin: 0;
   letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
 .shop-page-subtitle {
+  display: none;
   font-size: 14px;
   color: #707070;
-  margin: 0;
+  margin-top: 8px;
 }
 
 .shop-layout {
@@ -38,10 +33,6 @@
   grid-template-columns: 260px minmax(0, 1fr);
   gap: 48px;
   align-items: start;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
 }
 
 /* Sidebar Styles */
@@ -49,57 +40,45 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
 }
 
 .shop-sidebar .filter-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
+  gap: 32px;
 }
 
-/* 1. Filter Search */
+/* 1. Filter Search (Desktop: Luxury Underline with Right Icon) */
 .filter-search-wrap {
+  order: 1;
   position: relative;
   display: flex;
   align-items: center;
-  background: #F8F8F6;
-  border: 1px solid #EAE6DF;
-  border-radius: 999px;
-  padding: 4px 14px;
-  transition: all var(--transition-fast);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-gray);
+  border-radius: 0;
+  padding: 0 0 10px 0;
+  transition: border-color var(--transition-fast);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .filter-search-wrap:focus-within {
-  background: #FFFFFF;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(161, 138, 104, 0.15);
-}
-
-.filter-search-icon {
-  color: #8C8273;
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  background: transparent;
+  border-bottom-color: var(--color-black);
+  box-shadow: none;
 }
 
 .filter-search-input {
+  order: 1;
   width: 100%;
   border: none;
   background: transparent;
-  font-size: 13.5px;
+  font-size: var(--fs-body-md);
   color: var(--color-black);
   outline: none;
-  padding: 7px 0;
+  padding: 0 32px 0 0;
   font-family: inherit;
 }
 
@@ -113,15 +92,20 @@
 }
 
 .filter-search-input::placeholder {
-  color: #9C968B;
+  color: var(--color-dark-gray);
 }
 
 .filter-search-clear {
-  color: #8C8273;
+  order: 2;
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-dark-gray);
   font-size: 18px;
   line-height: 1;
   text-decoration: none;
-  padding: 2px 6px;
+  padding: 2px 4px;
   cursor: pointer;
   transition: color var(--transition-fast);
   display: inline-flex;
@@ -133,112 +117,41 @@
   color: var(--color-black);
 }
 
-/* 2. Selects (Shop By & Sort By) */
-.filter-select-wrap {
-  position: relative;
-  width: 100%;
-}
-
-.filter-select {
-  width: 100%;
-  height: 44px;
-  padding: 0 34px 0 14px;
-  font-size: 13.5px;
-  font-family: var(--font-primary);
-  color: var(--color-black);
-  background-color: var(--color-white);
-  border: 1px solid #DED6CA;
-  border-radius: var(--radius-sm);
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  outline: none;
-}
-
-.filter-select:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(161, 138, 104, 0.15);
-}
-
-.filter-select-chevron {
+.filter-search-icon {
+  order: 3;
   position: absolute;
-  right: 14px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #555555;
+  color: var(--color-black);
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-right: 0;
+  flex-shrink: 0;
 }
 
-/* 3. Filter Groups & Category List */
-.filter-group {
+/* 2. Selects (Sort By) */
+.filter-group-sort {
+  order: 2;
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.filter-heading-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 100%;
 }
 
 .filter-heading {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: var(--fw-medium);
   color: var(--color-black);
   margin: 0;
   letter-spacing: -0.01em;
 }
 
-.filter-heading-count {
-  font-size: 12px;
-  color: #8C8273;
-}
-
-.category-filter-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-}
-
-.category-filter-link {
-  font-size: 14px;
-  color: var(--color-dark-gray);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: all var(--transition-fast);
-}
-
-.category-filter-link:hover {
-  color: var(--color-black);
-  background-color: #FAF8F5;
-}
-
-.category-filter-link.active {
-  color: var(--color-accent);
-  background-color: #FAF5ED;
-  font-weight: 600;
-}
-
-.category-filter-count {
-  font-size: 12px;
-  color: #999;
-}
-
 .shop-toolbar-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: block;
+  width: 100%;
 }
 
 .shop-toolbar-info {
@@ -247,28 +160,150 @@
   color: #707070;
 }
 
+.filter-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.filter-select {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 16px;
+  font-size: var(--fs-body-md);
+  font-family: var(--font-primary);
+  color: var(--color-black);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray);
+  border-radius: var(--radius-sm);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  outline: none;
+}
+
+.filter-select:focus {
+  border-color: var(--color-black);
+  box-shadow: none;
+}
+
+.filter-select-chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-black);
+  display: flex;
+  align-items: center;
+}
+
+/* 3. Filter Groups & Categories List (Desktop: Clean Vertical Text Links) */
+.filter-group-categories {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.filter-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-heading-count {
+  font-size: 13px;
+  color: var(--color-dark-gray);
+}
+
+.category-filter-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.category-filter-link {
+  font-size: 15px;
+  color: var(--color-dark-gray);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  transition: color var(--transition-fast);
+  cursor: pointer;
+}
+
+.category-filter-link:hover {
+  color: var(--color-black);
+  background: transparent;
+}
+
+.category-filter-link.active {
+  color: var(--color-black);
+  font-weight: var(--fw-medium);
+  background: transparent;
+}
+
+.category-filter-count {
+  font-size: 13px;
+  color: #999;
+}
+
+/* 4. Reset Filters Button */
 .filter-reset-wrap {
+  order: 4;
   padding-top: 4px;
+  width: 100%;
 }
 
 .btn-reset-filters {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #8C2A2A;
-  background-color: #FDF2F2;
-  border: 1px solid #F9D6D6;
-  padding: 7px 14px;
-  border-radius: 999px;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--color-black);
+  background-color: transparent;
+  border: 1px solid var(--color-gray);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
   transition: all var(--transition-fast);
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .btn-reset-filters:hover {
-  background-color: #FDE8E8;
-  color: #771A1A;
+  border-color: var(--color-black);
+  color: var(--color-black);
+  background-color: #FAF8F5;
+}
+
+/* Desktop Shop Main & Product Grid */
+.shop-main {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.shop-main .product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Empty State */
@@ -366,16 +401,10 @@
   .shop-page {
     padding-top: 16px;
     padding-bottom: 56px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
   }
 
   .shop-header-wrap {
     margin-bottom: 14px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
   }
 
   .shop-page-title {
@@ -417,21 +446,48 @@
 
   /* 1. Mobile Search Bar */
   .filter-search-wrap {
+    order: 1 !important;
     padding: 2px 12px;
-    border-radius: 12px;
+    border: 1px solid #EAE6DF !important;
+    border-radius: 12px !important;
+    background: #F8F8F6 !important;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
   }
 
+  .filter-search-wrap:focus-within {
+    background: #FFFFFF !important;
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 3px rgba(161, 138, 104, 0.15) !important;
+  }
+
+  .filter-search-icon {
+    order: 1 !important;
+    position: static !important;
+    transform: none !important;
+    margin-right: 8px !important;
+    color: #8C8273 !important;
+  }
+
   .filter-search-input {
-    font-size: 14px;
-    padding: 7px 0;
+    order: 2 !important;
+    font-size: 14px !important;
+    padding: 7px 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .filter-search-clear {
+    order: 3 !important;
+    position: static !important;
+    transform: none !important;
+    margin-left: 4px !important;
   }
 
   /* 2. Horizontal Scrollable Category Pills */
   .filter-group-categories {
+    order: 2 !important;
     gap: 6px;
     width: 100% !important;
     max-width: 100% !important;
@@ -496,6 +552,7 @@
 
   /* 3. Compact Toolbar: Count + Compact Sort Select */
   .filter-group-sort {
+    order: 3 !important;
     gap: 0;
     width: 100% !important;
     max-width: 100% !important;
@@ -549,14 +606,24 @@
   }
 
   .filter-reset-wrap {
+    order: 4 !important;
     padding-top: 0;
     width: 100%;
     min-width: 0;
   }
 
   .btn-reset-filters {
-    font-size: 11px;
-    padding: 4px 10px;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #8C2A2A !important;
+    background-color: #FDF2F2 !important;
+    border: 1px solid #F9D6D6 !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
   }
 
   /* 4. FORCE STRICT 2-COLUMN GRID ON MOBILE SHOP */

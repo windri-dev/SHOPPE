@@ -103,41 +103,52 @@
 }
 
 /* --------------------------------------------------------------------------
-   Toast Notification
+   Toast Notification (Top-Center Floating Notification, Unobtrusive)
    -------------------------------------------------------------------------- */
 .toast-container {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: auto;
+  right: auto;
   z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   pointer-events: none;
+  max-width: 90vw;
+  width: auto;
 }
 
 .toast {
   pointer-events: auto;
-  background-color: var(--color-black);
-  color: var(--color-white);
-  padding: 14px 20px;
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-body-md);
+  background-color: #111827;
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: var(--shadow-md);
-  animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  gap: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
+  animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .toast.toast-out {
-  animation: toastOut 0.3s forwards;
+  animation: toastOut 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 @keyframes toastIn {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(-24px) scale(0.95);
   }
 
   to {
@@ -154,7 +165,7 @@
 
   to {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(-20px) scale(0.95);
   }
 }
 

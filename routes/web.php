@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\ContactController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\OrderController;
+use App\Http\Controllers\Web\PaymentWebhookController;
 use App\Http\Controllers\Web\ShopController;
 use App\Http\Controllers\Web\StaticPageController;
 use Illuminate\Support\Facades\Route;
@@ -25,12 +26,23 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{slug}', [ShopController::class, 'show'])->name('shop.show');
 
-// Keranjang Belanja & Checkout
+// Keranjang Belanja
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
+// Checkout (Wajib Login / Registrasi Akun)
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+});
+
+// Orders & Payment Integration
 Route::get('/orders/{orderNumber}', [OrderController::class, 'show'])->name('order.show');
+Route::get('/orders/{orderNumber}/status', [OrderController::class, 'checkStatus'])->name('order.check_status');
+Route::post('/orders/{orderNumber}/initiate-pga', [OrderController::class, 'initiatePgaPayment'])->name('order.initiate_pga');
 Route::post('/orders/{orderNumber}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('order.confirm_payment');
+
+// Webhook Callback Payment Gateway (CSRF exempt)
+Route::post('/payment/webhook/{provider?}', [PaymentWebhookController::class, 'handle'])->name('payment.webhook');
 
 // Blog & Jurnal
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
