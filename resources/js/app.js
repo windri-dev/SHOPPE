@@ -92,15 +92,18 @@ class AppController {
   extractProductData(element) {
     const card = element.closest('.product-card');
     const id = element.dataset.productId || card?.dataset.productId || card?.dataset.id;
-    const title = element.dataset.productTitle || card?.dataset.title || card?.querySelector('.product-title')?.textContent?.trim() || 'Jewelry Piece';
-    const price = parseFloat(element.dataset.productPrice || card?.dataset.price || '20') || 20;
+    const title = element.dataset.productTitle || card?.dataset.title || card?.querySelector('.product-title')?.textContent?.trim() || 'Apparel Piece';
+    const price = parseFloat(element.dataset.productPrice || card?.dataset.price || '35') || 35;
     const image = element.dataset.productImg || card?.dataset.image || card?.querySelector('img')?.src || '/images/product-1.png';
     const url = card?.dataset.url || card?.querySelector('.product-title a')?.href || '/shop';
-    const description = card?.dataset.description || 'Handcrafted minimalist jewelry piece cast in premium brass with an 18k gold-dipped finish.';
+    const description = card?.dataset.description || 'Busana kontemporer rancangan eksklusif PUTRI.J berbahan premium lembut dan berkarakter anggun.';
     const inStock = (card?.dataset.stock ?? 'true') !== 'false';
     const quantity = Math.max(1, parseInt(element.dataset.productQty || '1', 10) || 1);
+    const video = card?.dataset.video || '';
+    const videoType = card?.dataset.videoType || 'none';
+    const videoEmbed = card?.dataset.videoEmbed || '';
 
-    return { id, title, price, image, url, description, inStock, quantity };
+    return { id, title, price, image, url, description, inStock, quantity, video, videoType, videoEmbed };
   }
 
   // 1. Header scroll effect
@@ -281,13 +284,63 @@ class AppController {
           id: product.id,
           title: product.title,
           price: product.price,
-          variant: '18k Gold / Standard',
+          variant: 'Size M / Standard',
           image: product.image,
           quantity: 1
         });
         this.closeQuickView();
       }
     });
+
+    // Video Toggle in Quick View
+    const videoToggleBtn = document.getElementById('modalVideoToggleBtn');
+    videoToggleBtn?.addEventListener('click', () => {
+      this.toggleQuickViewVideo();
+    });
+  }
+
+  toggleQuickViewVideo() {
+    const videoBox = document.getElementById('modalProductVideoBox');
+    const imgEl = document.getElementById('modalProductImg');
+    const label = document.getElementById('modalVideoToggleLabel');
+    const directVideo = document.getElementById('modalProductVideo');
+    const iframeEl = document.getElementById('modalProductIframe');
+    const product = this.currentQuickViewProduct;
+
+    if (!videoBox || !product?.video) return;
+
+    const isVideoVisible = videoBox.style.display !== 'none';
+    if (isVideoVisible) {
+      // Switch back to Image
+      videoBox.style.display = 'none';
+      if (imgEl) imgEl.style.display = 'block';
+      if (label) label.textContent = 'Lihat Video';
+      if (directVideo && !directVideo.paused) directVideo.pause();
+    } else {
+      // Switch to Video
+      if (imgEl) imgEl.style.display = 'none';
+      videoBox.style.display = 'flex';
+      if (label) label.textContent = 'Lihat Foto';
+
+      if (product.videoType === 'youtube' || product.videoType === 'vimeo') {
+        if (directVideo) directVideo.style.display = 'none';
+        if (iframeEl) {
+          iframeEl.style.display = 'block';
+          if (!iframeEl.src || iframeEl.src === 'about:blank') {
+            iframeEl.src = product.videoEmbed;
+          }
+        }
+      } else {
+        if (iframeEl) iframeEl.style.display = 'none';
+        if (directVideo) {
+          directVideo.style.display = 'block';
+          if (directVideo.src !== product.video) {
+            directVideo.src = product.video;
+          }
+          directVideo.play().catch(() => {});
+        }
+      }
+    }
   }
 
   openQuickView(product) {
@@ -298,6 +351,30 @@ class AppController {
     if (imgEl) {
       imgEl.src = product.image;
       imgEl.alt = product.title;
+      imgEl.style.display = 'block';
+    }
+
+    const videoBox = document.getElementById('modalProductVideoBox');
+    const videoToggleBtn = document.getElementById('modalVideoToggleBtn');
+    const label = document.getElementById('modalVideoToggleLabel');
+    const directVideo = document.getElementById('modalProductVideo');
+    const iframeEl = document.getElementById('modalProductIframe');
+
+    if (videoBox) videoBox.style.display = 'none';
+    if (directVideo) {
+      if (!directVideo.paused) directVideo.pause();
+      directVideo.removeAttribute('src');
+      directVideo.load();
+    }
+    if (iframeEl) iframeEl.src = 'about:blank';
+
+    if (videoToggleBtn) {
+      if (product.video) {
+        videoToggleBtn.style.display = 'inline-flex';
+        if (label) label.textContent = 'Lihat Video';
+      } else {
+        videoToggleBtn.style.display = 'none';
+      }
     }
 
     const titleEl = document.getElementById('modalProductTitle');
@@ -336,6 +413,17 @@ class AppController {
   }
 
   closeQuickView() {
+    const videoBox = document.getElementById('modalProductVideoBox');
+    const directVideo = document.getElementById('modalProductVideo');
+    const iframeEl = document.getElementById('modalProductIframe');
+
+    if (videoBox) videoBox.style.display = 'none';
+    if (directVideo && !directVideo.paused) {
+      directVideo.pause();
+      directVideo.removeAttribute('src');
+    }
+    if (iframeEl) iframeEl.src = 'about:blank';
+
     this.quickViewModal?.classList.remove('open');
     document.body.style.overflow = '';
   }

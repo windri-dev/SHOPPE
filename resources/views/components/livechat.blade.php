@@ -10,7 +10,7 @@
 >
   <div class="shoppe-livechat-teaser" id="shoppeLiveChatTeaser" style="display: none;">
     <span class="shoppe-livechat-teaser-text">
-      Butuh bantuan perhiasan? Chat kami di sini ✨
+      Butuh rekomendasi busana? Chat kami di sini ✨
     </span>
     <button type="button" class="shoppe-livechat-teaser-close" id="shoppeLiveChatTeaserClose" aria-label="Tutup notifikasi">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -60,7 +60,7 @@
         </button>
 
         <a
-          href="https://wa.me/https://www.whatsapp.com/?text=Halo%20PUTRI.J,%20saya%20ingin%20konsultasi%20produk%20perhiasan"
+          href="https://wa.me/https://www.whatsapp.com/?text=Halo%20PUTRI.J,%20saya%20ingin%20konsultasi%20produk%20busana"
           target="_blank"
           rel="noopener noreferrer"
           class="shoppe-livechat-btn-header shoppe-livechat-btn-whatsapp"
@@ -87,7 +87,7 @@
         <line x1="12" y1="16" x2="12" y2="12"></line>
         <line x1="12" y1="8" x2="12.01" y2="8"></line>
       </svg>
-      <span id="shoppeLiveChatNoticeText">Ada pertanyaan seputar perhiasan atau pesanan? Tim kami siap melayani Anda.</span>
+      <span id="shoppeLiveChatNoticeText">Ada pertanyaan seputar busana atau pesanan? Tim kami siap melayani Anda.</span>
     </div>
 
     <div class="shoppe-livechat-body" id="shoppeLiveChatBody" tabindex="0"></div>

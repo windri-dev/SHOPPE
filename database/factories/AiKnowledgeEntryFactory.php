@@ -29,4 +29,3 @@ class AiKnowledgeEntryFactory extends Factory
         ];
     }
 }
-

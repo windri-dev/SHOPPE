@@ -112,6 +112,30 @@ class AiConciergeService
             ];
         }
 
+        // 4.5 Cek Sapaan Murni Pelanggan (Pure Greeting: "hallo", "halo kak", "selamat siang", dll.)
+        if ($this->isPureGreeting($q)) {
+            $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
+            $greetingFallback = "{$customerGreeting} Selamat datang di butik busana **PUTRI.J** ✨ Ada yang bisa kami bantu seputar koleksi busana, panduan ukuran (size chart), atau pesanan Anda hari ini?";
+            $greetingReply = $this->callExternalAiApi($cleanMessage, $greetingFallback, $user, $inquiry) ?? $greetingFallback;
+
+            if ($inquiry) {
+                $inquiry->update(['status' => InquiryStatus::RESPONDED]);
+                $this->recordAiMessage($inquiry, $greetingReply);
+            }
+
+            return [
+                'handled_by' => 'ai',
+                'handling_mode' => 'ai',
+                'reply' => $greetingReply,
+                'action_btn' => [
+                    'label' => 'Buka Katalog Busana',
+                    'url' => route('shop.index'),
+                    'external' => false,
+                ],
+                'rule_applied' => 'Sapaan Ramah Konsultan Butik',
+            ];
+        }
+
         // 5. Cek Pengecekan Barang, Harga & Stok Real-Time dari Database Katalog (0 Token - Langsung Database)
         $catalogResult = $this->checkProductAndPriceCatalog($q);
         if ($catalogResult !== null) {
@@ -141,8 +165,8 @@ class AiConciergeService
             ];
         }
 
-        // 6. Cek Knowledge Base & Aturan Respons Toko (0 Token - Langsung Database)
-        $knowledgeMatch = $this->findMatchingKnowledge($q, ['knowledge', 'response_rule']);
+        // 6. Cek Knowledge Base Toko (0 Token - Langsung Database)
+        $knowledgeMatch = $this->findMatchingKnowledge($q, ['knowledge']);
         if ($knowledgeMatch) {
             $reply = $knowledgeMatch->content;
             $mode = $knowledgeMatch->requires_human_handoff ? 'human' : 'ai';
@@ -164,7 +188,7 @@ class AiConciergeService
                 'handling_mode' => $mode,
                 'reply' => $reply,
                 'action_btn' => [
-                    'label' => 'Buka Katalog Perhiasan',
+                    'label' => 'Buka Katalog Busana',
                     'url' => route('shop.index'),
                     'external' => false,
                 ],
@@ -178,9 +202,15 @@ class AiConciergeService
         $maxPrice = (float) (Product::where('is_active', true)->max('price') ?? 120);
 
         $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRI.J** ✨\n\nSaat ini tersedia **{$totalActive} koleksi perhiasan pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi perhiasan atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
+        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRI.J** ✨\n\nSaat ini tersedia **{$totalActive} koleksi busana pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
 
-        $defaultReply = $this->callExternalAiApi($cleanMessage, $fallbackReply, $user, $inquiry) ?? $fallbackReply;
+        $externalReply = $this->callExternalAiApi($cleanMessage, $fallbackReply, $user, $inquiry);
+        $defaultReply = $externalReply ?? $fallbackReply;
+
+        // Auto-Learn: Simpan otomatis pertanyaan & jawaban baru ke Knowledge Base agar pertanyaan serupa di masa mendatang langsung dijawab dari lokal
+        if ($externalReply !== null && ! $this->isPureGreeting($q) && mb_strlen($cleanMessage) >= 10) {
+            $this->autoLearnKnowledge($cleanMessage, $externalReply);
+        }
 
         if ($inquiry) {
             $inquiry->update(['status' => InquiryStatus::RESPONDED]);
@@ -255,6 +285,46 @@ class AiConciergeService
     }
 
     /**
+     * Deteksi apakah pesan pelanggan adalah sapaan murni (pure greeting) tanpa topik spesifik.
+     */
+    protected function isPureGreeting(string $q): bool
+    {
+        $clean = trim((string) preg_replace('/[^\p{L}\p{N}\s]/u', '', strtolower($q)));
+        if ($clean === '') {
+            return false;
+        }
+
+        $words = array_values(array_filter(preg_split('/\s+/', $clean) ?: []));
+        if (count($words) === 0 || count($words) > 5) {
+            return false;
+        }
+
+        $greetings = [
+            'halo', 'hallo', 'hello', 'hai', 'hi', 'hei', 'hey',
+            'selamat', 'pagi', 'siang', 'sore', 'malam',
+            'assalamualaikum', 'assalamu\'alaikum', 'kulonuwun',
+            'permisi', 'tes', 'test', 'ping', 'p',
+        ];
+
+        $fillers = [
+            'kak', 'kakak', 'min', 'admin', 'sis', 'sist', 'gan',
+            'putri', 'putrij', 'ya', 'dong', 'kah', 'apakah', 'ada', 'orang',
+            'semua', 'di', 'sana', 'cs', 'assistant', 'bot',
+        ];
+
+        $greetingFound = false;
+        foreach ($words as $w) {
+            if (in_array($w, $greetings, true)) {
+                $greetingFound = true;
+            } elseif (! in_array($w, $fillers, true)) {
+                return false;
+            }
+        }
+
+        return $greetingFound;
+    }
+
+    /**
      * @param  array<int, string>  $types
      */
     protected function findMatchingKnowledge(string $q, array $types): ?AiKnowledgeEntry
@@ -273,18 +343,109 @@ class AiConciergeService
             $score = 0;
 
             foreach ($keywords as $kw) {
-                if ($kw !== '' && str_contains($q, $kw)) {
-                    $score += strlen($kw);
+                if ($kw === '') {
+                    continue;
+                }
+
+                if (str_contains($kw, ' ')) {
+                    // Frasa multi-kata (contoh: "size chart", "tukar size")
+                    if (str_contains($q, $kw)) {
+                        $score += strlen($kw) * 2;
+                    }
+                } else {
+                    // Kata tunggal: Wajib cocok seluruh kata (whole word boundary) agar huruf 'l' / 's' tidak memicu match palsu pada 'hallo'
+                    if (preg_match('/\b'.preg_quote($kw, '/').'\b/i', $q)) {
+                        $score += max(strlen($kw), 2);
+                    }
                 }
             }
 
-            if ($score > $bestScore) {
+            if ($score >= 3 && $score > $bestScore) {
                 $bestScore = $score;
                 $bestMatch = $entry;
             }
         }
 
         return $bestMatch;
+    }
+
+    /**
+     * Ekstrak kata kunci bersih dan relevan dari teks pertanyaan pelanggan untuk disimpan ke Knowledge Base.
+     */
+    public function extractKeywordsFromText(string $text): string
+    {
+        $clean = strtolower(trim((string) preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $text)));
+        $rawWords = array_values(array_filter(preg_split('/\s+/', $clean) ?: []));
+
+        $stopwords = [
+            'apa', 'apakah', 'bagaimana', 'kenapa', 'mengapa', 'kapan', 'siapa', 'dimana', 'mana',
+            'yang', 'dan', 'di', 'ke', 'dari', 'untuk', 'pada', 'adalah', 'yaitu', 'ini', 'itu',
+            'saya', 'kami', 'kita', 'kamu', 'anda', 'kak', 'kakak', 'min', 'admin', 'sis', 'sist',
+            'mau', 'tanya', 'tolong', 'dong', 'ya', 'kan', 'ada', 'tidak', 'nggak', 'bukan', 'bisa',
+            'kah', 'pun', 'juga', 'sudah', 'telah', 'sedang', 'akan', 'lagi', 'lebih', 'paling',
+            'sangat', 'sekali', 'tentang', 'seperti', 'halo', 'hai', 'selamat', 'pagi', 'siang',
+            'sore', 'malam', 'permisi', 'gimana', 'beneran', 'masih', 'punya', 'kira', 'makasih',
+            'terima', 'kasih',
+        ];
+
+        $filteredWords = [];
+        foreach ($rawWords as $w) {
+            if (mb_strlen($w) >= 3 && ! in_array($w, $stopwords, true)) {
+                $filteredWords[] = $w;
+            }
+        }
+
+        $keywords = [];
+
+        // 1. Tambahkan frasa 2-kata jika memungkinkan (misal: "cara merawat", "dress sutra")
+        $filteredCount = count($filteredWords);
+        for ($i = 0; $i < min($filteredCount - 1, 3); $i++) {
+            $keywords[] = $filteredWords[$i].' '.$filteredWords[$i + 1];
+        }
+
+        // 2. Tambahkan kata-kata tunggal unik
+        foreach ($filteredWords as $w) {
+            if (! in_array($w, $keywords, true)) {
+                $keywords[] = $w;
+            }
+        }
+
+        $uniqueKeywords = array_unique(array_filter($keywords));
+
+        return Str::limit(implode(', ', array_slice($uniqueKeywords, 0, 8)), 250, '');
+    }
+
+    /**
+     * Simpan pertanyaan dan jawaban secara otomatis ke dalam AI Knowledge Base.
+     */
+    public function autoLearnKnowledge(string $question, string $answer): ?AiKnowledgeEntry
+    {
+        $q = strtolower(trim($question));
+
+        // Hindari duplikasi jika pertanyaan sudah memiliki kecocokan di Knowledge Base
+        if ($this->findMatchingKnowledge($q, ['knowledge']) !== null) {
+            return null;
+        }
+
+        $keywords = $this->extractKeywordsFromText($question);
+        if ($keywords === '') {
+            return null;
+        }
+
+        $cleanTitle = 'FAQ: '.Str::limit(trim($question), 70, '');
+
+        try {
+            return AiKnowledgeEntry::create([
+                'type' => 'knowledge',
+                'title' => $cleanTitle,
+                'keywords' => $keywords,
+                'content' => trim($answer),
+                'requires_human_handoff' => false,
+                'is_active' => true,
+            ]);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
@@ -315,7 +476,7 @@ class AiConciergeService
             }
 
             // Cek kata kunci unik nama produk (minimal 4 huruf dan bukan kata generik)
-            $genericWords = ['earrings', 'necklace', 'ring', 'rings', 'bracelet', 'hair', 'set', 'with', 'gold', 'silver', 'pearl', 'chain', 'band', 'stud', 'hoop', 'drop'];
+            $genericWords = ['dress', 'gaun', 'midi', 'maxi', 'baju', 'atasan', 'blouse', 'top', 'shirt', 'kemeja', 'celana', 'pants', 'rok', 'skirt', 'linen', 'silk', 'katun', 'cotton', 'outer', 'blazer', 'set', 'with'];
             $words = preg_split('/\s+/', $nameLower) ?: [];
             foreach ($words as $word) {
                 $cleanWord = preg_replace('/[^a-z0-9]/', '', $word) ?? '';
@@ -338,7 +499,7 @@ class AiConciergeService
                 }
 
                 $reply = "Berikut hasil pengecekan katalog real-time untuk **{$p->name}** ({$p->sku}):\n"
-                    .'• **Kategori:** '.($p->category->name ?? 'Perhiasan')."\n"
+                    .'• **Kategori:** '.($p->category->name ?? 'Busana & Pakaian')."\n"
                     ."• **Harga Resmi:** **{$priceText}**\n"
                     ."• **Status Stok:** {$stockText}\n"
                     .'• **Detail:** '.Str::limit((string) $p->description, 120);
@@ -392,16 +553,12 @@ class AiConciergeService
 
         // B. Cek kata kunci kategori atau niat pengecekan barang/harga/stok
         $categoryKeywordsMap = [
-            'earrings' => ['anting', 'earring', 'earrings', 'hoop', 'stud'],
-            'necklaces' => ['kalung', 'necklace', 'necklaces', 'liontin', 'pendant', 'choker'],
-            'rings' => ['cincin', 'ring', 'rings', 'signet'],
-            'bracelets' => ['gelang', 'bracelet', 'bracelets', 'bangle', 'cuff'],
-            'hair-pins' => ['hair pin', 'hairpin', 'jepit', 'rambut'],
-            'anklets' => ['gelang kaki', 'anklet', 'anklets'],
-            'brooches' => ['bros', 'brooch', 'pin baju'],
-            'pearl-edition' => ['mutiara', 'pearl', 'baroque'],
-            'luxury-watches' => ['jam tangan', 'watch', 'watches', 'arloji'],
-            'gift-sets' => ['kado', 'hadiah', 'gift', 'bundling', 'set', 'hampers'],
+            'dresses' => ['dress', 'gaun', 'midi dress', 'maxi dress', 'slip dress', 'gown', 'dresses'],
+            'blouses-tops' => ['blouse', 'top', 'tops', 'atasan', 'kemeja', 'shirt', 'tank', 'baju', 'kaos'],
+            'outerwear-blazers' => ['blazer', 'outer', 'outerwear', 'coat', 'trench coat', 'jaket', 'cardigan', 'vest', 'rompi'],
+            'pants-trousers' => ['celana', 'pants', 'trousers', 'kulot', 'culotte', 'palazzo', 'bawahan'],
+            'skirts' => ['rok', 'skirt', 'skirts', 'midi skirt', 'maxi skirt', 'pleated'],
+            'knitwear-sets' => ['knit', 'knitwear', 'rajut', 'co-ord', 'setelan', 'one set', 'set'],
         ];
 
         $matchedCategorySlug = null;
@@ -471,7 +628,7 @@ class AiConciergeService
         $results = $query->take(3)->get();
         if ($results->isEmpty()) {
             return [
-                'reply' => "Saat ini belum ada produk yang sesuai dengan kriteria **{$filterLabel}**. Silakan lihat seluruh koleksi perhiasan kami di halaman Shop atau hubungi kami untuk bantuan pencarian khusus.",
+                'reply' => "Saat ini belum ada produk yang sesuai dengan kriteria **{$filterLabel}**. Silakan lihat seluruh koleksi busana kami di halaman Shop atau hubungi kami untuk bantuan pencarian khusus.",
                 'action_btn' => [
                     'label' => 'Buka Katalog Lengkap',
                     'url' => route('shop.index'),
@@ -483,15 +640,15 @@ class AiConciergeService
         }
 
         if ($isRecommendationIntent) {
-            $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi perhiasan pilihan terfavorit di butik **PUTRI.J** yang siap kirim (*ready stock*):'];
+            $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi busana pilihan terfavorit di butik **PUTRI.J** yang siap kirim (*ready stock*):'];
             foreach ($results as $p) {
                 $descClean = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $p->description)));
                 $descShort = Str::limit($descClean, 80);
                 $lines[] = "✨ **{$p->name}** — **{$p->formatted_price}**\n   _{$descShort}_";
             }
-            $lines[] = "\nKoleksi di atas dibuat dengan material emas vermeil 18k dan bahan *hypoallergenic* yang aman serta nyaman digunakan. Apakah ada model yang paling sesuai dengan selera Kakak?";
+            $lines[] = "\nKoleksi di atas dibuat dengan material premium pilihan (Linen, Silk, & Katun Organik) yang adem dan berpotongan rapi, serta dilengkapi garansi tukar ukuran (size exchange). Apakah ada model yang paling sesuai dengan selera Kakak?";
         } else {
-            $lines = ["Berikut pilihan koleksi perhiasan untuk **{$filterLabel}** di butik PUTRI.J:"];
+            $lines = ["Berikut pilihan koleksi busana untuk **{$filterLabel}** di butik PUTRI.J:"];
             foreach ($results as $p) {
                 $stockBadge = $p->stock > 0 ? "Ready {$p->stock} pcs" : 'Habis';
                 $promoInfo = ($p->original_price && (float) $p->original_price > (float) $p->price)
@@ -593,6 +750,8 @@ class AiConciergeService
             || str_starts_with($apiKey, 'sk-')
             || str_contains($customEndpoint, '/v1')
             || str_contains($customEndpoint, 'chat/completions')
+            || str_contains($customEndpoint, '9router')
+            || str_contains($customEndpoint, 'openrouter')
             || str_contains($model, '/');
 
         /** @var Collection<int, AiKnowledgeEntry> $boundaryEntries */
@@ -625,12 +784,13 @@ class AiConciergeService
             ->implode("\n");
 
         $customerName = $user?->name ?? $inquiry?->name ?? 'Pelanggan';
-        $systemPrompt = "Anda adalah asisten konsultan butik perhiasan mewah PUTRI.J.\n"
-            ."Jawab pertanyaan pelanggan dengan ramah, elegan, sopan, dan ringkas (maksimal 2-3 kalimat) dalam Bahasa Indonesia.\n\n"
+        $systemPrompt = "Anda adalah Aria, asisten konsultan butik busana wanita & ready-to-wear PUTRI.J (dress, atasan/blouse, blazer, celana, rok, dan setelan rajut).\n"
+            ."Jawab sapaan dan pertanyaan pelanggan seputar rekomendasi busana, ukuran (size chart), bahan kain premium, dan bantuan belanja dengan ramah, hangat, elegan, dan ringkas (maksimal 2-3 kalimat) dalam Bahasa Indonesia.\n\n"
             ."Koleksi Utama:\n{$catalogSnapshot}\n\n"
             ."Aturan:\n"
-            ."1. Jawab singkat dan padat (maksimal 2-3 kalimat).\n"
-            .'2. Jika pelanggan membutuhkan bantuan pesanan atau komplain, arahkan untuk menghubungi Customer Service kami.';
+            ."1. Jawab singkat, hangat, berkelas, dan padat (maksimal 2-3 kalimat).\n"
+            ."2. Jika pelanggan hanya menyapa (halo/hai/pagi/siang/malam), balas dengan sapaan hangat dan tawarkan bantuan untuk memilih busana yang pas atau mengecek pesanan.\n"
+            .'3. Jika pelanggan membutuhkan bantuan pesanan atau komplain, arahkan untuk menghubungi Customer Service kami.';
 
         try {
             $httpClient = Http::timeout(12);
@@ -671,9 +831,13 @@ class AiConciergeService
 
             // Format OpenAI Chat Completions (OpenAI, 9Router, OpenRouter, Groq, DeepSeek)
             if ($customEndpoint !== '') {
-                $url = str_ends_with($customEndpoint, '/chat/completions')
-                    ? $customEndpoint
-                    : $customEndpoint.'/chat/completions';
+                if (str_ends_with($customEndpoint, '/chat/completions')) {
+                    $url = $customEndpoint;
+                } elseif (str_ends_with($customEndpoint, '/v1')) {
+                    $url = $customEndpoint.'/chat/completions';
+                } else {
+                    $url = $customEndpoint.'/v1/chat/completions';
+                }
             } else {
                 $url = $provider === 'groq'
                     ? 'https://api.groq.com/openai/v1/chat/completions'

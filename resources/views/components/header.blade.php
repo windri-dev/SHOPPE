@@ -73,7 +73,7 @@
   <div class="mobile-nav-header">
     <div style="display: flex; flex-direction: column; gap: 2px;">
       <span class="header-logo">PUTRI.J</span>
-      <span style="font-size: 10.5px; color: #8C8273; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">Fine Artisan Jewelry</span>
+      <span style="font-size: 10.5px; color: #8C8273; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">Contemporary Fashion &amp; Apparel</span>
     </div>
     <button class="drawer-close-btn" id="mobileNavClose" aria-label="Close Navigation">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -87,7 +87,7 @@
     <li><a href="{{ route('shop.index') }}" class="mobile-nav-link {{ request()->routeIs('shop.*') ? 'active' : '' }}">Shop Collection <span>&rarr;</span></a></li>
     <li><a href="{{ route('blog.index') }}" class="mobile-nav-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">Journal &amp; Blog <span>&rarr;</span></a></li>
     <li><a href="{{ route('about') }}" class="mobile-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">Our Story <span>&rarr;</span></a></li>
-    <li><a href="{{ route('faq') }}" class="mobile-nav-link {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ &amp; Care Guide <span>&rarr;</span></a></li>
+    <li><a href="{{ route('faq') }}" class="mobile-nav-link {{ request()->routeIs('faq') ? 'active' : '' }}">FAQ &amp; Size Guide <span>&rarr;</span></a></li>
     <li><a href="{{ route('account.index') }}" class="mobile-nav-link {{ request()->routeIs('account.*') ? 'active' : '' }}">My Account <span>&rarr;</span></a></li>
     <li><a href="{{ route('contact.index') }}" class="mobile-nav-link {{ request()->routeIs('contact.*') ? 'active' : '' }}">Contact &amp; Concierge <span>&rarr;</span></a></li>
     @if(auth()->check() && auth()->user()->isAdmin())
@@ -100,6 +100,6 @@
   </ul>
   <div class="mobile-nav-footer">
     <a href="{{ route('shop.index') }}" class="btn btn-primary btn-block" style="height: 44px; font-size: 12.5px; border-radius: 8px;">Explore New Arrivals</a>
-    <p style="font-size: 11px; color: #8C8C8C; text-align: center; margin-top: 12px;">18k Gold-Dipped Vermeil &bull; Free Exchange 14 Days</p>
+    <p style="font-size: 11px; color: #8C8C8C; text-align: center; margin-top: 12px;">Premium Fabrics &bull; Complimentary Size Exchange 7 Days</p>
   </div>
 </aside>

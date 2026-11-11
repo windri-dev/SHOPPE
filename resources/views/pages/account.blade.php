@@ -157,7 +157,7 @@
                     <tr class="customer-order-row" data-status="{{ $ord->status->value }}">
                       <td>
                         <strong style="color: #111827;">{{ $ord->order_number }}</strong>
-                        <div style="font-size: 11px; color: #6B7280; margin-top: 2px;">{{ $ord->items->count() }} item perhiasan</div>
+                        <div style="font-size: 11px; color: #6B7280; margin-top: 2px;">{{ $ord->items->count() }} item busana</div>
                       </td>
                       <td>{{ $ord->created_at->format('d M Y') }}</td>
                       <td>
@@ -273,7 +273,7 @@
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                   <input type="checkbox" name="promo_newsletter" value="1" {{ !empty($notifPrefs['promo_newsletter']) ? 'checked' : '' }}>
-                  <span>Info eksklusif peluncuran koleksi perhiasan baru &amp; voucher member</span>
+                  <span>Info eksklusif peluncuran koleksi busana baru &amp; voucher member</span>
                 </label>
               </div>
             </div>

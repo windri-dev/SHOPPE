@@ -31,4 +31,3 @@ return [
     */
     'always_allow_local' => (bool) env('ADMIN_IP_ALWAYS_ALLOW_LOCAL', true),
 ];
-

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('badge')->nullable();
             $table->text('description')->nullable();
             $table->json('images')->nullable();
+            $table->string('video_url')->nullable();
             $table->integer('sales_count')->default(0);
             $table->timestamps();
 

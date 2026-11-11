@@ -83,7 +83,7 @@ class CategoryAdminController extends Controller
         $productsCount = $category->products()->count();
 
         if ($productsCount > 0) {
-            return back()->with('error', "Kategori '{$category->name}' tidak dapat dihapus karena masih menampung {$productsCount} produk perhiasan. Silakan ubah kategori produk-produk tersebut terlebih dahulu.");
+            return back()->with('error', "Kategori '{$category->name}' tidak dapat dihapus karena masih menampung {$productsCount} produk busana. Silakan ubah kategori produk-produk tersebut terlebih dahulu.");
         }
 
         $name = $category->name;

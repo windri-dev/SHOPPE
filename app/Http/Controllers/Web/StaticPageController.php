@@ -25,8 +25,8 @@ class StaticPageController extends Controller
             [
                 'category' => 'orders',
                 'category_label' => 'Pemesanan & Akun',
-                'question' => 'Bagaimana cara memesan perhiasan di PUTRI.J?',
-                'answer' => 'Pilih perhiasan favorit Anda di katalog Shop, klik tombol "Add to Cart", lalu lanjutkan ke halaman Checkout. Jika Anda sudah login dan melengkapi alamat di menu Akun Saya, seluruh data penerima dan lokasi pengiriman akan terisi secara otomatis seperti di Shopee.',
+                'question' => 'Bagaimana cara memesan busana di PUTRI.J?',
+                'answer' => 'Pilih busana favorit Anda di katalog Shop, tentukan ukuran (S, M, L, XL), klik tombol "Add to Cart", lalu lanjutkan ke halaman Checkout. Jika Anda sudah login dan melengkapi alamat di menu Akun Saya, seluruh data penerima dan lokasi pengiriman akan terisi secara otomatis.',
             ],
             [
                 'category' => 'orders',
@@ -50,7 +50,7 @@ class StaticPageController extends Controller
                 'category' => 'shipping',
                 'category_label' => 'Pengiriman & Pelacakan Resi',
                 'question' => 'Berapa lama pesanan saya dikemas dan dikirim?',
-                'answer' => 'Setiap pesanan yang pembayarannya telah terverifikasi sebelum pukul 16.00 WIB akan dikemas dengan kotak beludru bersegel aman dan diserahkan ke kurir ekspedisi pada hari kerja yang sama. Estimasi pengiriman adalah 1-2 hari kerja untuk Jabodetabek dan 2-4 hari kerja untuk luar kota.',
+                'answer' => 'Setiap pesanan yang pembayarannya telah terverifikasi sebelum pukul 16.00 WIB akan dikemas rapi dalam signature packaging bersegel dan diserahkan ke kurir ekspedisi pada hari kerja yang sama. Estimasi pengiriman adalah 1-2 hari kerja untuk Jabodetabek dan 2-4 hari kerja untuk luar kota.',
             ],
             [
                 'category' => 'shipping',
@@ -61,32 +61,32 @@ class StaticPageController extends Controller
             [
                 'category' => 'shipping',
                 'category_label' => 'Pengiriman & Pelacakan Resi',
-                'question' => 'Apakah pengiriman perhiasan diasuransikan?',
-                'answer' => 'Ya, seluruh pengiriman perhiasan PUTRI.J dilindungi oleh asuransi pengiriman penuh tanpa biaya tambahan dan dikemas dalam kotak berlapis pelindung guncangan yang disegel secara rahasia.',
+                'question' => 'Apakah pengiriman busana diasuransikan?',
+                'answer' => 'Ya, seluruh pengiriman busana PUTRI.J dilindungi oleh asuransi pengiriman penuh tanpa biaya tambahan dan dikemas dalam garment wrap pelindung debu dan air yang tersegel rapat.',
             ],
             [
                 'category' => 'warranty',
                 'category_label' => 'Garansi & Tukar Ukuran',
-                'question' => 'Apakah saya bisa menukar ukuran cincin (resize) jika kebesaran atau kekecilan?',
-                'answer' => 'Ya! Kami menyediakan layanan penukaran ukuran (Complimentary Size Exchange) gratis 1 kali dalam waktu 7 hari sejak paket diterima, selama perhiasan belum pernah dipakai beraktivitas, tidak tergores, dan segel sertifikat masih lengkap.',
+                'question' => 'Apakah saya bisa menukar ukuran baju jika kebesaran atau kekecilan?',
+                'answer' => 'Ya! Kami menyediakan layanan penukaran ukuran (Complimentary Size Exchange) gratis 1 kali dalam waktu 7 hari sejak paket diterima, selama pakaian belum pernah dicuci, tidak terkena parfum/noda, dan hangtag label masih terpasang rapi.',
             ],
             [
                 'category' => 'warranty',
                 'category_label' => 'Garansi & Tukar Ukuran',
-                'question' => 'Bagaimana prosedur klaim jika barang yang diterima cacat atau rusak saat pengiriman?',
-                'answer' => 'Mohon sertakan video unboxing tanpa jeda dan hubungi tim kami melalui fitur Live Chat Concierge di pojok kanan bawah layar dalam waktu maksimal 2x24 jam setelah paket diterima. Kami akan mengganti dengan unit baru 100% bebas biaya ongkos kirim.',
+                'question' => 'Bagaimana prosedur klaim jika barang yang diterima cacat atau salah warna?',
+                'answer' => 'Mohon sertakan video unboxing tanpa jeda dan hubungi tim kami melalui fitur Live Chat di pojok kanan bawah layar dalam waktu maksimal 2x24 jam setelah paket diterima. Kami akan mengganti dengan unit baru 100% bebas biaya ongkos kirim.',
             ],
             [
                 'category' => 'care',
-                'category_label' => 'Keaslian & Perawatan Perhiasan',
-                'question' => 'Apakah perhiasan PUTRI.J aman terkena air, keringat, dan parfum?',
-                'answer' => 'Koleksi utama kami menggunakan bahan Sterling Silver 925 berlapis Emas 18K Vermeil dan Stainless Steel 316L Hypoallergenic yang tahan percikan air. Namun, untuk menjaga kilau lapisan emas tetap awet bertahun-tahun, hindari semprotan parfum atau losion secara langsung pada permukaan batu mulia dan mutiara.',
+                'category_label' => 'Panduan Ukuran & Perawatan Bahan',
+                'question' => 'Bagaimana cara menentukan ukuran baju (Size) yang paling cocok untuk saya?',
+                'answer' => 'Setiap produk busana dilengkapi panduan ukuran spesifik (Lingkar Dada, Panjang Bahu, dan Panjang Baju). Anda juga dapat berkonsultasi langsung melalui Live Chat kami untuk rekomendasi ukuran berdasarkan tinggi dan berat badan.',
             ],
             [
                 'category' => 'care',
-                'category_label' => 'Keaslian & Perawatan Perhiasan',
-                'question' => 'Bagaimana cara membersihkan perhiasan agar tetap berkilau seperti baru?',
-                'answer' => 'Cukup usap lembut permukaan perhiasan menggunakan kain microfiber khusus yang kami sertakan di dalam kotak kemasan setiap selesai digunakan, lalu simpan kembali di dalam pouch kedap udara yang terpisah agar tidak saling bergesekan.',
+                'category_label' => 'Panduan Ukuran & Perawatan Bahan',
+                'question' => 'Bagaimana cara mencuci dan merawat busana berbahan Linen & Silk agar awet?',
+                'answer' => 'Gunakan mode pencucian lembut (delicate cycle) atau cuci tangan dengan deterjen cair netral. Hindari penggunaan mesin pengering panas (tumble dry) dan pemutih. Jemur terbalik di tempat teduh, lalu setrika uap atau setrika suhu sedang saat pakaian masih agak lembap.',
             ],
         ];
 

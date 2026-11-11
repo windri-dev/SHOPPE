@@ -204,7 +204,7 @@ class InquirySeeder extends Seeder
                     ],
                     [
                         'sender_type' => 'admin',
-                        'message' => 'Sama-sama Kak Clara, senang bisa melayani Anda. Selamat menikmati perhiasan cantiknya!',
+                        'message' => 'Sama-sama Kak Clara, senang bisa melayani Anda. Selamat menikmati busana cantiknya!',
                         'created_at' => Carbon::now()->subDays(24)->addMinutes(25),
                     ],
                 ],

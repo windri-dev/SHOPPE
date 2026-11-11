@@ -29,4 +29,3 @@ class StoreAiKnowledgeRequest extends FormRequest
         ];
     }
 }
-

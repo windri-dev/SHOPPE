@@ -7,7 +7,7 @@
   <div class="contact-header">
     <h1 class="contact-title">Contact Us</h1>
     <p class="contact-subtitle">
-      Silakan hubungi tim Concierge kami untuk pertanyaan seputar koleksi perhiasan, pesanan, atau kolaborasi khusus.
+      Silakan hubungi tim Concierge kami untuk pertanyaan seputar koleksi busana, pesanan, atau kolaborasi khusus.
     </p>
   </div>
 

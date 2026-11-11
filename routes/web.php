@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\ContactController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\PaymentWebhookController;
+use App\Http\Controllers\Web\ProductReviewController;
 use App\Http\Controllers\Web\ShopController;
 use App\Http\Controllers\Web\StaticPageController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Katalog & Detail Produk
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{slug}', [ShopController::class, 'show'])->name('shop.show');
+Route::post('/shop/{product:slug}/reviews', [ProductReviewController::class, 'store'])->name('shop.reviews.store');
+Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpful'])->name('reviews.helpful');
 
 // Keranjang Belanja
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

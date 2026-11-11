@@ -13,54 +13,34 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Earrings',
-                'slug' => 'earrings',
-                'description' => 'Sculptural and minimalist drop, huggie, and hoop earrings cast in 18k gold-dipped brass.',
+                'name' => 'Dresses',
+                'slug' => 'dresses',
+                'description' => 'Midi slip dress, pleated wrap dresses, dan gaun kontemporer berbahan silk & linen pilihan untuk segala suasana.',
             ],
             [
-                'name' => 'Necklaces',
-                'slug' => 'necklaces',
-                'description' => 'Delicate chains, statement pendants, and artisanal layering pieces crafted for daily elegance.',
+                'name' => 'Blouses & Tops',
+                'slug' => 'blouses-tops',
+                'description' => 'Koleksi atasan wanita elegan, kemeja relaxed linen, satin drape blouse, dan kemeja katun berkancing.',
             ],
             [
-                'name' => 'Hair pins',
-                'slug' => 'hairpins',
-                'description' => 'Artisan brass hair pins and botanical clip ensembles designed for effortless hair styling.',
+                'name' => 'Outerwear & Blazers',
+                'slug' => 'outerwear-blazers',
+                'description' => 'Blazer berstruktur modern, oversized trench coat, vest santai, dan jaket tailored berkelas.',
             ],
             [
-                'name' => 'Rings',
-                'slug' => 'rings',
-                'description' => 'Architectural bands, pavé stackables, and polished signet rings sculpted for modern hands.',
+                'name' => 'Pants & Trousers',
+                'slug' => 'pants-trousers',
+                'description' => 'Celana palazzo jatuh berpinggang tinggi, tailored cigarette trousers, dan culottes santai yang nyaman.',
             ],
             [
-                'name' => 'Bracelets',
-                'slug' => 'bracelets',
-                'description' => 'Fine wrist cuffs, tennis chains, and minimalist cable links made from recycled precious metals.',
+                'name' => 'Skirts',
+                'slug' => 'skirts',
+                'description' => 'Rok midi bias-cut satin, pleated A-line skirt, dan wrap skirts yang anggun untuk gerak dinamis.',
             ],
             [
-                'name' => 'Pendants & Charms',
-                'slug' => 'pendants',
-                'description' => 'Intricately engraved talismans, celestial motifs, and organic Baroque pearl pendants.',
-            ],
-            [
-                'name' => 'Brooches & Pins',
-                'slug' => 'brooches',
-                'description' => 'Contemporary sculptural lapel brooches adding elevated distinction to coats and blouses.',
-            ],
-            [
-                'name' => 'Anklets',
-                'slug' => 'anklets',
-                'description' => 'Sun-kissed delicate ankle chains designed for warm seasons and coastal getaways.',
-            ],
-            [
-                'name' => 'Artisan Watches',
-                'slug' => 'watches',
-                'description' => 'Minimalist mechanical timepieces featuring mesh bracelets and sapphire crystal glass.',
-            ],
-            [
-                'name' => 'Gift Sets',
-                'slug' => 'sets',
-                'description' => 'Curated matching jewelry capsules presented in signature velvet keepsake boxes.',
+                'name' => 'Knitwear & Sets',
+                'slug' => 'knitwear-sets',
+                'description' => 'Setelan co-ord dua potong senada, sweater rajut kasmir ringan, dan lounge knitwear bernuansa tenang.',
             ],
         ];
 

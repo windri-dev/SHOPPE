@@ -19,7 +19,7 @@
     <section id="shipping">
       <h2 class="policy-section-title">Shipping & Returns</h2>
       <p>
-        Pesanan Anda diproses dan dikirim dalam waktu 1-2 hari kerja setelah verifikasi pembayaran berhasil. Kami memastikan setiap kotak kemasan tersegel aman dengan bantalan pelindung perhiasan.
+        Pesanan Anda diproses dan dikirim dalam waktu 1-2 hari kerja setelah verifikasi pembayaran berhasil. Kami memastikan setiap paket kemasan tersegel aman dengan pelindung garment wrap kedap air.
       </p>
       <ul class="policy-list">
         <li>Gratis ongkos kirim standar untuk pesanan di atas $ 50.00.</li>

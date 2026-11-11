@@ -59,7 +59,7 @@
           <div>
             <h4 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700; color: #065F46;">Pembayaran Terkonfirmasi</h4>
             <p style="margin: 0; font-size: 13.5px; color: #065F46; line-height: 1.5;">
-              Terima kasih! Pembayaran Anda telah terverifikasi secara resmi pada <strong>{{ $order->paid_at ? $order->paid_at->format('d M Y, H:i') : 'hari ini' }}</strong> via {{ strtoupper($order->payment_gateway ?? $order->payment_method) }}{{ $order->payment_channel ? ' (' . strtoupper($order->payment_channel) . ')' : '' }}. Perhiasan Anda saat ini dalam antrean pengemasan aman dan segera diserahkan ke pihak ekspedisi.
+              Terima kasih! Pembayaran Anda telah terverifikasi secara resmi pada <strong>{{ $order->paid_at ? $order->paid_at->format('d M Y, H:i') : 'hari ini' }}</strong> via {{ strtoupper($order->payment_gateway ?? $order->payment_method) }}{{ $order->payment_channel ? ' (' . strtoupper($order->payment_channel) . ')' : '' }}. Busana Anda saat ini dalam antrean pengemasan rapi dan segera diserahkan ke pihak ekspedisi.
             </p>
           </div>
         </div>

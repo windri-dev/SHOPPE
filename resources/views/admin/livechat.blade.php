@@ -250,8 +250,12 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
           </form>
-          <div class="chat-input-tip">
-            Saat Anda mengirim balasan, tiket otomatis beralih ke <strong>Mode Admin Manusia</strong> sehingga AI tidak menimpa jawaban Anda.
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 6px; font-size: 11px;">
+            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #111827; font-weight: 600;">
+              <input type="checkbox" id="adminSaveAsKnowledgeCheckbox" style="accent-color: #A18A68; width: 14px; height: 14px; cursor: pointer;">
+              <span>💡 Simpan balasan ini ke <strong>Knowledge Base</strong> (agar pertanyaan serupa dijawab otomatis oleh AI)</span>
+            </label>
+            <span style="color: #6B7280;">Tiket otomatis beralih ke <strong>Mode Admin Manusia</strong> saat dikirim.</span>
           </div>
         </footer>
       @else
@@ -337,6 +341,15 @@
 
         <!-- Daftar Knowledge Base, Batasan, dan Aturan Respons -->
         <div style="display: flex; flex-direction: column; gap: 10px; max-height: 65vh; overflow-y: auto;">
+          <div style="position: sticky; top: 0; background: #FFF; z-index: 2; padding-bottom: 4px;">
+            <input
+              type="text"
+              id="knSearchInput"
+              placeholder="Cari judul, topik, atau kata kunci knowledge..."
+              style="width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 12px; box-sizing: border-box;"
+            >
+          </div>
+          <div id="knowledgeEntriesList" style="display: flex; flex-direction: column; gap: 10px;">
           @forelse($knowledgeEntries as $entry)
             @php
               $badgeStyle = match($entry->type) {
@@ -350,7 +363,7 @@
                 default => 'Knowledge Base Toko',
               };
             @endphp
-            <div style="border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 6px;">
+            <div class="knowledge-entry-card" data-title="{{ strtolower($entry->title) }}" data-keywords="{{ strtolower((string)$entry->keywords) }}" data-content="{{ strtolower($entry->content) }}" style="border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 6px;">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <strong style="font-size: 13px; color: #111827;">{{ $entry->title }}</strong>
@@ -407,6 +420,7 @@
               Belum ada aturan Knowledge Base atau Batasan AI.
             </div>
           @endforelse
+          </div>
         </div>
       </div>
     </div>
@@ -494,6 +508,94 @@
     });
   }
 
+  // Filter pencarian di dalam Modal Knowledge Base
+  const knSearchInput = document.getElementById('knSearchInput');
+  if (knSearchInput) {
+    knSearchInput.addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      document.querySelectorAll('.knowledge-entry-card').forEach(card => {
+        const title = card.getAttribute('data-title') || '';
+        const keywords = card.getAttribute('data-keywords') || '';
+        const content = card.getAttribute('data-content') || '';
+        if (!q || title.includes(q) || keywords.includes(q) || content.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // Buka Modal Knowledge Base dengan form terisi otomatis dari chat
+  function openQuickKnowledge(question, answer) {
+    if (!knowledgeModal) return;
+    knowledgeModal.style.display = 'flex';
+    if (resetKnowledgeFormBtn) resetKnowledgeFormBtn.click();
+
+    const titleInput = document.getElementById('knTitle');
+    const contentInput = document.getElementById('knContent');
+    const keywordsInput = document.getElementById('knKeywords');
+    const typeSelect = document.getElementById('knType');
+
+    if (titleInput) {
+      const cleanQ = (question || '').trim().replace(/[?.,!]+$/, '');
+      titleInput.value = cleanQ ? ('FAQ: ' + cleanQ) : 'FAQ: Pertanyaan Baru';
+    }
+    if (contentInput) {
+      contentInput.value = (answer || '').trim();
+    }
+    if (keywordsInput && question) {
+      const cleanWords = question.toLowerCase().replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length >= 3 && !['apa', 'apakah', 'bagaimana', 'bisa', 'kak', 'kakak', 'min', 'admin', 'sis', 'mau', 'tanya', 'ada', 'yang', 'dan', 'di', 'ke', 'dari', 'untuk', 'ini'].includes(w));
+      const uniq = [...new Set(cleanWords)];
+      keywordsInput.value = uniq.slice(0, 7).join(', ');
+    }
+    if (typeSelect) {
+      typeSelect.value = 'knowledge';
+    }
+    if (contentInput && !answer) {
+      contentInput.focus();
+    }
+  }
+
+  // Event listener tombol "💡 Simpan ke Knowledge" di setiap balon chat
+  if (messagesStream) {
+    messagesStream.addEventListener('click', function(e) {
+      const btn = e.target.closest('.btn-quick-to-knowledge');
+      if (!btn) return;
+
+      const inq = inquiriesData.find(i => i.id == currentInquiryId);
+      const isQuestion = btn.getAttribute('data-is-question') === '1';
+      const msgText = btn.getAttribute('data-message') || '';
+
+      let question = '';
+      let answer = '';
+
+      if (isQuestion) {
+        question = msgText;
+        if (inq && inq.messages) {
+          const idx = inq.messages.findIndex(m => m.message === msgText);
+          if (idx !== -1 && inq.messages[idx + 1]) {
+            answer = inq.messages[idx + 1].message;
+          }
+        }
+      } else {
+        answer = msgText;
+        if (inq && inq.messages) {
+          const idx = inq.messages.findIndex(m => m.message === msgText);
+          if (idx !== -1 && inq.messages[idx - 1]) {
+            question = inq.messages[idx - 1].message;
+          } else {
+            question = inq.subject || '';
+          }
+        }
+      }
+
+      openQuickKnowledge(question, answer);
+    });
+  }
+
   function getInitials(name) {
     if (!name) return 'PL';
     return name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -547,9 +649,21 @@
         <div class="chat-bubble-content-wrap">
           <span class="chat-bubble-sender">${escapeHtml(senderLabel)}</span>
           <div class="chat-bubble" style="${aiBubbleStyle}">${escapeHtml(msg.message)}</div>
-          <div class="chat-bubble-meta">
-            <span>${timeStr}</span>
-            ${!isCustomer ? '<span title="Terkirim">&#10003;&#10003;</span>' : ''}
+          <div class="chat-bubble-meta" style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <span>${timeStr}</span>
+              ${!isCustomer ? '<span title="Terkirim">&#10003;&#10003;</span>' : ''}
+            </div>
+            <button
+              type="button"
+              class="btn-quick-to-knowledge"
+              data-is-question="${isCustomer ? '1' : '0'}"
+              data-message="${escapeHtml(msg.message)}"
+              style="background: none; border: none; color: #A18A68; font-size: 10px; font-weight: 700; cursor: pointer; padding: 0 4px; display: inline-flex; align-items: center; gap: 3px;"
+              title="${isCustomer ? 'Simpan pertanyaan ini ke Knowledge Base' : 'Jadikan jawaban ini Knowledge Base'}"
+            >
+              💡 ${isCustomer ? 'Simpan ke Knowledge' : 'Jadikan Knowledge'}
+            </button>
           </div>
         </div>
       `;
@@ -773,6 +887,8 @@
 
       try {
         const replyUrl = `/admin/inquiries/${currentInquiryId}/reply`;
+        const saveKnCheckbox = document.getElementById('adminSaveAsKnowledgeCheckbox');
+        const shouldSaveKn = saveKnCheckbox ? saveKnCheckbox.checked : false;
 
         const res = await fetch(replyUrl, {
           method: 'POST',
@@ -781,12 +897,19 @@
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrfToken,
           },
-          body: JSON.stringify({ message: message }),
+          body: JSON.stringify({
+            message: message,
+            save_as_knowledge: shouldSaveKn,
+          }),
         });
 
         const data = await res.json();
 
         if (data.success) {
+          if (data.data?.knowledge_saved) {
+            alert('🎉 ' + data.message + '\nPertanyaan dan balasan ini kini menjadi pengetahuan resmi AI untuk menjawab pelanggan serupa secara otomatis.');
+            if (saveKnCheckbox) saveKnCheckbox.checked = false;
+          }
           const newMsg = {
             id: data.data.id,
             sender_type: 'admin',

@@ -24,4 +24,3 @@ class ToggleInquiryModeRequest extends FormRequest
         ];
     }
 }
-

@@ -36,7 +36,7 @@ class OrderSeeder extends Seeder
                 'status' => OrderStatus::DELIVERED,
                 'payment_method' => 'bank_transfer',
                 'tracking_number' => 'JNE-8829103948',
-                'notes' => 'Tolong bubble wrap ekstra untuk perhiasan mutiara.',
+                'notes' => 'Tolong bubble wrap ekstra dan kemasan garment wrap aman.',
                 'created_at' => Carbon::now()->subDays(24),
                 'shipping_cost' => 5.00,
                 'discount_amount' => 5.00,

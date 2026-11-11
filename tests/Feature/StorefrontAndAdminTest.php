@@ -12,8 +12,11 @@ use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Inquiry;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\User;
+use App\Services\AiConciergeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -31,23 +34,24 @@ class StorefrontAndAdminTest extends TestCase
         parent::setUp();
 
         $category = Category::create([
-            'name' => 'Earrings',
-            'slug' => 'earrings',
-            'description' => 'Drop and hoop earrings.',
+            'name' => 'Dresses',
+            'slug' => 'dresses',
+            'description' => 'Midi and maxi dresses.',
         ]);
 
         $this->product = Product::create([
             'category_id' => $category->id,
             'sku' => 'SKU-0012',
-            'name' => 'Lira Earrings',
-            'slug' => 'lira-earrings',
+            'name' => 'Lira Silk Dress',
+            'slug' => 'lira-silk-dress',
             'price' => 20.00,
             'stock' => 24,
             'is_featured' => true,
             'is_active' => true,
             'sales_count' => 48,
-            'description' => 'Cast in 18k gold-dipped brass.',
+            'description' => 'Cast in silk satin blend.',
             'images' => ['images/product-1.png'],
+            'video_url' => 'https://example.com/dress.mp4',
         ]);
 
         $this->blogPost = BlogPost::create([
@@ -88,11 +92,11 @@ class StorefrontAndAdminTest extends TestCase
     {
         $catalogResponse = $this->get('/shop');
         $catalogResponse->assertStatus(200);
-        $catalogResponse->assertSee('Lira Earrings');
+        $catalogResponse->assertSee('Lira Silk Dress');
 
         $detailResponse = $this->get('/shop/'.$this->product->slug);
         $detailResponse->assertStatus(200);
-        $detailResponse->assertSee('Lira Earrings');
+        $detailResponse->assertSee('Lira Silk Dress');
         $detailResponse->assertSee('SKU-0012');
     }
 
@@ -186,7 +190,7 @@ class StorefrontAndAdminTest extends TestCase
         $orderPage = $this->get(route('order.show', $order->order_number));
         $orderPage->assertStatus(200);
         $orderPage->assertSee($order->order_number);
-        $orderPage->assertSee('Lira Earrings');
+        $orderPage->assertSee('Lira Silk Dress');
     }
 
     public function test_contact_inquiry_submission_stores_inquiry_and_initial_message(): void
@@ -197,8 +201,8 @@ class StorefrontAndAdminTest extends TestCase
             'name' => 'Clara Aurelia',
             'email' => 'buyer@shoppe.com',
             'phone' => '+628123456789',
-            'subject' => 'Custom Engraving Request',
-            'message' => 'Can I engrave initials on the Lira Earrings?',
+            'subject' => 'Custom Request',
+            'message' => 'Can I request custom size on the Lira Silk Dress?',
         ]);
 
         $response->assertRedirect();
@@ -369,7 +373,7 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.products.index'));
         $response->assertStatus(200);
         $response->assertSee('Katalog &amp; Manajemen Stok Produk', false);
-        $response->assertSee('Lira Earrings');
+        $response->assertSee('Lira Silk Dress');
     }
 
     public function test_admin_can_toggle_product_stock(): void
@@ -571,8 +575,8 @@ class StorefrontAndAdminTest extends TestCase
 
         $response = $this->actingAs($admin)->get(route('admin.categories.index'));
         $response->assertStatus(200);
-        $response->assertSee('Klasifikasi &amp; Manajemen Kategori Perhiasan', false);
-        $response->assertSee('Earrings');
+        $response->assertSee('Klasifikasi &amp; Manajemen Kategori Busana', false);
+        $response->assertSee('Dresses');
     }
 
     public function test_admin_can_create_new_category(): void
@@ -700,7 +704,7 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->postJson(route('livechat.send'), [
             'name' => 'Siti Nurhaliza',
             'email' => 'siti@example.com',
-            'message' => 'Halo, tolong cek harga dan stok Lira Earrings',
+            'message' => 'Halo, tolong cek harga dan stok Lira Silk Dress',
         ]);
 
         $response->assertStatus(200);
@@ -709,7 +713,7 @@ class StorefrontAndAdminTest extends TestCase
         $response->assertJsonPath('data.handling_mode', 'ai');
 
         $aiReply = (string) $response->json('data.ai_reply');
-        $this->assertStringContainsString('Lira Earrings', $aiReply);
+        $this->assertStringContainsString('Lira Silk Dress', $aiReply);
         $this->assertStringContainsString('$ 20.00', $aiReply);
         $this->assertStringContainsString('24 pcs', $aiReply);
     }
@@ -719,7 +723,7 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->postJson(route('livechat.send'), [
             'name' => 'Maya Aesthetic',
             'email' => 'maya@example.com',
-            'message' => 'carikkan aku perhiasan yang cocok dan rekomendasi yang tepat',
+            'message' => 'carikkan aku busana yang cocok dan rekomendasi yang tepat',
         ]);
 
         $response->assertStatus(200);
@@ -727,7 +731,7 @@ class StorefrontAndAdminTest extends TestCase
         $response->assertJsonPath('data.handled_by', 'ai');
         $reply = (string) $response->json('data.ai_reply');
 
-        $this->assertStringContainsString('rekomendasi perhiasan pilihan terfavorit', $reply);
+        $this->assertStringContainsString('rekomendasi busana pilihan terfavorit', $reply);
         $this->assertStringNotContainsString('Habis', $reply);
     }
 
@@ -808,14 +812,14 @@ class StorefrontAndAdminTest extends TestCase
             'ticket_number' => 'TCK-DRAFT-01',
             'name' => 'Putri Marino',
             'email' => 'putri@example.com',
-            'subject' => 'Tanya Lira Earrings',
+            'subject' => 'Tanya Lira Silk Dress',
             'channel' => 'livechat',
             'handling_mode' => 'ai',
             'status' => InquiryStatus::UNREAD,
         ]);
         $inquiry->messages()->create([
             'sender_type' => 'customer',
-            'message' => 'Berapa harga Lira Earrings dan apakah stoknya masih ada?',
+            'message' => 'Berapa harga Lira Silk Dress dan apakah stoknya masih ada?',
             'created_at' => now(),
         ]);
 
@@ -827,12 +831,67 @@ class StorefrontAndAdminTest extends TestCase
 
         $draftRes = $this->actingAs($admin)->getJson(route('admin.inquiries.ai_draft', $inquiry));
         $draftRes->assertStatus(200);
-        $this->assertStringContainsString('Lira Earrings', (string) $draftRes->json('data.draft'));
+        $this->assertStringContainsString('Lira Silk Dress', (string) $draftRes->json('data.draft'));
 
         // 4. Admin deletes the knowledge entry
         $delRes = $this->actingAs($admin)->delete(route('admin.ai_knowledge.destroy', $entry));
         $delRes->assertRedirect();
         $this->assertNull(AiKnowledgeEntry::find($entry->id));
+    }
+
+    public function test_ai_knowledge_can_be_saved_from_chat_and_retrieved_for_future_questions(): void
+    {
+        $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();
+        $concierge = app(AiConciergeService::class);
+
+        // 1. Test keyword extraction
+        $keywords = $concierge->extractKeywordsFromText('Bagaimana cara merawat kain sutra silk agar awet?');
+        $this->assertStringContainsString('merawat', $keywords);
+        $this->assertStringContainsString('sutra', $keywords);
+
+        // 2. Test autoLearnKnowledge
+        $created = $concierge->autoLearnKnowledge(
+            'Bagaimana cara merawat kain sutra silk agar awet?',
+            'Cuci kain sutra PUTRI.J dengan air dingin, deterjen lembut khusus sutra, dan jangan diperas kencang.'
+        );
+        $this->assertNotNull($created);
+        $this->assertEquals('knowledge', $created->type);
+
+        // 3. Test that subsequent similar question is directly answered from the saved knowledge entry
+        $result = $concierge->handleCustomerMessage('cara merawat kain sutra silk');
+        $this->assertEquals($created->title, $result['rule_applied']);
+        $this->assertStringContainsString('Cuci kain sutra PUTRI.J', $result['reply']);
+
+        // 4. Test admin reply with save_as_knowledge flag
+        $inquiry = Inquiry::create([
+            'ticket_number' => 'TCK-LEARN-01',
+            'name' => 'Siti Rahma',
+            'email' => 'siti@example.com',
+            'subject' => 'Tanya Pengiriman Sameday',
+            'channel' => 'livechat',
+            'handling_mode' => 'human',
+            'status' => InquiryStatus::UNREAD,
+        ]);
+        $inquiry->messages()->create([
+            'sender_type' => 'customer',
+            'message' => 'Apakah butik melayani pengiriman sameday di area Jakarta?',
+            'created_at' => now(),
+        ]);
+
+        $replyRes = $this->actingAs($admin)->postJson(route('admin.inquiries.reply', $inquiry), [
+            'message' => 'Ya, kami melayani pengiriman Sameday & Instant untuk seluruh wilayah Jakarta.',
+            'save_as_knowledge' => true,
+        ]);
+        $replyRes->assertStatus(200);
+        $this->assertTrue($replyRes->json('data.knowledge_saved'));
+
+        $savedFromReply = AiKnowledgeEntry::where('content', 'Ya, kami melayani pengiriman Sameday & Instant untuk seluruh wilayah Jakarta.')->first();
+        $this->assertNotNull($savedFromReply);
+
+        // 5. Test that a customer asking about sameday in Jakarta now receives this saved knowledge
+        $subsequentResult = $concierge->handleCustomerMessage('apakah bisa pengiriman sameday jakarta?');
+        $this->assertEquals($savedFromReply->title, $subsequentResult['rule_applied']);
+        $this->assertStringContainsString('Ya, kami melayani pengiriman Sameday & Instant', $subsequentResult['reply']);
     }
 
     public function test_customer_can_register_with_complete_shipping_data_and_auto_fill_checkout(): void
@@ -934,7 +993,165 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->get(route('faq'));
         $response->assertStatus(200);
         $response->assertSee('Frequently Asked Questions (FAQ)');
-        $response->assertSee('Bagaimana cara memesan perhiasan di PUTRI.J?');
+        $response->assertSee('Bagaimana cara memesan busana di PUTRI.J?');
         $response->assertSee('application/ld+json', false);
+    }
+
+    public function test_product_with_video_renders_video_elements_on_detail_page(): void
+    {
+        $productWithVideo = Product::whereNotNull('video_url')->firstOrFail();
+        $this->assertTrue($productWithVideo->hasVideo());
+
+        $response = $this->get(route('shop.show', $productWithVideo->slug));
+        $response->assertStatus(200);
+        $response->assertSee('pdpThumbVideoBtn');
+        $response->assertSee('pdpMainVideoBox');
+        $response->assertSee('Lihat Video Busana');
+    }
+
+    public function test_product_without_video_does_not_render_video_elements(): void
+    {
+        $this->product->update(['video_url' => null]);
+        $response = $this->get(route('shop.show', $this->product->slug));
+        $response->assertStatus(200);
+        $response->assertDontSee('id="pdpThumbVideoBtn"', false);
+        $response->assertDontSee('id="pdpFloatingPlayBtn"', false);
+        $response->assertDontSee('id="pdpMainVideoBox"', false);
+        $response->assertDontSee('Video Showcase');
+    }
+
+    public function test_product_card_does_not_render_video_badge(): void
+    {
+        $response = $this->get(route('shop.index'));
+        $response->assertStatus(200);
+        $response->assertDontSee('product-video-badge');
+    }
+
+    public function test_product_model_video_type_helpers(): void
+    {
+        $p1 = new Product(['video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ']);
+        $this->assertEquals('youtube', $p1->video_type);
+        $this->assertStringContainsString('youtube.com/embed/dQw4w9WgXcQ', (string) $p1->video_embed_url);
+
+        $p2 = new Product(['video_url' => 'https://example.com/fashion-lookbook.mp4']);
+        $this->assertEquals('direct', $p2->video_type);
+        $this->assertEquals('https://example.com/fashion-lookbook.mp4', $p2->video_embed_url);
+    }
+
+    public function test_product_detail_page_renders_reviews_and_rating_summary(): void
+    {
+        ProductReview::create([
+            'product_id' => $this->product->id,
+            'customer_name' => 'zainulll12',
+            'rating' => 5,
+            'size_purchased' => 'Size M, Champagne Silk',
+            'quality_tag' => 'Sangat bagus & adem',
+            'fit_tag' => 'Pas di badan',
+            'comment' => 'barang mendarat dengan aman, seller responsif.',
+            'seller_reply' => 'Hai Kak, Terimakasih sudah berbelanja di toko Kami.',
+            'seller_replied_at' => now(),
+            'is_verified_purchase' => true,
+            'is_approved' => true,
+        ]);
+
+        $response = $this->get(route('shop.show', $this->product->slug));
+        $response->assertStatus(200);
+        $response->assertSee('Penilaian Produk');
+        $response->assertSee('dari 5');
+        $response->assertSee('Semua');
+        $response->assertSee('5 Bintang');
+        $response->assertSee('zainulll12');
+        $response->assertSee('barang mendarat dengan aman, seller responsif.');
+        $response->assertSee('Variasi: Size M, Champagne Silk');
+        $response->assertSee('Kualitas Bahan:');
+        $response->assertSee('Sangat bagus &amp; adem', false);
+        $response->assertSee('Respon Penjual:');
+        $response->assertSee('Hai Kak, Terimakasih sudah berbelanja di toko Kami.');
+    }
+
+    public function test_guest_can_submit_product_review(): void
+    {
+        $response = $this->post(route('shop.reviews.store', $this->product->slug), [
+            'rating' => 5,
+            'customer_name' => 'Maya Bella',
+            'customer_email' => 'maya@example.com',
+            'size_purchased' => 'S',
+            'headline' => 'Sangat suka dengan warnanya',
+            'comment' => 'Jahitannya rapi dan ukurannya pas di badan saya.',
+        ]);
+
+        $response->assertRedirect(route('shop.show', $this->product->slug).'#customer-reviews');
+        $response->assertSessionHas('review_success');
+
+        $this->assertDatabaseHas('product_reviews', [
+            'product_id' => $this->product->id,
+            'customer_name' => 'Maya Bella',
+            'rating' => 5,
+            'is_verified_purchase' => false,
+        ]);
+    }
+
+    public function test_authenticated_buyer_with_past_order_gets_verified_purchase(): void
+    {
+        $buyer = User::factory()->create(['role' => UserRole::CUSTOMER]);
+        $order = Order::create([
+            'user_id' => $buyer->id,
+            'order_number' => 'ORD-REV-001',
+            'status' => OrderStatus::DELIVERED,
+            'subtotal' => 20.00,
+            'shipping_cost' => 0.00,
+            'discount_amount' => 0.00,
+            'grand_total' => 20.00,
+            'customer_name' => $buyer->name,
+            'customer_email' => $buyer->email,
+            'customer_phone' => '08123456789',
+            'shipping_address' => ['address' => 'Jl. Sudirman'],
+            'payment_method' => 'manual_transfer',
+            'payment_status' => 'paid',
+        ]);
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $this->product->id,
+            'product_name' => $this->product->name,
+            'unit_price' => 20.00,
+            'quantity' => 1,
+            'line_total' => 20.00,
+        ]);
+
+        $response = $this->actingAs($buyer)->post(route('shop.reviews.store', $this->product->slug), [
+            'rating' => 5,
+            'customer_name' => $buyer->name,
+            'size_purchased' => 'M',
+            'headline' => 'Kualitas terbaik',
+            'comment' => 'Bahan sangat adem dan potongan pas di badan.',
+        ]);
+
+        $response->assertRedirect(route('shop.show', $this->product->slug).'#customer-reviews');
+        $this->assertDatabaseHas('product_reviews', [
+            'product_id' => $this->product->id,
+            'user_id' => $buyer->id,
+            'is_verified_purchase' => true,
+        ]);
+    }
+
+    public function test_review_helpful_counter_can_be_incremented(): void
+    {
+        $review = ProductReview::create([
+            'product_id' => $this->product->id,
+            'customer_name' => 'Anisa',
+            'rating' => 5,
+            'comment' => 'Ulasan yang sangat bermanfaat.',
+            'helpful_count' => 3,
+            'is_approved' => true,
+        ]);
+
+        $response = $this->postJson(route('reviews.helpful', $review->id));
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'helpful_count' => 4,
+        ]);
+
+        $this->assertEquals(4, $review->fresh()->helpful_count);
     }
 }

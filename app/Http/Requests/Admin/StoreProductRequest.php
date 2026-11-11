@@ -28,6 +28,7 @@ class StoreProductRequest extends FormRequest
             'badge' => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string', 'max:2000'],
             'image_url' => ['nullable', 'string', 'max:255'],
+            'video_url' => ['nullable', 'string', 'max:500'],
             'is_featured' => ['nullable', 'boolean'],
         ];
     }

@@ -1,12 +1,12 @@
 @extends('layouts.storefront')
 
-@section('title', 'Shop - Jewelry Collection | PUTRI.J')
+@section('title', 'Shop - Contemporary Fashion & Apparel | PUTRI.J')
 
 @section('content')
 <div class="container shop-page">
   <div class="shop-header-wrap">
     <h1 class="shop-page-title">Shop The Latest</h1>
-    <p class="shop-page-subtitle mobile-only">Koleksi perhiasan artisan modern berlapis emas 18k dan perak murni.</p>
+    <p class="shop-page-subtitle mobile-only">Koleksi busana kontemporer, midi dress elegan, atasan sutra, dan blazer berkarakter.</p>
   </div>
 
   <div class="shop-layout">
@@ -23,7 +23,7 @@
             placeholder="Search..."
             class="filter-search-input"
             autocomplete="off"
-            aria-label="Search jewelry"
+            aria-label="Search apparel"
           >
           <a
             href="{{ route('shop.index', request()->except('search', 'page')) }}"
@@ -116,8 +116,8 @@
                 <line x1="8" y1="11" x2="14" y2="11"></line>
               </svg>
             </div>
-            <h3>Perhiasan Tidak Ditemukan</h3>
-            <p>Maaf, tidak ada produk perhiasan yang sesuai dengan filter atau kata kunci Anda.</p>
+            <h3>Busana Tidak Ditemukan</h3>
+            <p>Maaf, tidak ada produk busana yang sesuai dengan filter atau kata kunci Anda.</p>
             <a href="{{ route('shop.index') }}" class="btn btn-outline btn-sm">Reset Semua Filter</a>
           </div>
         @endforelse

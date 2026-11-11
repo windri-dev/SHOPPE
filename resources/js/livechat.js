@@ -50,7 +50,7 @@ class LiveChatManager {
 
     const waHeaderBtn = this.wrapper.querySelector('.shoppe-livechat-btn-whatsapp');
     if (waHeaderBtn) {
-      waHeaderBtn.href = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent('Halo PUTRI.J Concierge, saya ingin konsultasi produk perhiasan.')}`;
+      waHeaderBtn.href = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent('Halo PUTRI.J Concierge, saya ingin konsultasi produk busana.')}`;
     }
 
     this.loadHistory();
@@ -137,7 +137,7 @@ class LiveChatManager {
       if (this.humanBtnText) this.humanBtnText.textContent = 'Bicara CS';
       this.humanBtn?.classList.remove('is-human');
       if (this.noticeText) {
-        this.noticeText.innerHTML = 'Ada pertanyaan seputar perhiasan atau pesanan? Tim kami siap melayani Anda.';
+        this.noticeText.innerHTML = 'Ada pertanyaan seputar busana atau pesanan? Tim kami siap melayani Anda.';
       }
     }
 
@@ -230,7 +230,7 @@ class LiveChatManager {
         {
           sender: 'agent',
           senderBadge: 'PUTRI.J Assistant',
-          text: 'Halo! Selamat datang di **PUTRI.J** ✨\nAda yang bisa kami bantu seputar koleksi perhiasan, ukuran, atau pesanan Anda hari ini?',
+          text: 'Halo! Selamat datang di **PUTRI.J** ✨\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini?',
           time: this.getCurrentTime()
         }
       ];

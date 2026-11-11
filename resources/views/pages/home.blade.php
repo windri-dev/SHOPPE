@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'PUTRI.J - Modern Jewelry & Accessories')
+@section('title', 'PUTRI.J - Contemporary Ready-to-Wear Fashion & Apparel')
 
 @section('content')
 <!-- Hero Section Carousel -->
@@ -10,33 +10,33 @@
       <div class="hero-slides">
         <!-- Slide 1 -->
         <div class="hero-slide active">
-          <img src="{{ asset('images/hero-1.png') }}" alt="Gold big hoops" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
+          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Silk Wrap Dress" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h1 class="hero-title">Gold big hoops</h1>
-            <div class="hero-price">$ 68.00</div>
+            <h1 class="hero-title">Aurelia Silk Wrap Dress</h1>
+            <div class="hero-price">$ 65.00</div>
             <a href="{{ route('shop.index') }}" class="btn">View Product</a>
           </div>
         </div>
 
         <!-- Slide 2 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-1.jpg') }}" alt="Artisan Gold Vermeil" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-1.jpg') }}" alt="Tailored French Linen Shirt" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Artisan Gold Vermeil</h2>
-            <div class="hero-price">$ 45.00</div>
+            <h2 class="hero-title">Tailored French Linen Shirt</h2>
+            <div class="hero-price">$ 38.00</div>
             <a href="{{ route('shop.index') }}" class="btn">Shop Collection</a>
           </div>
         </div>
 
         <!-- Slide 3 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-2.jpg') }}" alt="Sculptural Silver & Pearls" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-2.jpg') }}" alt="Double-Breasted Structured Blazer" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Sculptural Silver &amp; Pearls</h2>
-            <div class="hero-price">$ 55.00</div>
+            <h2 class="hero-title">Double-Breasted Blazer</h2>
+            <div class="hero-price">$ 78.00</div>
             <a href="{{ route('shop.index') }}" class="btn">Discover Pieces</a>
           </div>
         </div>
@@ -70,10 +70,10 @@
     <div class="trust-features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; text-align: center;">
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9l4-6z"></path><path d="M2 9h20"></path><path d="M10 3l2 6 4-6"></path></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"></path></svg>
         </div>
-        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">18K Gold-Dipped Vermeil</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">Cast in hypoallergenic brass, 100% nickel-free &amp; lead-free.</p>
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">Premium Natural Fabrics</h3>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">French Washed Linen, Mulberry Silk Blend &amp; Organic Cotton.</p>
       </div>
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
@@ -86,15 +86,15 @@
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
         </div>
-        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">Signature Keepsake Box</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">Dikemas elegan dalam velvet jewelry pouch khas PUTRI.J.</p>
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">Signature Packaging</h3>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">Dikemas rapi dalam garment bag &amp; signature box khas PUTRI.J.</p>
       </div>
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
         </div>
-        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">14-Day Free Exchange</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">Garansi tukar size dan jaminan mutu pengerjaan artisan.</p>
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">Complimentary Size Exchange</h3>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">Garansi tukar ukuran 7 hari gratis jika baju kebesaran atau kekecilan.</p>
       </div>
     </div>
   </div>
@@ -123,7 +123,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">Curated Best Sellers</h2>
-          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">Koleksi mahakarya paling diminati dan direkomendasikan oleh personal stylist kami.</p>
+          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">Koleksi busana pilihan paling diminati dan direkomendasikan oleh personal stylist kami.</p>
         </div>
         <a href="{{ route('shop.index', ['sort' => 'popular']) }}" class="section-link">Explore Popular</a>
       </div>
@@ -144,7 +144,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">From Our Journal</h2>
-          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">Inspirasi gaya perhiasan, teknik layering, dan rahasia perawatan perhiasan artisan.</p>
+          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">Inspirasi gaya berbusana, capsule wardrobe modern, dan tips merawat pakaian berkualitas tinggi.</p>
         </div>
         <a href="{{ route('blog.index') }}" class="section-link">View All Stories</a>
       </div>

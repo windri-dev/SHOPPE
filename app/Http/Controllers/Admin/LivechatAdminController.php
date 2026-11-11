@@ -16,6 +16,7 @@ use App\Services\AiConciergeService;
 use App\Services\InquiryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LivechatAdminController extends Controller
@@ -39,10 +40,40 @@ class LivechatAdminController extends Controller
         $updatedInquiry = $this->inquiryService->replyToInquiry($inquiry, $request->validated('message'));
         $latestMessage = $updatedInquiry->messages()->latest('id')->first();
 
+        $savedKnowledge = null;
+        if ($request->boolean('save_as_knowledge')) {
+            $lastCustomerMsg = $inquiry->messages()
+                ->whereIn('sender_type', ['customer', 'user'])
+                ->latest('id')
+                ->first();
+            $questionText = $lastCustomerMsg?->message ?? $inquiry->subject ?? 'Pertanyaan Pelanggan';
+
+            $title = trim((string) $request->input('knowledge_title', ''));
+            if ($title === '') {
+                $title = 'FAQ: '.Str::limit(trim($questionText), 70, '');
+            }
+
+            $keywords = trim((string) $request->input('knowledge_keywords', ''));
+            if ($keywords === '') {
+                $keywords = $this->aiConciergeService->extractKeywordsFromText($questionText);
+            }
+
+            $savedKnowledge = AiKnowledgeEntry::create([
+                'type' => 'knowledge',
+                'title' => $title,
+                'keywords' => $keywords,
+                'content' => $request->validated('message'),
+                'requires_human_handoff' => false,
+                'is_active' => true,
+            ]);
+        }
+
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Balasan berhasil dikirim (Mode Admin Manusia aktif).',
+                'message' => $savedKnowledge
+                    ? 'Balasan berhasil dikirim & disimpan ke Knowledge Base!'
+                    : 'Balasan berhasil dikirim (Mode Admin Manusia aktif).',
                 'data' => [
                     'id' => $latestMessage?->id,
                     'sender_type' => $latestMessage?->sender_type,
@@ -52,11 +83,17 @@ class LivechatAdminController extends Controller
                     'inquiry_status' => $updatedInquiry->status->value,
                     'inquiry_status_label' => $updatedInquiry->status->label(),
                     'handling_mode' => $updatedInquiry->handling_mode,
+                    'knowledge_saved' => $savedKnowledge !== null,
+                    'knowledge_entry' => $savedKnowledge,
                 ],
             ]);
         }
 
-        return back()->with('success', "Balasan terkirim ke tiket {$inquiry->ticket_number}.");
+        $flashMessage = $savedKnowledge
+            ? "Balasan terkirim ke tiket {$inquiry->ticket_number} dan disimpan ke Knowledge Base."
+            : "Balasan terkirim ke tiket {$inquiry->ticket_number}.";
+
+        return back()->with('success', $flashMessage);
     }
 
     public function updateStatus(UpdateInquiryStatusRequest $request, Inquiry $inquiry): RedirectResponse|JsonResponse

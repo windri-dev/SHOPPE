@@ -37,4 +37,3 @@ class AiKnowledgeEntry extends Model
         };
     }
 }
-

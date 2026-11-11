@@ -169,7 +169,7 @@ class CartManager {
     } else {
       this.items.push({
         id: normalizedId,
-        title: product.title || 'Jewelry Piece',
+        title: product.title || 'Apparel Item',
         price: parseFloat(product.price) || 20.00,
         variant: variant,
         image: product.image || '/images/product-1.png',

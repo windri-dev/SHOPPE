@@ -45,7 +45,7 @@
     <div class="admin-card" style="padding: 16px 20px; border-left: 4px solid #111827;">
       <span style="font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Total Katalog</span>
       <div style="font-size: 26px; font-weight: 700; color: #111827; margin-top: 4px;">{{ number_format($stats['total']) }}</div>
-      <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Perhiasan terdaftar</div>
+      <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Busana terdaftar</div>
     </div>
     <div class="admin-card" style="padding: 16px 20px; border-left: 4px solid #10B981;">
       <span style="font-size: 12px; font-weight: 600; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">Stok Aman</span>
@@ -106,7 +106,7 @@
           type="search"
           name="search"
           value="{{ request('search') }}"
-          placeholder="Cari SKU, Nama Perhiasan..."
+          placeholder="Cari SKU, Nama Busana..."
           class="chat-search-input"
           style="padding-left: 12px; width: 220px;"
         >
@@ -129,7 +129,7 @@
         <thead>
           <tr>
             <th style="width: 60px;">Foto</th>
-            <th>Perhiasan &amp; SKU</th>
+            <th>Busana &amp; SKU</th>
             <th>Kategori</th>
             <th>Harga Normal</th>
             <th>Terjual</th>
@@ -162,6 +162,11 @@
                     @if($product->badge)
                       <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; background: {{ str_contains(strtolower($product->badge), 'sale') || str_contains(strtolower($product->badge), 'off') ? '#FEE2E2' : '#FEF3C7' }}; color: {{ str_contains(strtolower($product->badge), 'sale') || str_contains(strtolower($product->badge), 'off') ? '#DC2626' : '#D97706' }};">
                         {{ $product->badge }}
+                      </span>
+                    @endif
+                    @if($product->hasVideo())
+                      <span style="font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #111827; color: #A18A68; display: inline-flex; align-items: center; gap: 3px;">
+                        ▶ Video
                       </span>
                     @endif
                   </div>
@@ -221,7 +226,7 @@
                   <!-- Tombol Edit Produk -->
                   <button
                     type="button"
-                    onclick="openEditProductModal('{{ $product->id }}', '{{ addslashes($product->name) }}', '{{ $product->sku }}', '{{ $product->category_id }}', '{{ $product->price }}', '{{ $product->original_price ?? '' }}', '{{ $product->stock }}', '{{ addslashes($product->badge ?? '') }}', '{{ addslashes($product->description ?? '') }}')"
+                    onclick="openEditProductModal('{{ $product->id }}', '{{ addslashes($product->name) }}', '{{ $product->sku }}', '{{ $product->category_id }}', '{{ $product->price }}', '{{ $product->original_price ?? '' }}', '{{ $product->stock }}', '{{ addslashes($product->badge ?? '') }}', '{{ addslashes($product->description ?? '') }}', '{{ addslashes($product->video_url ?? '') }}')"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 9px; font-size: 11px;"
                     title="Edit detail produk & harga"
@@ -306,15 +311,15 @@
 <div id="createProductModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 580px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Produk Perhiasan Baru</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Produk Busana Baru</h3>
       <button type="button" onclick="closeCreateProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
     <form action="{{ route('admin.products.store') }}" method="POST" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
       @csrf
       <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Perhiasan *</label>
-        <input type="text" name="name" required placeholder="Contoh: Aurelia Diamond Solitaire Ring" class="chat-search-input" style="width: 100%; font-size: 13px;">
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana *</label>
+        <input type="text" name="name" required placeholder="Contoh: Aurelia Silk Bias Cut Midi Dress" class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -335,11 +340,11 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga ($) *</label>
-          <input type="number" step="0.01" name="price" required placeholder="25.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <input type="number" step="0.01" name="price" required placeholder="45.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret ($)</label>
-          <input type="number" step="0.01" name="original_price" placeholder="35.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <input type="number" step="0.01" name="original_price" placeholder="60.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Stok Awal (pcs) *</label>
@@ -350,7 +355,7 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
-          <input type="text" name="badge" placeholder="Contoh: Bestseller / -20% Off" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <input type="text" name="badge" placeholder="Contoh: Best Seller / -20%" class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Gambar (Opsional)</label>
@@ -359,8 +364,13 @@
       </div>
 
       <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi Perhiasan</label>
-        <textarea name="description" rows="3" placeholder="Deskripsi material, ukuran, dan detail pengerjaan..." class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube / Vimeo)</label>
+        <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi Busana &amp; Material</label>
+        <textarea name="description" rows="3" placeholder="Deskripsi potongan, bahan kain, ukuran, dan saran styling..." class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
@@ -418,7 +428,7 @@
 <div id="editProductModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 580px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Detail Perhiasan &amp; Harga</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Detail Busana &amp; Harga</h3>
       <button type="button" onclick="closeEditProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
@@ -427,7 +437,7 @@
       @method('PUT')
 
       <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Perhiasan *</label>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana *</label>
         <input type="text" name="name" id="editProductName" required class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
@@ -467,7 +477,12 @@
       </div>
 
       <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi</label>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube / Vimeo)</label>
+        <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi &amp; Detail Kain</label>
         <textarea name="description" id="editProductDesc" rows="3" class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
       </div>
 
@@ -500,7 +515,7 @@ function closeAdjustStockModal() {
 }
 
 // Modal Edit Produk
-function openEditProductModal(id, name, sku, categoryId, price, originalPrice, stock, badge, desc) {
+function openEditProductModal(id, name, sku, categoryId, price, originalPrice, stock, badge, desc, videoUrl) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
   document.getElementById('editProductSku').value = sku;
@@ -509,6 +524,7 @@ function openEditProductModal(id, name, sku, categoryId, price, originalPrice, s
   document.getElementById('editProductOriginalPrice').value = originalPrice || '';
   document.getElementById('editProductStock').value = stock;
   document.getElementById('editProductBadge').value = badge || '';
+  document.getElementById('editProductVideoUrl').value = videoUrl || '';
   document.getElementById('editProductDesc').value = desc || '';
   document.getElementById('editProductModalBackdrop').style.display = 'flex';
 }

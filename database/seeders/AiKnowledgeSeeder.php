@@ -15,9 +15,9 @@ class AiKnowledgeSeeder extends Seeder
             // 1. Knowledge Base (Pengetahuan Toko & Layanan)
             [
                 'type' => 'knowledge',
-                'title' => 'Material & Keaslian Perhiasan',
-                'keywords' => 'bahan, material, emas, karat, vermeil, perak, silver, alergi, gatal, hypoallergenic, luntur, karat',
-                'content' => 'Seluruh koleksi perhiasan PUTRI.J dibuat menggunakan bahan Premium Brass & 925 Sterling Silver dengan lapisan 18K Gold Vermeil (ketebalan 2.5 mikron). 100% bebas nikel dan timbal (Hypoallergenic) sehingga aman untuk kulit sensitif dan tidak mudah pudar.',
+                'title' => 'Material Kain & Kualitas Jahitan',
+                'keywords' => 'bahan, material, kain, linen, silk, sutra, katun, kasmir, panas, adem, berbulu, tebal, tipis, furing',
+                'content' => 'Seluruh koleksi busana PUTRI.J dirancang menggunakan material kain premium pilihan seperti 100% French Washed Linen yang breathable, Mulberry Silk Blend yang lembut berkilau elegan, dan Katun Organik berserat rapat. Jahitan berstandar butik dengan furing halus yang nyaman di kulit.',
                 'requires_human_handoff' => false,
                 'is_active' => true,
             ],
@@ -33,15 +33,15 @@ class AiKnowledgeSeeder extends Seeder
                 'type' => 'knowledge',
                 'title' => 'Pengiriman, Asuransi & Gratis Ongkir',
                 'keywords' => 'ongkir, kirim, pengiriman, ekspedisi, jne, sicepat, asuransi, lama pengiriman, gratis ongkir',
-                'content' => 'Kami menyediakan Gratis Ongkos Kirim ke seluruh Indonesia untuk pesanan di atas $50.00. Pesanan yang lunas sebelum pukul 16.00 WIB dikirim pada hari yang sama dengan perlindungan asuransi penuh dan kemasan velvet box bersegel.',
+                'content' => 'Kami menyediakan Gratis Ongkos Kirim ke seluruh Indonesia untuk pesanan di atas $50.00. Pesanan yang lunas sebelum pukul 16.00 WIB dikirim pada hari yang sama dengan perlindungan asuransi penuh dan kemasan garment wrap bersegel aman.',
                 'requires_human_handoff' => false,
                 'is_active' => true,
             ],
             [
                 'type' => 'knowledge',
-                'title' => 'Ukuran Cincin & Rantai Kalung',
-                'keywords' => 'ukuran, size, lingkar jari, panjang kalung, rantai, extender, berat anting',
-                'content' => 'Kalung PUTRI.J memiliki panjang rantai standar 40cm + 5cm extender. Cincin tersedia dalam ukuran US 5, 6, 7, dan 8. Anting dirancang ultra-ringan (di bawah 8 gram per pasang) agar nyaman dipakai seharian.',
+                'title' => 'Panduan Ukuran (Size Guide) & Tukar Ukuran',
+                'keywords' => 'panduan ukuran, size chart, lingkar dada, panjang baju, ukuran s, ukuran m, ukuran l, ukuran xl, size s, size m, size l, size xl, kekecilan, kebesaran, tukar size, rekomendasi ukuran',
+                'content' => 'Busana PUTRI.J tersedia dalam ukuran S (LD 88-92 cm), M (LD 94-98 cm), L (LD 100-104 cm), dan XL (LD 106-112 cm). Kami menyediakan Complimentary Size Exchange gratis 1 kali dalam 7 hari jika baju yang diterima kurang pas di badan Anda.',
                 'requires_human_handoff' => false,
                 'is_active' => true,
             ],
@@ -57,9 +57,9 @@ class AiKnowledgeSeeder extends Seeder
             ],
             [
                 'type' => 'boundary',
-                'title' => 'Batasan Pesanan Custom / Ukir Nama & Grosir B2B',
-                'keywords' => 'custom, ukir nama, grafir, engrave, grosir, reseller, partai besar, korporat, souvenir',
-                'content' => 'Permintaan grafir/ukir inisial khusus (custom engraving) dan pemesanan korporat/grosir membutuhkan pengecekan jadwal pengrajin secara manual. Kami mengalihkan obrolan ini kepada Staf Concierge kami untuk membantu Anda.',
+                'title' => 'Batasan Pesanan Custom / Jahit Khusus & Grosir B2B',
+                'keywords' => 'custom, jahit khusus, seragam, pesan banyak, grosir, reseller, partai besar, korporat, souvenir',
+                'content' => 'Permintaan pesanan jahit custom khusus, seragam, atau pemesanan grosir/partai besar membutuhkan koordinasi produksi secara manual. Kami mengalihkan obrolan ini kepada Staf Concierge kami untuk membantu Anda secara personal.',
                 'requires_human_handoff' => true,
                 'is_active' => true,
             ],
@@ -75,7 +75,7 @@ class AiKnowledgeSeeder extends Seeder
                 'type' => 'boundary',
                 'title' => 'Batasan Topik Di Luar Layanan PUTRI.J',
                 'keywords' => 'politik, presiden, pemilu, judi, pinjol, kripto, resep masakan, tugas sekolah, obat medis',
-                'content' => 'Mohon maaf, Aria AI Concierge memiliki batasan pengetahuan khusus untuk melayani konsultasi produk perhiasan, pengecekan harga & stok katalog, serta bantuan pesanan di PUTRI.J Luxury.',
+                'content' => 'Mohon maaf, Aria AI Concierge memiliki batasan pengetahuan khusus untuk melayani konsultasi produk busana & pakaian, panduan ukuran (size), pengecekan harga & stok katalog, serta bantuan pesanan di butik PUTRI.J.',
                 'requires_human_handoff' => false,
                 'is_active' => true,
             ],
@@ -92,8 +92,8 @@ class AiKnowledgeSeeder extends Seeder
             [
                 'type' => 'response_rule',
                 'title' => 'Panduan Tukar Ukuran (Size Exchange 7 Hari)',
-                'keywords' => 'tukar ukuran, kebesaran, kekecilan, resize, retur ukuran',
-                'content' => 'Pelanggan berhak menukar ukuran cincin/gelang secara gratis 1 kali dalam 7 hari sejak pesanan diterima (selama segel utuh dan belum dipakai). Arahkan pelanggan untuk menyebutkan nomor pesanan atau hubungkan ke Admin jika ingin memproses penukaran.',
+                'keywords' => 'tukar ukuran, tukar baju, ganti size, retur ukuran',
+                'content' => 'Pelanggan berhak menukar ukuran baju/busana secara gratis 1 kali dalam 7 hari sejak pesanan diterima (selama tag utuh dan belum dipakai/dicuci). Arahkan pelanggan untuk menyebutkan nomor pesanan atau hubungkan ke Admin jika ingin memproses penukaran.',
                 'requires_human_handoff' => false,
                 'is_active' => true,
             ],
@@ -106,4 +106,3 @@ class AiKnowledgeSeeder extends Seeder
         }
     }
 }
-

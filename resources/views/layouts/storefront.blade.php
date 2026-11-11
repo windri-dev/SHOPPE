@@ -6,8 +6,8 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="user-auth" content="{{ auth()->check() ? '1' : '0' }}">
   <meta name="login-url" content="{{ route('login') }}">
-  <title>@yield('title', 'PUTRI.J - Modern Luxury Jewelry & Accessories')</title>
-  <meta name="description" content="@yield('meta_description', 'Discover handcrafted minimalist jewelry, earrings, necklaces, and artisan accessories.')">
+  <title>@yield('title', 'PUTRI.J - Contemporary Ready-to-Wear Fashion & Apparel')</title>
+  <meta name="description" content="@yield('meta_description', 'Koleksi busana kontemporer, midi dress elegan, atasan sutra, blazer tailored, dan pakaian wanita modern dari butik PUTRI.J.')">
   <meta name="theme-color" content="#A18A68">
 
   <!-- Favicons & Touch Icons -->
@@ -58,11 +58,19 @@
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
-      <div class="modal-image-col">
+      <div class="modal-image-col" style="position: relative;">
         <img src="{{ asset('images/product-1.png') }}" alt="Product preview" id="modalProductImg" width="400" height="400">
+        <div id="modalProductVideoBox" style="display: none; position: absolute; inset: 0; background: #0B0F17; border-radius: 8px; overflow: hidden; align-items: center; justify-content: center;">
+          <video id="modalProductVideo" controls playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+          <iframe id="modalProductIframe" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <button type="button" id="modalVideoToggleBtn" style="display: none; position: absolute; bottom: 12px; right: 12px; background: rgba(17, 24, 39, 0.88); color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.25); cursor: pointer; align-items: center; gap: 6px; z-index: 10;" aria-label="Toggle video preview">
+          <svg viewBox="0 0 24 24" fill="#A18A68" width="12" height="12"><path d="M8 5v14l11-7z"/></svg>
+          <span id="modalVideoToggleLabel">Lihat Video</span>
+        </button>
       </div>
       <div class="modal-info-col">
-        <h2 class="modal-product-title" id="modalProductTitle">Jewelry Piece</h2>
+        <h2 class="modal-product-title" id="modalProductTitle">Apparel Piece</h2>
         <div class="modal-product-price" id="modalProductPrice">$ 20.00</div>
         <p class="modal-product-desc" id="modalProductDesc"></p>
         <div class="modal-actions">

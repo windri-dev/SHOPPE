@@ -133,7 +133,7 @@
 <section id="catalog-section" class="admin-card" style="margin-bottom: 28px;">
   <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
     <div>
-      <h2 class="admin-card-title">Katalog &amp; Stok Perhiasan (Preview)</h2>
+      <h2 class="admin-card-title">Katalog &amp; Stok Busana (Preview)</h2>
       <p style="font-size: 13px; color: #6B7280; margin: 4px 0 0 0;">Monitoring cepat status stok dan ketersediaan etalase.</p>
     </div>
     <a href="{{ route('admin.products.index') }}" class="table-gold-link" style="font-size: 13px; font-weight: 600; text-decoration: none;">
@@ -230,7 +230,7 @@
               <div style="font-size: 12px; color: #6B7280;">{{ $inq->email }}</div>
             </td>
             <td>
-              <span style="font-weight: 500;">{{ $inq->subject ?: 'Konsultasi Perhiasan' }}</span>
+              <span style="font-weight: 500;">{{ $inq->subject ?: 'Konsultasi Busana' }}</span>
               <div style="font-size: 11px; color: #9CA3AF;">#{{ $inq->ticket_number }}</div>
             </td>
             <td style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4B5563; font-size: 12.5px;">

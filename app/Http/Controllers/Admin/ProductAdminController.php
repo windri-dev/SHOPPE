@@ -60,7 +60,7 @@ class ProductAdminController extends Controller
     }
 
     /**
-     * Menyimpan produk perhiasan baru ke database.
+     * Menyimpan produk busana/pakaian baru ke database.
      */
     public function store(StoreProductRequest $request): RedirectResponse
     {
@@ -96,8 +96,9 @@ class ProductAdminController extends Controller
             'original_price' => $validated['original_price'] ?? null,
             'stock' => (int) $validated['stock'],
             'badge' => $badge,
-            'description' => $validated['description'] ?? 'Koleksi perhiasan eksklusif PUTRI.J dengan bahan premium.',
+            'description' => $validated['description'] ?? 'Koleksi busana eksklusif PUTRI.J dengan material premium pilihan.',
             'images' => $images,
+            'video_url' => $validated['video_url'] ?? null,
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => true,
             'sales_count' => 0,
@@ -137,6 +138,7 @@ class ProductAdminController extends Controller
             'badge' => $badge,
             'description' => $validated['description'] ?? $product->description,
             'images' => $images,
+            'video_url' => array_key_exists('video_url', $validated) ? $validated['video_url'] : $product->video_url,
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->has('is_active') ? $request->boolean('is_active') : $product->is_active,
         ]);

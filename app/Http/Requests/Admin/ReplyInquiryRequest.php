@@ -20,6 +20,9 @@ class ReplyInquiryRequest extends FormRequest
     {
         return [
             'message' => ['required', 'string', 'max:2000'],
+            'save_as_knowledge' => ['nullable', 'boolean'],
+            'knowledge_title' => ['nullable', 'string', 'max:150'],
+            'knowledge_keywords' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

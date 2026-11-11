@@ -10,8 +10,11 @@
   data-image="{{ asset($product->primary_image) }}"
   data-url="{{ route('shop.show', $product->slug) }}"
   data-description="{{ $product->description }}"
-  data-category="{{ $product->category->slug ?? 'jewelry' }}"
+  data-category="{{ $product->category->slug ?? 'apparel' }}"
   data-stock="{{ $product->isInStock() ? 'true' : 'false' }}"
+  data-video="{{ $product->video_url ?? '' }}"
+  data-video-type="{{ $product->video_type }}"
+  data-video-embed="{{ $product->video_embed_url ?? '' }}"
 >
   <div class="product-media">
     <a href="{{ route('shop.show', $product->slug) }}" class="product-media-link">

@@ -32,7 +32,7 @@ class CheckoutService
                 $qty = max(1, (int) ($item['quantity'] ?? 1));
 
                 if ($product->stock < $qty) {
-                    throw new Exception("Maaf, stok perhiasan '{$product->name}' tidak mencukupi (tersisa {$product->stock}).");
+                    throw new Exception("Maaf, stok busana '{$product->name}' tidak mencukupi (tersisa {$product->stock}).");
                 }
 
                 $product->decrement('stock', $qty);

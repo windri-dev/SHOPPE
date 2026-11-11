@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'FAQ & Pusat Bantuan Pelanggan - PUTRI.J')
-@section('meta_description', 'Pertanyaan yang sering diajukan (FAQ) seputar cara pemesanan, konfirmasi pembayaran, buku alamat pengiriman, pelacakan resi, garansi tukar ukuran, dan perawatan perhiasan PUTRI.J.')
+@section('meta_description', 'Pertanyaan yang sering diajukan (FAQ) seputar cara pemesanan, konfirmasi pembayaran, buku alamat pengiriman, pelacakan resi, garansi tukar ukuran, dan perawatan busana PUTRI.J.')
 
 @section('content')
 <div class="container" style="padding-top: 48px; padding-bottom: 80px; max-width: 860px;">
@@ -11,7 +11,7 @@
       Frequently Asked Questions (FAQ)
     </h1>
     <p style="font-size: 15px; color: #6B7280; max-width: 600px; margin: 0 auto;">
-      Temukan jawaban instan seputar pemesanan, verifikasi pembayaran, manajemen lokasi pengiriman, hingga panduan perawatan perhiasan.
+      Temukan jawaban instan seputar pemesanan, verifikasi pembayaran, manajemen lokasi pengiriman, hingga panduan ukuran &amp; perawatan busana.
     </p>
   </div>
 
