@@ -30,7 +30,7 @@
 
     @if($product->badge)
       <span class="product-badge badge {{ $product->badge === 'Sold out' ? 'badge-new' : 'badge-sale' }}">
-        {{ $product->badge }}
+        {{ __($product->badge) }}
       </span>
     @endif
 
@@ -52,8 +52,8 @@
         class="action-icon-btn"
         data-action="quick-view"
         data-product-id="{{ $product->id }}"
-        title="Quick view"
-        aria-label="Quick view {{ $product->name }}"
+        title="{{ __('Quick View') }}"
+        aria-label="{{ __('Quick View') }} {{ $product->name }}"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -72,7 +72,7 @@
         data-product-price="{{ $product->price }}"
         data-product-img="{{ asset($product->primary_image) }}"
       >
-        ADD TO CART
+        {{ __('Add to Cart') }}
       </button>
     @else
       <button
@@ -81,7 +81,7 @@
         disabled
         style="opacity: 0.75; cursor: not-allowed;"
       >
-        SOLD OUT
+        {{ __('Sold Out') }}
       </button>
     @endif
   </div>

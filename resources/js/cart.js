@@ -250,14 +250,16 @@ class CartManager {
   renderDrawerItems() {
     if (!this.cartBody) return;
 
+    const t = window.__trans || {};
+
     if (this.items.length === 0) {
       this.cartBody.innerHTML = `
         <div class="cart-empty-state">
           <svg class="cart-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
           </svg>
-          <p>Your shopping bag is currently empty.</p>
-          <a href="/shop" class="btn btn-outline btn-sm">Explore Shop</a>
+          <p>${t.emptyCartDrawer || 'Your shopping bag is currently empty.'}</p>
+          <a href="/shop" class="btn btn-outline btn-sm">${t.exploreShop || 'Explore Shop'}</a>
         </div>
       `;
       return;
@@ -266,7 +268,7 @@ class CartManager {
     const defaultImg = '/images/product-1.png';
     this.cartBody.innerHTML = this.items.map((item, idx) => {
       const safeTitle = escCartHtml(item.title);
-      const safeVariant = escCartHtml(item.variant || '18k Gold / Standard');
+      const safeVariant = escCartHtml(item.variant || 'Standard');
       const safeId = escCartHtml(item.id);
       return `
         <div class="cart-item" data-id="${safeId}">
@@ -279,7 +281,7 @@ class CartManager {
             <span class="cart-item-variant">${safeVariant}</span>
             <span class="cart-item-price">${this.formatPrice(item.price)}</span>
             <div class="cart-item-qty-row">
-              <span class="cart-item-qty-label">QTY:</span>
+              <span class="cart-item-qty-label">${t.qty || 'QTY'}:</span>
               <button type="button" class="cart-item-qty-btn" onclick="window.cartManager.updateQuantity(${idx}, -1)" aria-label="Decrease quantity">&minus;</button>
               <span class="cart-item-qty-val">${Number(item.quantity) || 1}</span>
               <button type="button" class="cart-item-qty-btn" onclick="window.cartManager.updateQuantity(${idx}, 1)" aria-label="Increase quantity">&#43;</button>
@@ -294,6 +296,7 @@ class CartManager {
     const tableContainer = document.getElementById('cartTableContainer');
     const pageSubtotal = document.getElementById('cartPageSubtotal');
     const pageTotal = document.getElementById('cartPageTotal');
+    const t = window.__trans || {};
 
     if (pageSubtotal) pageSubtotal.textContent = this.formatPrice(subtotal);
     if (pageTotal) pageTotal.textContent = this.formatPrice(subtotal);
@@ -303,8 +306,8 @@ class CartManager {
     if (this.items.length === 0) {
       tableContainer.innerHTML = `
         <div style="text-align: center; padding: 60px 24px; background: #FAF9F6; border: 1px dashed #D8D8D8; border-radius: 6px;">
-          <p style="color: #707070; font-size: 16px; margin-bottom: 20px;">Keranjang belanja Anda saat ini kosong.</p>
-          <a href="/shop" class="btn btn-primary">Mulai Belanja</a>
+          <p style="color: #707070; font-size: 16px; margin-bottom: 20px;">${t.emptyCartPage || 'Keranjang belanja Anda saat ini kosong.'}</p>
+          <a href="/shop" class="btn btn-primary">${t.startShopping || 'Mulai Belanja'}</a>
         </div>
       `;
       return;
@@ -313,7 +316,7 @@ class CartManager {
     const defaultImg = '/images/product-1.png';
     tableContainer.innerHTML = this.items.map((item, idx) => {
       const safeTitle = escCartHtml(item.title);
-      const safeVariant = escCartHtml(item.variant || '18k Gold / Standard');
+      const safeVariant = escCartHtml(item.variant || 'Standard');
       return `
         <div class="cart-page-item">
           <div class="cart-page-img-wrap">
@@ -338,12 +341,13 @@ class CartManager {
   renderCheckoutSummary(subtotal) {
     const checkoutList = document.getElementById('checkoutItemsList');
     const hiddenInputs = document.getElementById('hiddenCartInputs');
+    const t = window.__trans || {};
 
     if (checkoutList) {
       if (this.items.length === 0) {
         checkoutList.innerHTML = `
           <p style="color: #707070; font-size: 14px; margin-bottom: 20px;">
-            Keranjang Anda kosong. <a href="/shop" style="color: var(--color-accent); text-decoration: underline;">Pilih produk di katalog</a> terlebih dahulu.
+            ${t.emptyCheckout || 'Keranjang Anda kosong.'} <a href="/shop" style="color: var(--color-accent); text-decoration: underline;">${t.chooseProduct || 'Pilih produk di katalog'}</a>.
           </p>
         `;
       } else {

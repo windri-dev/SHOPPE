@@ -13,7 +13,7 @@
         id="searchInput" 
         name="search"
         value="{{ request('search') }}"
-        placeholder="Search dresses, blouses, blazers, trousers..." 
+        placeholder="{{ __('Search products...') }}" 
         autocomplete="off"
       >
       <button type="button" class="search-close-btn" id="searchClose" aria-label="Close search">

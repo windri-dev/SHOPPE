@@ -5,8 +5,8 @@
 @section('content')
 <div class="container shop-page">
   <div class="shop-header-wrap">
-    <h1 class="shop-page-title">Shop The Latest</h1>
-    <p class="shop-page-subtitle mobile-only">Koleksi busana kontemporer, midi dress elegan, atasan sutra, dan blazer berkarakter.</p>
+    <h1 class="shop-page-title">{{ __('Shop The Latest') }}</h1>
+    <p class="shop-page-subtitle mobile-only">{{ __('Koleksi busana kontemporer, midi dress elegan, atasan sutra, dan blazer berkarakter.') }}</p>
   </div>
 
   <div class="shop-layout">
@@ -43,18 +43,22 @@
         <!-- 2. Sort By Dropdown (Desktop: below search; Mobile: toolbar below categories) -->
         <div class="filter-group filter-group-sort">
           <div class="filter-heading-row desktop-only">
-            <h3 class="filter-heading">Sort By</h3>
+            <h3 class="filter-heading">{{ __('Sort by') }}</h3>
           </div>
           <div class="shop-toolbar-row">
             <span class="shop-toolbar-info">
-              Menampilkan <strong>{{ $products->count() }}</strong> dari <strong>{{ $products->total() }}</strong> produk
+              @if(app()->getLocale() === 'en')
+                Showing <strong>{{ $products->count() }}</strong> of <strong>{{ $products->total() }}</strong> pieces
+              @else
+                Menampilkan <strong>{{ $products->count() }}</strong> dari <strong>{{ $products->total() }}</strong> produk
+              @endif
             </span>
             <div class="filter-select-wrap">
               <select name="sort" class="filter-select" onchange="document.getElementById('shopFilterForm').submit()" aria-label="Sort products">
                 <option value="default" {{ request('sort') === 'default' ? 'selected' : '' }}>Default</option>
-                <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
-                <option value="price_high" {{ request('sort') === 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
-                <option value="popular" {{ request('sort') === 'popular' ? 'selected' : '' }}>Most Popular</option>
+                <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>{{ __('Price: Low to High') }}</option>
+                <option value="price_high" {{ request('sort') === 'price_high' ? 'selected' : '' }}>{{ __('Price: High to Low') }}</option>
+                <option value="popular" {{ request('sort') === 'popular' ? 'selected' : '' }}>{{ __('Best Seller') }}</option>
               </select>
               <span class="filter-select-chevron">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -68,13 +72,13 @@
         <!-- 3. Categories (Desktop: vertical text list; Mobile: horizontal scrollable pills) -->
         <div class="filter-group filter-group-categories">
           <div class="filter-heading-row">
-            <h3 class="filter-heading">Categories</h3>
+            <h3 class="filter-heading">{{ __('Category') }}</h3>
             <span class="filter-heading-count desktop-only">{{ $products->total() }} pieces</span>
           </div>
           <ul class="category-filter-list">
             <li>
               <a href="{{ route('shop.index', request()->except('category', 'page')) }}" class="category-filter-link {{ !request('category') ? 'active' : '' }}">
-                <span>All Products</span>
+                <span>{{ __('All') }}</span>
               </a>
             </li>
             @foreach($categories as $category)
@@ -95,7 +99,7 @@
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              Reset Filter
+              {{ __('Reset Filter') }}
             </a>
           </div>
         @endif
@@ -116,9 +120,9 @@
                 <line x1="8" y1="11" x2="14" y2="11"></line>
               </svg>
             </div>
-            <h3>Busana Tidak Ditemukan</h3>
-            <p>Maaf, tidak ada produk busana yang sesuai dengan filter atau kata kunci Anda.</p>
-            <a href="{{ route('shop.index') }}" class="btn btn-outline btn-sm">Reset Semua Filter</a>
+            <h3>{{ __('Busana Tidak Ditemukan') }}</h3>
+            <p>{{ __('Maaf, tidak ada produk busana yang sesuai dengan filter atau kata kunci Anda.') }}</p>
+            <a href="{{ route('shop.index') }}" class="btn btn-outline btn-sm">{{ __('Reset Semua Filter') }}</a>
           </div>
         @endforelse
       </div>

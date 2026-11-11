@@ -18,6 +18,7 @@ class Product extends Model
         'category_id',
         'sku',
         'name',
+        'name_en',
         'slug',
         'price',
         'original_price',
@@ -26,6 +27,7 @@ class Product extends Model
         'is_active',
         'badge',
         'description',
+        'description_en',
         'images',
         'video_url',
         'sales_count',
@@ -174,6 +176,34 @@ class Product extends Model
         $favorable = $reviews->where('rating', '>=', 4)->count();
 
         return (int) round(($favorable / $total) * 100);
+    }
+
+    public function getNameAttribute(?string $value): string
+    {
+        if (app()->getLocale() === 'en' && ! empty($this->attributes['name_en'])) {
+            return (string) $this->attributes['name_en'];
+        }
+
+        return $value ?? '';
+    }
+
+    public function getDescriptionAttribute(?string $value): ?string
+    {
+        if (app()->getLocale() === 'en' && ! empty($this->attributes['description_en'])) {
+            return (string) $this->attributes['description_en'];
+        }
+
+        return $value;
+    }
+
+    public function getRawName(): string
+    {
+        return $this->attributes['name'] ?? '';
+    }
+
+    public function getRawDescription(): ?string
+    {
+        return $this->attributes['description'] ?? null;
     }
 
     public function isInStock(): bool

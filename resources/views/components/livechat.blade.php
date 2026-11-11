@@ -40,7 +40,7 @@
         </div>
         <div class="shoppe-livechat-agent-info">
           <h4>PUTRI.J Concierge</h4>
-          <span id="shoppeLiveChatModeLabel">Online • Siap Membantu</span>
+          <span id="shoppeLiveChatModeLabel">{{ __('Online') }} &bull; {{ app()->getLocale() === 'en' ? 'Ready to Assist' : 'Siap Membantu' }}</span>
         </div>
       </div>
 
@@ -49,14 +49,14 @@
           type="button"
           id="shoppeLiveChatHumanBtn"
           class="shoppe-livechat-btn-mode"
-          title="Hubungkan ke Customer Service"
-          aria-label="Hubungkan ke Customer Service"
+          title="{{ __('Hubungi CS') }}"
+          aria-label="{{ __('Hubungi CS') }}"
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <span id="shoppeLiveChatHumanBtnText">Bicara CS</span>
+          <span id="shoppeLiveChatHumanBtnText">{{ __('Hubungi CS') }}</span>
         </button>
 
         <a
@@ -98,9 +98,9 @@
           type="text"
           class="shoppe-livechat-input"
           id="shoppeLiveChatInput"
-          placeholder="Ketik pesan Anda di sini..."
+          placeholder="{{ __('Ketik pertanyaan Anda...') }}"
           autocomplete="off"
-          aria-label="Pesan Live Chat"
+          aria-label="{{ __('Ketik pertanyaan Anda...') }}"
         />
         <button type="submit" class="shoppe-livechat-send-btn" id="shoppeLiveChatSend" aria-label="Kirim Pesan" disabled>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">

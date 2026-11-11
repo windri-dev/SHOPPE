@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\ContactController;
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\OrderController;
 use App\Http\Controllers\Web\PaymentWebhookController;
 use App\Http\Controllers\Web\ProductReviewController;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Katalog & Detail Produk
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');

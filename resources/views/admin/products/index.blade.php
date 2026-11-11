@@ -226,7 +226,7 @@
                   <!-- Tombol Edit Produk -->
                   <button
                     type="button"
-                    onclick="openEditProductModal('{{ $product->id }}', '{{ addslashes($product->name) }}', '{{ $product->sku }}', '{{ $product->category_id }}', '{{ $product->price }}', '{{ $product->original_price ?? '' }}', '{{ $product->stock }}', '{{ addslashes($product->badge ?? '') }}', '{{ addslashes($product->description ?? '') }}', '{{ addslashes($product->video_url ?? '') }}')"
+                    onclick="openEditProductModal('{{ $product->id }}', '{{ addslashes($product->getRawName()) }}', '{{ addslashes($product->name_en ?? '') }}', '{{ $product->sku }}', '{{ $product->category_id }}', '{{ $product->price }}', '{{ $product->original_price ?? '' }}', '{{ $product->stock }}', '{{ addslashes($product->badge ?? '') }}', '{{ addslashes($product->getRawDescription() ?? '') }}', '{{ addslashes($product->description_en ?? '') }}', '{{ addslashes($product->video_url ?? '') }}')"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 9px; font-size: 11px;"
                     title="Edit detail produk & harga"
@@ -317,9 +317,26 @@
 
     <form action="{{ route('admin.products.store') }}" method="POST" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
       @csrf
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana *</label>
-        <input type="text" name="name" required placeholder="Contoh: Aurelia Silk Bias Cut Midi Dress" class="chat-search-input" style="width: 100%; font-size: 13px;">
+
+      <!-- Auto-Translate AI Banner -->
+      <div style="background: #FDF8F0; border: 1px solid #F3E2C7; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4;">
+          <strong>✨ Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Cukup ketik Nama &amp; Deskripsi dalam Bahasa Indonesia. Sistem AI akan otomatis menerjemahkan ke Bahasa Inggris saat disimpan, atau klik tombol di samping untuk preview instan.
+        </div>
+        <button type="button" id="btnAutoTranslateCreate" onclick="triggerAiTranslate('create')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+          ✨ Translate ke EN
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana (Indonesia) *</label>
+          <input type="text" name="name" id="createProdName" required placeholder="Contoh: Gaun Pesta Sutra Satin" class="chat-search-input" style="width: 100%; font-size: 13px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Busana (English - Auto AI)</label>
+          <input type="text" name="name_en" id="createProdNameEn" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;">
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -368,9 +385,15 @@
         <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi Busana &amp; Material</label>
-        <textarea name="description" rows="3" placeholder="Deskripsi potongan, bahan kain, ukuran, dan saran styling..." class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi (Indonesia)</label>
+          <textarea name="description" id="createProdDesc" rows="3" placeholder="Deskripsi potongan, bahan kain, ukuran, dan saran styling..." class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi (English - Auto AI)</label>
+          <textarea name="description_en" id="createProdDescEn" rows="3" placeholder="Otomatis diterjemahkan AI ke English jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
+        </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
@@ -436,9 +459,24 @@
       @csrf
       @method('PUT')
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana *</label>
-        <input type="text" name="name" id="editProductName" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+      <div style="background: #FDF8F3; border: 1px solid #F3E8D8; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4;">
+          <strong>✨ Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Ubah teks Bahasa Indonesia lalu klik Translate ke EN untuk memperbarui versi Inggris dengan AI.
+        </div>
+        <button type="button" id="btnAutoTranslateEdit" onclick="triggerAiTranslate('edit')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+          ✨ Translate ke EN
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana (Indonesia) *</label>
+          <input type="text" name="name" id="editProductName" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Busana (English - Auto AI)</label>
+          <input type="text" name="name_en" id="editProductNameEn" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;">
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -481,9 +519,15 @@
         <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi &amp; Detail Kain</label>
-        <textarea name="description" id="editProductDesc" rows="3" class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi (Indonesia)</label>
+          <textarea name="description" id="editProductDesc" rows="3" class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi (English - Auto AI)</label>
+          <textarea name="description_en" id="editProductDescEn" rows="3" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
+        </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
@@ -515,9 +559,10 @@ function closeAdjustStockModal() {
 }
 
 // Modal Edit Produk
-function openEditProductModal(id, name, sku, categoryId, price, originalPrice, stock, badge, desc, videoUrl) {
+function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
+  document.getElementById('editProductNameEn').value = nameEn || '';
   document.getElementById('editProductSku').value = sku;
   document.getElementById('editProductCategory').value = categoryId;
   document.getElementById('editProductPrice').value = price;
@@ -526,10 +571,63 @@ function openEditProductModal(id, name, sku, categoryId, price, originalPrice, s
   document.getElementById('editProductBadge').value = badge || '';
   document.getElementById('editProductVideoUrl').value = videoUrl || '';
   document.getElementById('editProductDesc').value = desc || '';
+  document.getElementById('editProductDescEn').value = descEn || '';
   document.getElementById('editProductModalBackdrop').style.display = 'flex';
 }
 function closeEditProductModal() {
   document.getElementById('editProductModalBackdrop').style.display = 'none';
+}
+
+// AI Auto Translate Helper
+async function triggerAiTranslate(mode) {
+  const isCreate = mode === 'create';
+  const nameInput = document.getElementById(isCreate ? 'createProdName' : 'editProductName');
+  const descInput = document.getElementById(isCreate ? 'createProdDesc' : 'editProductDesc');
+  const nameEnInput = document.getElementById(isCreate ? 'createProdNameEn' : 'editProductNameEn');
+  const descEnInput = document.getElementById(isCreate ? 'createProdDescEn' : 'editProductDescEn');
+  const btn = document.getElementById(isCreate ? 'btnAutoTranslateCreate' : 'btnAutoTranslateEdit');
+
+  const nameVal = nameInput ? nameInput.value.trim() : '';
+  const descVal = descInput ? descInput.value.trim() : '';
+
+  if (!nameVal) {
+    alert('Harap isi Nama Busana dalam Bahasa Indonesia terlebih dahulu.');
+    if (nameInput) nameInput.focus();
+    return;
+  }
+
+  const originalBtnText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Menerjemahkan...';
+
+  try {
+    const res = await fetch("{{ route('admin.products.auto_translate') }}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: nameVal,
+        description: descVal
+      })
+    });
+
+    const data = await res.json();
+    if (data.status === 'success') {
+      if (nameEnInput) nameEnInput.value = data.name_en || '';
+      if (descEnInput) descEnInput.value = data.description_en || '';
+    } else {
+      alert('Gagal menerjemahkan: ' + (data.message || 'Terjadi kesalahan'));
+    }
+  } catch (err) {
+    console.error('Translation error:', err);
+    alert('Koneksi terjemahan AI gagal. Silakan coba kembali.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalBtnText;
+  }
 }
 </script>
 @endsection

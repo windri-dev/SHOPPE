@@ -57,13 +57,20 @@ class BlogAdminController extends Controller
             $counter++;
         }
 
+        $titleEn = ! empty($validated['title_en']) ? trim($validated['title_en']) : null;
+        $excerptEn = ! empty($validated['excerpt_en']) ? trim($validated['excerpt_en']) : null;
+        $contentEn = ! empty($validated['content_en']) ? trim($validated['content_en']) : null;
+
         $post = BlogPost::create([
             'title' => trim($validated['title']),
+            'title_en' => $titleEn,
             'slug' => $slug,
             'category' => trim($validated['category']),
             'author' => strtoupper(trim($validated['author'])),
             'excerpt' => trim($validated['excerpt']),
+            'excerpt_en' => $excerptEn,
             'content' => trim($validated['content']),
+            'content_en' => $contentEn,
             'image' => ! empty($validated['image']) ? $validated['image'] : 'images/blog-1.jpg',
             'published_at' => Carbon::now(),
         ]);
@@ -75,12 +82,19 @@ class BlogAdminController extends Controller
     {
         $validated = $request->validated();
 
+        $titleEn = array_key_exists('title_en', $validated) ? (! empty($validated['title_en']) ? trim($validated['title_en']) : null) : $blog->title_en;
+        $excerptEn = array_key_exists('excerpt_en', $validated) ? (! empty($validated['excerpt_en']) ? trim($validated['excerpt_en']) : null) : $blog->excerpt_en;
+        $contentEn = array_key_exists('content_en', $validated) ? (! empty($validated['content_en']) ? trim($validated['content_en']) : null) : $blog->content_en;
+
         $blog->update([
             'title' => trim($validated['title']),
+            'title_en' => $titleEn,
             'category' => trim($validated['category']),
             'author' => strtoupper(trim($validated['author'])),
             'excerpt' => trim($validated['excerpt']),
+            'excerpt_en' => $excerptEn,
             'content' => trim($validated['content']),
+            'content_en' => $contentEn,
             'image' => ! empty($validated['image']) ? $validated['image'] : $blog->image,
         ]);
 

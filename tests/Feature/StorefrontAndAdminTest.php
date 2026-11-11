@@ -55,13 +55,16 @@ class StorefrontAndAdminTest extends TestCase
         ]);
 
         $this->blogPost = BlogPost::create([
-            'title' => 'Top Trends From Spring',
+            'title' => 'Tren Musim Semi Terkini',
+            'title_en' => 'Top Trends From Spring',
             'slug' => 'top-trends-from-spring',
             'category' => 'Fashion',
             'author' => 'ANNY JOHNSON',
             'image' => 'images/blog-1.png',
-            'excerpt' => 'Minimalist gold silhouettes and sculptural forms.',
-            'content' => 'Spring brings a renewed appreciation for effortless layering.',
+            'excerpt' => 'Siluet emas minimalis dan bentuk skulptural.',
+            'excerpt_en' => 'Minimalist gold silhouettes and sculptural forms.',
+            'content' => 'Musim semi membawa apresiasi baru terhadap layering elegan.',
+            'content_en' => 'Spring brings a renewed appreciation for effortless layering.',
             'published_at' => now(),
         ]);
 
@@ -85,7 +88,12 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('PUTRI.J');
-        $response->assertSee('Shop The Latest');
+        $response->assertSee('Koleksi Terbaru');
+
+        // English version sees "Shop The Latest"
+        $enResponse = $this->withSession(['locale' => 'en'])->get('/');
+        $enResponse->assertStatus(200);
+        $enResponse->assertSee('Shop The Latest');
     }
 
     public function test_shop_catalog_and_product_detail_pages_are_accessible(): void
@@ -102,14 +110,25 @@ class StorefrontAndAdminTest extends TestCase
 
     public function test_blog_index_and_single_article_pages_are_accessible(): void
     {
-        $indexResponse = $this->get('/blog');
+        $indexResponse = $this->withSession(['locale' => 'id'])->get('/blog');
         $indexResponse->assertStatus(200);
-        $indexResponse->assertSee('Top Trends From Spring');
+        $indexResponse->assertSee('Tren Musim Semi Terkini');
+        $indexResponse->assertSee('Siluet emas minimalis dan bentuk skulptural.');
 
-        $showResponse = $this->get('/blog/'.$this->blogPost->slug);
+        $enIndexResponse = $this->withSession(['locale' => 'en'])->get('/blog');
+        $enIndexResponse->assertStatus(200);
+        $enIndexResponse->assertSee('Top Trends From Spring');
+        $enIndexResponse->assertSee('Minimalist gold silhouettes and sculptural forms.');
+
+        $showResponse = $this->withSession(['locale' => 'id'])->get('/blog/'.$this->blogPost->slug);
         $showResponse->assertStatus(200);
-        $showResponse->assertSee('Top Trends From Spring');
+        $showResponse->assertSee('Tren Musim Semi Terkini');
         $showResponse->assertSee('ANNY JOHNSON');
+
+        $enShowResponse = $this->withSession(['locale' => 'en'])->get('/blog/'.$this->blogPost->slug);
+        $enShowResponse->assertStatus(200);
+        $enShowResponse->assertSee('Top Trends From Spring');
+        $enShowResponse->assertSee('Spring brings a renewed appreciation for effortless layering.');
     }
 
     public function test_guest_cannot_access_checkout_and_is_redirected_to_login(): void
@@ -892,6 +911,85 @@ class StorefrontAndAdminTest extends TestCase
         $subsequentResult = $concierge->handleCustomerMessage('apakah bisa pengiriman sameday jakarta?');
         $this->assertEquals($savedFromReply->title, $subsequentResult['rule_applied']);
         $this->assertStringContainsString('Ya, kami melayani pengiriman Sameday & Instant', $subsequentResult['reply']);
+    }
+
+    public function test_user_can_switch_language_between_indonesian_and_english(): void
+    {
+        // 1. Initial request in default locale (id)
+        $homeId = $this->get(route('home'));
+        $homeId->assertStatus(200);
+        $homeId->assertSee('Koleksi');
+        $homeId->assertSee(route('locale.switch', 'en'));
+
+        // 2. Switch to English
+        $switchEn = $this->get(route('locale.switch', 'en'));
+        $switchEn->assertRedirect();
+        $switchEn->assertSessionHas('locale', 'en');
+
+        // 3. Request home with English session
+        $homeEn = $this->withSession(['locale' => 'en'])->get(route('home'));
+        $homeEn->assertStatus(200);
+        $homeEn->assertSee('Shop');
+        $homeEn->assertSee(route('locale.switch', 'id'));
+
+        // 4. Test invalid locale safely rejected
+        $switchInvalid = $this->get(route('locale.switch', 'fr'));
+        $switchInvalid->assertRedirect();
+        $this->assertNotEquals('fr', session('locale'));
+    }
+
+    public function test_product_auto_translate_and_bilingual_display(): void
+    {
+        $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();
+        $category = Category::firstOrFail();
+
+        // 1. Test AJAX auto-translate endpoint for admin preview
+        $ajaxResponse = $this->actingAs($admin)->postJson(route('admin.products.auto_translate'), [
+            'name' => 'Gaun Pesta Sutra Modern',
+            'description' => 'Gaun sutra premium dengan potongan elegan untuk pesta malam.',
+        ]);
+        $ajaxResponse->assertStatus(200);
+        $ajaxResponse->assertJsonStructure([
+            'status',
+            'name_en',
+            'description_en',
+        ]);
+        $this->assertEquals('success', $ajaxResponse->json('status'));
+        $this->assertNotEmpty($ajaxResponse->json('name_en'));
+
+        // 2. Test admin store product without English fields auto-populates them
+        $storeResponse = $this->actingAs($admin)->post(route('admin.products.store'), [
+            'name' => 'Gaun Sutra Elegan Batik',
+            'name_en' => '', // leave empty to test auto AI translation
+            'category_id' => $category->id,
+            'sku' => 'SKU-AI-TRANS-1',
+            'price' => 150.00,
+            'stock' => 12,
+            'description' => 'Kain sutra asli berpadu corak batik kontemporer.',
+            'description_en' => '', // leave empty to test auto AI translation
+        ]);
+        $storeResponse->assertRedirect();
+
+        $savedProduct = Product::where('sku', 'SKU-AI-TRANS-1')->firstOrFail();
+        $this->assertEquals('Gaun Sutra Elegan Batik', $savedProduct->getRawName());
+        $this->assertNotEmpty($savedProduct->name_en);
+        $this->assertNotEmpty($savedProduct->description_en);
+
+        // 3. Test dynamic accessor behavior based on locale
+        app()->setLocale('id');
+        $this->assertEquals('Gaun Sutra Elegan Batik', $savedProduct->name);
+
+        app()->setLocale('en');
+        $this->assertEquals($savedProduct->name_en, $savedProduct->name);
+        $this->assertEquals($savedProduct->description_en, $savedProduct->description);
+
+        // 4. Test storefront response in English session
+        $storefrontEn = $this->withSession(['locale' => 'en'])->get(route('shop.show', $savedProduct->slug));
+        $storefrontEn->assertStatus(200);
+        $storefrontEn->assertSee($savedProduct->name_en);
+
+        // Reset locale back to ID
+        app()->setLocale('id');
     }
 
     public function test_customer_can_register_with_complete_shipping_data_and_auto_fill_checkout(): void

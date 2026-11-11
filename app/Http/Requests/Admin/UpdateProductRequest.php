@@ -25,6 +25,7 @@ class UpdateProductRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
             'sku' => ['required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($product?->id)],
             'price' => ['required', 'numeric', 'min:0.01'],
@@ -32,6 +33,7 @@ class UpdateProductRequest extends FormRequest
             'stock' => ['required', 'integer', 'min:0'],
             'badge' => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string', 'max:2000'],
+            'description_en' => ['nullable', 'string', 'max:2000'],
             'image_url' => ['nullable', 'string', 'max:255'],
             'video_url' => ['nullable', 'string', 'max:500'],
             'is_featured' => ['nullable', 'boolean'],

@@ -27,6 +27,7 @@ class ProductFactory extends Factory
             'category_id' => Category::factory(),
             'sku' => 'SKU-'.strtoupper(Str::random(6)),
             'name' => $name,
+            'name_en' => $name,
             'slug' => Str::slug($name),
             'price' => fake()->randomFloat(2, 18, 120),
             'original_price' => null,
@@ -35,6 +36,7 @@ class ProductFactory extends Factory
             'is_active' => true,
             'badge' => null,
             'description' => fake()->paragraph(),
+            'description_en' => fake()->paragraph(),
             'images' => ['images/product-1.png'],
             'sales_count' => fake()->numberBetween(0, 50),
         ];

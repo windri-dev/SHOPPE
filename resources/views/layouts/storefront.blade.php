@@ -22,6 +22,20 @@
       isAuthenticated: {{ auth()->check() ? 'true' : 'false' }},
       loginUrl: "{{ route('login') }}"
     };
+    window.ShoppeLocale = "{{ app()->getLocale() }}";
+    window.__trans = {
+      emptyCartDrawer: "{{ __('Your shopping bag is currently empty.') }}",
+      emptyCartPage: "{{ __('Keranjang belanja Anda saat ini kosong.') }}",
+      startShopping: "{{ __('Mulai Belanja') }}",
+      exploreShop: "{{ __('Explore Shop') }}",
+      emptyCheckout: "{{ __('Keranjang Anda kosong.') }}",
+      chooseProduct: "{{ __('Pilih produk di katalog') }}",
+      subtotal: "{{ __('Subtotal') }}",
+      items: "{{ __('items') }}",
+      item: "{{ __('item') }}",
+      remove: "{{ __('Hapus') }}",
+      qty: "{{ __('Qty') }}"
+    };
   </script>
 
   <!-- Technical SEO & Indexability -->

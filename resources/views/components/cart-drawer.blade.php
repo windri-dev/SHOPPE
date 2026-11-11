@@ -2,8 +2,8 @@
 <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Bag Drawer">
   <div class="drawer-header">
     <div class="drawer-title-wrap">
-      <h3 class="drawer-title">Shopping bag</h3>
-      <span class="drawer-item-count" id="drawerItemCount">0 items</span>
+      <h3 class="drawer-title">{{ __('Shopping bag') }}</h3>
+      <span class="drawer-item-count" id="drawerItemCount">0 {{ __('items') }}</span>
     </div>
     <button class="drawer-close-btn" data-action="close-cart" aria-label="Close Shopping Bag">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -19,15 +19,15 @@
 
   <div class="drawer-footer">
     <div class="subtotal-row">
-      <span class="subtotal-label" id="subtotalLabel">Subtotal (0 items)</span>
+      <span class="subtotal-label" id="subtotalLabel">{{ __('Subtotal') }} (0 {{ __('items') }})</span>
       <span class="subtotal-price" id="cartSubtotal">$ 0.00</span>
     </div>
     <div class="drawer-footer-actions">
-      <a href="{{ route('cart.index') }}" class="btn btn-outline btn-block">View Cart</a>
+      <a href="{{ route('cart.index') }}" class="btn btn-outline btn-block">{{ __('View Cart') }}</a>
       @guest
-        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">Login untuk Checkout</a>
+        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">{{ __('Login untuk Checkout') }}</a>
       @else
-        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">Proceed To Checkout</a>
+        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">{{ __('Proceed To Checkout') }}</a>
       @endguest
     </div>
   </div>

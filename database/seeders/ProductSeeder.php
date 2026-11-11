@@ -333,6 +333,8 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $prodData) {
+            $prodData['name_en'] = $prodData['name_en'] ?? $prodData['name'];
+            $prodData['description_en'] = $prodData['description_en'] ?? $prodData['description'];
             Product::updateOrCreate(['sku' => $prodData['sku']], $prodData);
         }
     }

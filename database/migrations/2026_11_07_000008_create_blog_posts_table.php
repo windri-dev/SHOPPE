@@ -11,12 +11,15 @@ return new class extends Migration
         Schema::create('blog_posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('title_en')->nullable();
             $table->string('slug')->unique();
-            $table->string('category')->default('Jewelry Care');
+            $table->string('category')->default('Fashion');
             $table->text('excerpt')->nullable();
+            $table->text('excerpt_en')->nullable();
             $table->longText('content');
+            $table->longText('content_en')->nullable();
             $table->string('image')->nullable();
-            $table->string('author')->default('SHOPPE Editorial');
+            $table->string('author')->default('PUTRI.J Editorial');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });

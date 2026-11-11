@@ -29,25 +29,25 @@
     <div style="padding: 20px 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #111827;">Informasi Pembayaran Pesanan</h3>
+          <h3 style="font-size: 16px; font-weight: 700; margin: 0; color: #111827;">{{ __('Informasi Pembayaran Pesanan') }}</h3>
           @if($order->payment_status === 'paid')
             <span style="background: #10B981; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              LUNAS
+              {{ __('LUNAS') }}
             </span>
           @elseif($order->payment_status === 'waiting_verification')
             <span style="background: #2563EB; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              MENUNGGU VERIFIKASI BUKTI
+              {{ __('MENUNGGU VERIFIKASI BUKTI') }}
             </span>
           @else
             <span style="background: #F59E0B; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px;">
-              MENUNGGU PEMBAYARAN
+              {{ __('MENUNGGU PEMBAYARAN') }}
             </span>
           @endif
         </div>
         <div style="font-size: 15px; font-weight: 700; color: #111827;">
-          Total Tagihan: <span style="color: #A18A68;">{{ $order->formatted_grand_total }}</span>
+          {{ __('Total Tagihan:') }} <span style="color: #A18A68;">{{ $order->formatted_grand_total }}</span>
         </div>
       </div>
 
@@ -86,8 +86,8 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 14px;">
             <div>
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span style="background: #A18A68; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Rekomendasi</span>
-                <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Pembayaran Otomatis & Instan</h4>
+                <span style="background: #A18A68; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">{{ __('Rekomendasi') }}</span>
+                <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">{{ __('Pembayaran Otomatis & Instan') }}</h4>
               </div>
               <p style="margin: 0; font-size: 13px; color: #6B7280;">
                 Mendukung <strong>QRIS (BCA, GoPay, OVO, ShopeePay)</strong>, <strong>Virtual Account Multi-Bank</strong>, serta <strong>Kartu Kredit / Debit</strong>. Verifikasi otomatis dalam hitungan detik tanpa upload bukti transfer.
@@ -108,7 +108,7 @@
               style="padding: 12px 26px; font-size: 14px; font-weight: 700; background: #A18A68; border-color: #A18A68; color: #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(161, 138, 104, 0.3);"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-              <span>Bayar Sekarang (PGA / Snap)</span>
+              <span>{{ __('Bayar Sekarang (PGA / Snap)') }}</span>
             </button>
 
             <!-- Instant Sandbox Simulation for rapid testing -->
@@ -122,7 +122,7 @@
                 title="Simulasi instan khusus testing sandbox"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                Simulasi Lunas Sandbox
+                {{ __('Simulasi Lunas Sandbox') }}
               </button>
             </form>
           </div>
@@ -218,7 +218,7 @@
 
               <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-top: 4px;">
                 <button type="submit" class="btn btn-primary" style="padding: 9px 20px; font-size: 13px; font-weight: 600;">
-                  Kirim Bukti Konfirmasi Transfer
+                  {{ __('Kirim Bukti Konfirmasi Transfer') }}
                 </button>
               </div>
             </form>
@@ -231,26 +231,26 @@
   <div class="order-details-grid">
     <!-- Left: Order Information -->
     <div>
-      <h1 class="order-section-title">Order Details</h1>
+      <h1 class="order-section-title">{{ __('Detail Pesanan') }}</h1>
 
       <div class="order-info-grid">
         <div class="order-info-group">
-          <div class="order-info-label">ORDER NUMBER</div>
+          <div class="order-info-label">{{ __('Nomor Pesanan:') }}</div>
           <p class="order-info-value">{{ $order->order_number }}</p>
         </div>
 
         <div class="order-info-group">
-          <div class="order-info-label">DELIVERY OPTIONS</div>
+          <div class="order-info-label">{{ __('Metode Pengiriman') }}</div>
           <p class="order-info-value">Standard Express Delivery</p>
         </div>
 
         <div class="order-info-group">
-          <div class="order-info-label">EMAIL</div>
+          <div class="order-info-label">{{ __('Email') }}</div>
           <p class="order-info-value">{{ $order->customer_email }}</p>
         </div>
 
         <div class="order-info-group">
-          <div class="order-info-label">DELIVERY ADDRESS</div>
+          <div class="order-info-label">{{ __('Alamat Pengiriman') }}</div>
           <p class="order-info-value">
             <strong>{{ $order->customer_name }}</strong>
             @if(!empty($order->shipping_address['label']))

@@ -112,10 +112,19 @@ class AiConciergeService
             ];
         }
 
-        // 4.5 Cek Sapaan Murni Pelanggan (Pure Greeting: "hallo", "halo kak", "selamat siang", dll.)
+        // 4.5 Cek Sapaan Murni Pelanggan (Pure Greeting: "hallo", "halo kak", "selamat siang", "hello", dll.)
         if ($this->isPureGreeting($q)) {
-            $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-            $greetingFallback = "{$customerGreeting} Selamat datang di butik busana **PUTRI.J** ✨ Ada yang bisa kami bantu seputar koleksi busana, panduan ukuran (size chart), atau pesanan Anda hari ini?";
+            $isEn = app()->getLocale() === 'en';
+            if ($isEn) {
+                $customerGreeting = $user ? "Hello **{$user->name}**!" : 'Hello!';
+                $greetingFallback = "{$customerGreeting} Welcome to **PUTRI.J** luxury fashion boutique ✨ How may we assist you with our collections, size guide, or your order today?";
+                $actionLabel = 'Explore Collection';
+            } else {
+                $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
+                $greetingFallback = "{$customerGreeting} Selamat datang di butik busana **PUTRI.J** ✨ Ada yang bisa kami bantu seputar koleksi busana, panduan ukuran (size chart), atau pesanan Anda hari ini?";
+                $actionLabel = 'Buka Katalog Busana';
+            }
+
             $greetingReply = $this->callExternalAiApi($cleanMessage, $greetingFallback, $user, $inquiry) ?? $greetingFallback;
 
             if ($inquiry) {
@@ -128,7 +137,7 @@ class AiConciergeService
                 'handling_mode' => 'ai',
                 'reply' => $greetingReply,
                 'action_btn' => [
-                    'label' => 'Buka Katalog Busana',
+                    'label' => $actionLabel,
                     'url' => route('shop.index'),
                     'external' => false,
                 ],
@@ -784,12 +793,18 @@ class AiConciergeService
             ->implode("\n");
 
         $customerName = $user?->name ?? $inquiry?->name ?? 'Pelanggan';
+        $isEn = app()->getLocale() === 'en';
+        $langInstruction = $isEn
+            ? 'Jawab dalam Bahasa Inggris yang elegan dan natural (Respond in refined, concise English).'
+            : 'Jawab dalam Bahasa Indonesia yang ramah dan elegan (atau dalam Bahasa Inggris jika pelanggan bertanya dalam Bahasa Inggris).';
+
         $systemPrompt = "Anda adalah Aria, asisten konsultan butik busana wanita & ready-to-wear PUTRI.J (dress, atasan/blouse, blazer, celana, rok, dan setelan rajut).\n"
-            ."Jawab sapaan dan pertanyaan pelanggan seputar rekomendasi busana, ukuran (size chart), bahan kain premium, dan bantuan belanja dengan ramah, hangat, elegan, dan ringkas (maksimal 2-3 kalimat) dalam Bahasa Indonesia.\n\n"
+            ."Jawab sapaan dan pertanyaan pelanggan seputar rekomendasi busana, ukuran (size chart), bahan kain premium, dan bantuan belanja.\n"
+            ."Pedoman Bahasa: {$langInstruction}\n\n"
             ."Koleksi Utama:\n{$catalogSnapshot}\n\n"
             ."Aturan:\n"
             ."1. Jawab singkat, hangat, berkelas, dan padat (maksimal 2-3 kalimat).\n"
-            ."2. Jika pelanggan hanya menyapa (halo/hai/pagi/siang/malam), balas dengan sapaan hangat dan tawarkan bantuan untuk memilih busana yang pas atau mengecek pesanan.\n"
+            ."2. Jika pelanggan hanya menyapa (halo/hai/hello/hi), balas dengan sapaan hangat dan tawarkan bantuan untuk memilih busana yang pas atau mengecek pesanan.\n"
             .'3. Jika pelanggan membutuhkan bantuan pesanan atau komplain, arahkan untuk menghubungi Customer Service kami.';
 
         try {

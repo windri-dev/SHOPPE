@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('sku')->unique();
             $table->string('name');
+            $table->string('name_en')->nullable();
             $table->string('slug')->unique();
             $table->decimal('price', 10, 2);
             $table->decimal('original_price', 10, 2)->nullable();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('badge')->nullable();
             $table->text('description')->nullable();
+            $table->text('description_en')->nullable();
             $table->json('images')->nullable();
             $table->string('video_url')->nullable();
             $table->integer('sales_count')->default(0);

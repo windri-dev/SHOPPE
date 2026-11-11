@@ -24,12 +24,15 @@ class BlogPostFactory extends Factory
 
         return [
             'title' => $title,
+            'title_en' => $title,
             'slug' => Str::slug($title),
             'category' => 'Fashion',
             'author' => fake()->name(),
             'image' => 'images/blog-1.jpg',
             'excerpt' => fake()->sentence(12),
+            'excerpt_en' => fake()->sentence(12),
             'content' => fake()->paragraphs(3, true),
+            'content_en' => fake()->paragraphs(3, true),
             'published_at' => now(),
         ];
     }

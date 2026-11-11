@@ -102,7 +102,7 @@
           @endfor
         </div>
         <span class="rating-count" style="font-size: 13px; color: #4B5563; font-weight: 500;">
-          <strong style="color: #111827;">{{ number_format($product->average_rating, 1) }}</strong> / 5.0 ({{ $product->reviews_count }} ulasan)
+          <strong style="color: #111827;">{{ number_format($product->average_rating, 1) }}</strong> / 5.0 ({{ $product->reviews_count }} {{ __('ulasan') }})
         </span>
       </a>
 
@@ -111,8 +111,8 @@
       <!-- Apparel Size Selector Pill -->
       <div style="margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="font-size: 13px; font-weight: 600; color: #111827;">Pilihan Ukuran (Size):</span>
-          <button type="button" onclick="document.querySelector('[data-pdp-tab=\'tabInfo\']').click()" style="background: none; border: none; font-size: 12px; color: #A18A68; text-decoration: underline; cursor: pointer;">Panduan Ukuran (Size Chart)</button>
+          <span style="font-size: 13px; font-weight: 600; color: #111827;">{{ __('Pilihan Ukuran:') }}</span>
+          <button type="button" onclick="document.querySelector('[data-pdp-tab=\'tabInfo\']').click()" style="background: none; border: none; font-size: 12px; color: #A18A68; text-decoration: underline; cursor: pointer;">{{ __('Panduan Ukuran (Size Chart)') }}</button>
         </div>
         <div style="display: flex; gap: 8px;" id="pdpSizeSelector">
           @foreach(['S', 'M', 'L', 'XL'] as $idx => $size)
@@ -146,13 +146,13 @@
             data-product-price="{{ $product->price }}"
             data-product-img="{{ asset($product->primary_image) }}"
           >
-            ADD TO CART
+            {{ __('Add to Cart') }}
           </button>
         </div>
       @else
         <div class="detail-actions-row">
           <button type="button" class="btn-add-cart-outline" disabled style="opacity: 0.6; cursor: not-allowed;">
-            SOLD OUT
+            {{ __('Sold Out') }}
           </button>
         </div>
       @endif
@@ -182,18 +182,18 @@
 
       <div class="detail-meta-list">
         <div class="meta-item"><strong>SKU:</strong> {{ $product->sku }}</div>
-        <div class="meta-item"><strong>Kategori:</strong> {{ $product->category->name ?? 'Apparel & Ready-to-Wear' }}</div>
+        <div class="meta-item"><strong>{{ __('Categories:') }}</strong> {{ $product->category->name ?? 'Apparel & Ready-to-Wear' }}</div>
         <div class="meta-item">
-          <strong>Ketersediaan:</strong>
+          <strong>{{ __('Ketersediaan:') }}</strong>
           @if($product->isInStock())
-            <span style="color: #2E7D32;">In Stock ({{ $product->stock }} pcs)</span>
+            <span style="color: #2E7D32;">{{ __('Ready') }} ({{ $product->stock }} pcs)</span>
           @else
-            <span style="color: #C62828;">Sold Out</span>
+            <span style="color: #C62828;">{{ __('Sold Out') }}</span>
           @endif
         </div>
         <div class="meta-item">
-          <strong>Garansi:</strong>
-          <span style="color: #4B5563;">Complimentary Size Exchange 7 Hari</span>
+          <strong>{{ __('Garansi:') }}</strong>
+          <span style="color: #4B5563;">{{ __('Complimentary Size Exchange 7 Hari') }}</span>
         </div>
       </div>
     </div>
@@ -202,16 +202,16 @@
   <!-- Product Tabs -->
   <section class="product-tabs-section">
     <div class="tab-nav-list" role="tablist">
-      <button type="button" class="tab-btn active" data-pdp-tab="tabDesc" role="tab" aria-selected="true">Description</button>
-      <button type="button" class="tab-btn" data-pdp-tab="tabInfo" role="tab" aria-selected="false">Panduan Ukuran &amp; Material</button>
+      <button type="button" class="tab-btn active" data-pdp-tab="tabDesc" role="tab" aria-selected="true">{{ __('Description') }}</button>
+      <button type="button" class="tab-btn" data-pdp-tab="tabInfo" role="tab" aria-selected="false">{{ __('Size Guide & Material') }}</button>
     </div>
 
     <div class="tab-panel active" id="tabDesc" role="tabpanel">
       <p style="line-height: 1.8; color: #4B5563;">{{ $product->description }}</p>
       <div style="margin-top: 18px; padding: 16px; background: #FAF9F6; border-radius: 8px; border: 1px solid #E5E7EB;">
-        <h4 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 8px 0;">✨ Catatan Styling PUTRI.J</h4>
+        <h4 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 8px 0;">✨ {{ __('Catatan Styling PUTRI.J') }}</h4>
         <p style="font-size: 13.5px; color: #6B7280; margin: 0; line-height: 1.6;">
-          Padukan busana ini dengan sepatu hak minimalis atau mules santai untuk kesan refined luxury. Material berkarakter jatuh rapi dan bernapas sejuk, nyaman dikenakan sepanjang hari dalam berbagai suasana.
+          {{ app()->getLocale() === 'en' ? 'Pair this piece with minimalist mules or delicate strappy heels for an understated luxury look. Breathable, fluid drape designed to move gracefully throughout your day.' : 'Padukan busana ini dengan sepatu hak minimalis atau mules santai untuk kesan refined luxury. Material berkarakter jatuh rapi dan bernapas sejuk, nyaman dikenakan sepanjang hari dalam berbagai suasana.' }}
         </p>
       </div>
     </div>
@@ -219,24 +219,24 @@
     <div class="tab-panel" id="tabInfo" role="tabpanel">
       <div class="additional-info-list">
         <div class="info-row">
-          <span class="info-label">Material Kain:</span>
+          <span class="info-label">{{ __('Material Kain:') }}</span>
           <span class="info-value">French Washed Linen, Mulberry Silk Blend, Organic Poplin Cotton</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Pilihan Ukuran:</span>
+          <span class="info-label">{{ __('Pilihan Ukuran:') }}</span>
           <span class="info-value">S (LD 88-92 cm), M (LD 94-98 cm), L (LD 100-104 cm), XL (LD 106-112 cm)</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Siluet / Potongan:</span>
+          <span class="info-label">{{ __('Siluet / Potongan:') }}</span>
           <span class="info-value">Tailored Relaxed Fit, Draped Silhouette</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Petunjuk Perawatan:</span>
-          <span class="info-value">Cuci lembut dengan air dingin (hand wash/delicate cycle), jemur terbalik di tempat teduh, setrika suhu sedang.</span>
+          <span class="info-label">{{ __('Petunjuk Perawatan:') }}</span>
+          <span class="info-value">{{ app()->getLocale() === 'en' ? 'Gentle wash in cold water (hand wash or delicate cycle), line dry inside out in shade, medium iron.' : 'Cuci lembut dengan air dingin (hand wash/delicate cycle), jemur terbalik di tempat teduh, setrika suhu sedang.' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Garansi Tukar Ukuran:</span>
-          <span class="info-value">Tukar ukuran gratis 1x dalam 7 hari jika baju kebesaran atau kekecilan.</span>
+          <span class="info-label">{{ __('Garansi Tukar Ukuran:') }}</span>
+          <span class="info-value">{{ __('Tukar ukuran gratis 1x dalam 7 hari jika baju kebesaran atau kekecilan.') }}</span>
         </div>
       </div>
     </div>
@@ -246,7 +246,7 @@
   <section class="product-reviews-section" id="customer-reviews" style="margin-top: 50px; margin-bottom: 60px; scroll-margin-top: 90px;">
     <!-- Section Title -->
     <div style="margin-bottom: 16px;">
-      <h2 style="font-size: 19px; font-weight: 700; color: rgba(0,0,0,0.87); margin: 0; letter-spacing: -0.01em;">Penilaian Produk</h2>
+      <h2 style="font-size: 19px; font-weight: 700; color: rgba(0,0,0,0.87); margin: 0; letter-spacing: -0.01em;">{{ __('Penilaian Produk') }}</h2>
     </div>
 
     @if(session('review_success'))
@@ -258,7 +258,7 @@
 
     @if($errors->any())
       <div style="margin-bottom: 20px; padding: 12px 16px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 4px; color: #991B1B; font-size: 13px;">
-        <strong>Mohon lengkapi isian penilaian:</strong>
+        <strong>{{ __('Mohon lengkapi isian penilaian:') }}</strong>
         <ul style="margin: 4px 0 0 18px; padding: 0;">
           @foreach($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -273,7 +273,7 @@
       <div style="min-width: 150px; text-align: center;">
         <div style="line-height: 1;">
           <span style="font-size: 32px; font-weight: 700; color: #111827;">{{ number_format($product->average_rating, 1) }}</span>
-          <span style="font-size: 16px; font-weight: 500; color: #A18A68; margin-left: 2px;">dari 5</span>
+          <span style="font-size: 16px; font-weight: 500; color: #A18A68; margin-left: 2px;">{{ __('dari 5') }}</span>
         </div>
         <div style="color: #A18A68; font-size: 20px; margin-top: 8px; letter-spacing: 2px;">
           @for($i = 1; $i <= 5; $i++)
@@ -291,14 +291,14 @@
         @php
           $breakdown = $product->rating_breakdown;
         @endphp
-        <button type="button" class="shoppe-filter-btn active" data-filter="all">Semua</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="5">5 Bintang ({{ $breakdown[5]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="4">4 Bintang ({{ $breakdown[4]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="3">3 Bintang ({{ $breakdown[3]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="2">2 Bintang ({{ $breakdown[2]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="1">1 Bintang ({{ $breakdown[1]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="comment">Dengan Komentar ({{ $product->reviews_with_comment_count }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="media">Dengan Media ({{ $product->reviews_with_media_count }})</button>
+        <button type="button" class="shoppe-filter-btn active" data-filter="all">{{ __('Semua') }}</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="5">5 {{ __('Bintang') }} ({{ $breakdown[5]['count'] }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="4">4 {{ __('Bintang') }} ({{ $breakdown[4]['count'] }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="3">3 {{ __('Bintang') }} ({{ $breakdown[3]['count'] }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="2">2 {{ __('Bintang') }} ({{ $breakdown[2]['count'] }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="1">1 {{ __('Bintang') }} ({{ $breakdown[1]['count'] }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="comment">{{ __('Dengan Komentar') }} ({{ $product->reviews_with_comment_count }})</button>
+        <button type="button" class="shoppe-filter-btn" data-filter="media">{{ __('Dengan Media') }} ({{ $product->reviews_with_media_count }})</button>
 
         <button
           type="button"
@@ -308,7 +308,7 @@
           onmouseout="this.style.background='#111827'; this.style.borderColor='#111827';"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-          Tulis Penilaian
+          {{ __('Tulis Penilaian') }}
         </button>
       </div>
     </div>
@@ -316,7 +316,7 @@
     <!-- Review Submission Form (Expandable) -->
     <div id="reviewFormContainer" style="display: {{ $errors->any() ? 'block' : 'none' }}; margin-bottom: 28px; padding: 24px; border: 1px solid #EAEAEA; border-radius: 6px; background: #FAF9F6;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #EAEAEA;">
-        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0;">Beri Penilaian &amp; Ulasan Produk</h3>
+        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0;">{{ __('Beri Penilaian & Ulasan Produk') }}</h3>
         <button type="button" id="btnCloseReviewForm" style="background: none; border: none; font-size: 20px; line-height: 1; color: #9CA3AF; cursor: pointer;">&times;</button>
       </div>
 
@@ -324,7 +324,7 @@
         @csrf
         <!-- Rating Star Picker -->
         <div style="margin-bottom: 18px;">
-          <label style="display: block; font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 6px;">Kualitas Produk <span style="color: #A18A68;">*</span></label>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 6px;">{{ __('Kualitas Produk') }} <span style="color: #A18A68;">*</span></label>
           <div style="display: flex; align-items: center; gap: 12px;">
             <div id="starPickerGroup" style="display: inline-flex; gap: 4px; font-size: 26px; cursor: pointer; color: #D1D5DB;">
               @for($s = 1; $s <= 5; $s++)
@@ -332,14 +332,14 @@
               @endfor
             </div>
             <input type="hidden" name="rating" id="reviewRatingInput" value="{{ old('rating', '5') }}" required>
-            <span id="starRatingLabel" style="font-size: 13px; font-weight: 600; color: #A18A68;">5 Bintang - Sangat Baik</span>
+            <span id="starRatingLabel" style="font-size: 13px; font-weight: 600; color: #A18A68;">5 {{ __('Bintang') }}</span>
           </div>
         </div>
 
         <!-- Name, Email, Variant & Tags Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
           <div>
-            <label for="reviewCustomerName" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Username / Nama <span style="color: #A18A68;">*</span></label>
+            <label for="reviewCustomerName" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">{{ __('Username / Nama') }} <span style="color: #A18A68;">*</span></label>
             <input
               type="text"
               name="customer_name"
@@ -351,7 +351,7 @@
             >
           </div>
           <div>
-            <label for="reviewSizePurchased" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Variasi Produk yang Dibeli</label>
+            <label for="reviewSizePurchased" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">{{ __('Variasi Produk yang Dibeli') }}</label>
             <input
               type="text"
               name="size_purchased"
@@ -362,7 +362,7 @@
             >
           </div>
           <div>
-            <label for="reviewQualityTag" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Kualitas Bahan</label>
+            <label for="reviewQualityTag" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">{{ __('Kualitas Bahan') }}</label>
             <input
               type="text"
               name="quality_tag"
@@ -373,7 +373,7 @@
             >
           </div>
           <div>
-            <label for="reviewFitTag" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Kesesuaian Ukuran</label>
+            <label for="reviewFitTag" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">{{ __('Kesesuaian Ukuran') }}</label>
             <input
               type="text"
               name="fit_tag"
@@ -387,13 +387,13 @@
 
         <!-- Comment -->
         <div style="margin-bottom: 16px;">
-          <label for="reviewComment" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">Deskripsi Ulasan <span style="color: #A18A68;">*</span></label>
+          <label for="reviewComment" style="display: block; font-size: 12.5px; font-weight: 600; color: #374151; margin-bottom: 5px;">{{ __('Deskripsi Ulasan') }} <span style="color: #A18A68;">*</span></label>
           <textarea
             name="comment"
             id="reviewComment"
             rows="3"
             required
-            placeholder="Tulis ulasan Anda mengenai kualitas barang, kecepatan pengiriman, dan pelayanan penjual..."
+            placeholder="{{ __('Tulis ulasan Anda mengenai kualitas barang, kecepatan pengiriman, dan pelayanan penjual...') }}"
             style="width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1px solid #D1D5DB; border-radius: 4px; outline: none; box-sizing: border-box; resize: vertical; background: #FFFFFF;"
           >{{ old('comment') }}</textarea>
         </div>
@@ -404,7 +404,7 @@
             id="btnCancelReviewForm"
             style="padding: 7px 16px; background: #FFFFFF; border: 1px solid #D1D5DB; color: #4B5563; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer;"
           >
-            Batal
+            {{ __('Batal') }}
           </button>
           <button
             type="submit"
@@ -412,7 +412,7 @@
             onmouseover="this.style.background='#A18A68'; this.style.borderColor='#A18A68';"
             onmouseout="this.style.background='#111827'; this.style.borderColor='#111827';"
           >
-            Kirim Penilaian
+            {{ __('Kirim Penilaian') }}
           </button>
         </div>
       </form>
@@ -502,7 +502,7 @@
             <!-- Respon Penjual (Seller Response Box with Gold Accent Line) -->
             @if($review->seller_reply)
               <div style="background: #F7F5F0; border-left: 3px solid #A18A68; border-radius: 4px; padding: 12px 16px; margin-bottom: 14px; border-top: 1px solid #EFECE6; border-right: 1px solid #EFECE6; border-bottom: 1px solid #EFECE6;">
-                <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 4px;">Respon Penjual:</div>
+                <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 4px;">{{ __('Respon Penjual:') }}</div>
                 <div style="font-size: 13px; line-height: 1.5; color: #4B5563;">{{ $review->seller_reply }}</div>
               </div>
             @endif
@@ -525,12 +525,12 @@
         </div>
       @empty
         <div style="text-align: center; padding: 40px 20px; color: #6B7280; font-size: 14px;">
-          Belum ada penilaian untuk produk ini.
+          {{ __('Belum ada penilaian untuk produk ini.') }}
         </div>
       @endforelse
 
       <div id="noMatchingReviewsMsg" style="display: none; text-align: center; padding: 40px 20px; color: #6B7280; font-size: 14px;">
-        Tidak ada penilaian yang sesuai dengan filter ini.
+        {{ __('Tidak ada penilaian yang sesuai dengan filter ini.') }}
       </div>
     </div>
   </section>

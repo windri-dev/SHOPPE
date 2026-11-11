@@ -10,6 +10,8 @@ use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\ProductTranslationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,6 +19,10 @@ use Illuminate\View\View;
 
 class ProductAdminController extends Controller
 {
+    public function __construct(
+        protected ProductTranslationService $translationService
+    ) {}
+
     public function index(Request $request): View
     {
         $query = Product::with('category')->latest();
@@ -87,9 +93,23 @@ class ProductAdminController extends Controller
             ? [$validated['image_url']]
             : ['images/product-1.png'];
 
+        $nameEn = ! empty($validated['name_en']) ? trim($validated['name_en']) : null;
+        $descriptionEn = ! empty($validated['description_en']) ? trim($validated['description_en']) : null;
+
+        // Auto-Translate via AI jika nama atau deskripsi bahasa Inggris belum diisi
+        if (empty($nameEn) || empty($descriptionEn)) {
+            $translated = $this->translationService->translateToEnglish(
+                $validated['name'],
+                $validated['description'] ?? 'Koleksi busana eksklusif PUTRI.J dengan material premium pilihan.'
+            );
+            $nameEn = $nameEn ?: $translated['name_en'];
+            $descriptionEn = $descriptionEn ?: $translated['description_en'];
+        }
+
         $product = Product::create([
             'category_id' => (int) $validated['category_id'],
             'name' => $validated['name'],
+            'name_en' => $nameEn,
             'slug' => $slug,
             'sku' => $sku,
             'price' => $validated['price'],
@@ -97,6 +117,7 @@ class ProductAdminController extends Controller
             'stock' => (int) $validated['stock'],
             'badge' => $badge,
             'description' => $validated['description'] ?? 'Koleksi busana eksklusif PUTRI.J dengan material premium pilihan.',
+            'description_en' => $descriptionEn,
             'images' => $images,
             'video_url' => $validated['video_url'] ?? null,
             'is_featured' => $request->boolean('is_featured'),
@@ -128,15 +149,30 @@ class ProductAdminController extends Controller
             $images = [$validated['image_url']];
         }
 
+        $nameEn = ! empty($validated['name_en']) ? trim($validated['name_en']) : null;
+        $descriptionEn = ! empty($validated['description_en']) ? trim($validated['description_en']) : null;
+
+        // Auto-Translate via AI jika kolom bahasa Inggris dikosongkan
+        if (empty($nameEn) || empty($descriptionEn)) {
+            $translated = $this->translationService->translateToEnglish(
+                $validated['name'],
+                $validated['description'] ?? $product->getRawDescription() ?? ''
+            );
+            $nameEn = $nameEn ?: $translated['name_en'];
+            $descriptionEn = $descriptionEn ?: $translated['description_en'];
+        }
+
         $product->update([
             'name' => $validated['name'],
+            'name_en' => $nameEn,
             'category_id' => (int) $validated['category_id'],
             'sku' => strtoupper(trim($validated['sku'])),
             'price' => $validated['price'],
             'original_price' => $validated['original_price'] ?? null,
             'stock' => $stock,
             'badge' => $badge,
-            'description' => $validated['description'] ?? $product->description,
+            'description' => $validated['description'] ?? $product->getRawDescription(),
+            'description_en' => $descriptionEn,
             'images' => $images,
             'video_url' => array_key_exists('video_url', $validated) ? $validated['video_url'] : $product->video_url,
             'is_featured' => $request->boolean('is_featured'),
@@ -222,5 +258,30 @@ class ProductAdminController extends Controller
         ]);
 
         return back()->with('success', "Status stok {$product->name} berhasil diperbarui ({$newStock} pcs).");
+    }
+
+    /**
+     * AJAX endpoint: Auto-Translate nama & deskripsi produk dari ID ke EN menggunakan AI.
+     */
+    public function autoTranslate(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $translated = $this->translationService->translateToEnglish(
+            $validated['name'],
+            $validated['description'] ?? ''
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'success' => true,
+            'message' => 'Terjemahan Bahasa Inggris berhasil di-generate oleh AI.',
+            'name_en' => $translated['name_en'] ?? '',
+            'description_en' => $translated['description_en'] ?? '',
+            'data' => $translated,
+        ]);
     }
 }

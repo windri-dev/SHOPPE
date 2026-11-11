@@ -1,13 +1,13 @@
 @extends('layouts.storefront')
 
-@section('title', 'Contact Us - PUTRI.J')
+@section('title', __('Contact Us') . ' - PUTRI.J')
 
 @section('content')
 <div class="container contact-page">
   <div class="contact-header">
-    <h1 class="contact-title">Contact Us</h1>
+    <h1 class="contact-title">{{ __('Contact Us') }}</h1>
     <p class="contact-subtitle">
-      Silakan hubungi tim Concierge kami untuk pertanyaan seputar koleksi busana, pesanan, atau kolaborasi khusus.
+      {{ __('Silakan hubungi tim Concierge kami untuk pertanyaan seputar koleksi busana, pesanan, atau kolaborasi khusus.') }}
     </p>
   </div>
 
@@ -29,37 +29,37 @@
       @csrf
       <div class="contact-form-row">
         <div class="contact-input-wrap">
-          <input type="text" name="name" required value="{{ old('name') }}" placeholder="Nama Lengkap *" class="contact-input">
+          <input type="text" name="name" required value="{{ old('name') }}" placeholder="{{ __('Nama Lengkap *') }}" class="contact-input">
         </div>
         <div class="contact-input-wrap">
-          <input type="email" name="email" required value="{{ old('email') }}" placeholder="Email *" class="contact-input">
+          <input type="email" name="email" required value="{{ old('email') }}" placeholder="{{ __('Email *') }}" class="contact-input">
         </div>
       </div>
 
       <div class="contact-form-row">
         <div class="contact-input-wrap">
-          <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="Nomor Telepon / WhatsApp" class="contact-input">
+          <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="{{ __('Nomor Telepon / WhatsApp') }}" class="contact-input">
         </div>
         <div class="contact-input-wrap">
-          <input type="text" name="subject" value="{{ old('subject') }}" placeholder="Subjek *" class="contact-input" required>
+          <input type="text" name="subject" value="{{ old('subject') }}" placeholder="{{ __('Subjek *') }}" class="contact-input" required>
         </div>
       </div>
 
       <div class="contact-input-wrap">
-        <textarea name="message" rows="5" required placeholder="Tuliskan pesan Anda di sini... *" class="contact-input contact-textarea">{{ old('message') }}</textarea>
+        <textarea name="message" rows="5" required placeholder="{{ __('Tuliskan pesan Anda di sini... *') }}" class="contact-input contact-textarea">{{ old('message') }}</textarea>
       </div>
 
       <button type="submit" class="contact-submit-btn">
-        KIRIM PESAN
+        {{ __('KIRIM PESAN') }}
       </button>
     </form>
 
     <div style="margin-top: 32px; padding: 18px 22px; background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
       <div style="font-size: 13.5px; color: #374151;">
-        <strong>Butuh jawaban cepat?</strong> Lihat panduan pemesanan, pembayaran, dan pelacakan resi di halaman FAQ kami.
+        <strong>{{ __('Butuh jawaban cepat?') }}</strong> {{ __('Lihat panduan pemesanan, pembayaran, dan pelacakan resi di halaman FAQ kami.') }}
       </div>
       <a href="{{ route('faq') }}" class="btn btn-outline" style="font-size: 12px; padding: 8px 16px;">
-        Buka Halaman FAQ &rarr;
+        {!! __('Buka Halaman FAQ &rarr;') !!}
       </a>
     </div>
   </div>

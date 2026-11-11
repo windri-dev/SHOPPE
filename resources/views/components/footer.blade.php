@@ -3,16 +3,16 @@
     <!-- Footer Top: Navigation (Left) & Newsletter (Right) -->
     <div class="footer-top">
       <nav class="footer-nav" aria-label="Footer Navigation">
-        <a href="{{ route('contact.index') }}">CONTACT</a>
+        <a href="{{ route('contact.index') }}">{{ __('CONTACT') }}</a>
         <a href="{{ route('faq') }}">FAQ</a>
-        <a href="{{ route('privacy') }}#terms">TERMS OF SERVICES</a>
-        <a href="{{ route('privacy') }}#shipping">SHIPPING AND RETURNS</a>
+        <a href="{{ route('privacy') }}#terms">{{ __('TERMS OF SERVICES') }}</a>
+        <a href="{{ route('privacy') }}#shipping">{{ __('SHIPPING AND RETURNS') }}</a>
       </nav>
 
       <div class="newsletter-box">
         <form class="newsletter-form" id="newsletterForm">
           <input type="email" class="newsletter-input" id="newsletterEmail"
-            placeholder="Give an email, get the newsletter." required aria-label="Newsletter email">
+            placeholder="{{ __('Give an email, get the newsletter.') }}" required aria-label="Newsletter email">
           <button type="submit" class="newsletter-submit" aria-label="Subscribe to newsletter">
             <svg width="25" height="15" viewBox="0 0 25 15" fill="none" stroke="currentColor" stroke-width="1.5">
               <line x1="0" y1="7.5" x2="23" y2="7.5"></line>
@@ -26,7 +26,7 @@
     <!-- Footer Bottom: Copyright (Left) & Social Links (Right) -->
     <div class="footer-bottom">
       <p class="footer-copyright">
-        &copy; {{ date('Y') }} PUTRI.J. <a href="{{ route('privacy') }}#terms">Terms of use</a> and <a href="{{ route('privacy') }}">privacy policy</a>.
+        &copy; {{ date('Y') }} PUTRI.J. <a href="{{ route('privacy') }}#terms">{{ __('Terms of use') }}</a> &amp; <a href="{{ route('privacy') }}">{{ __('privacy policy') }}</a>. {{ __('Hak Cipta Dilindungi.') }}
       </p>
 
       <div class="social-links" aria-label="Social media links">

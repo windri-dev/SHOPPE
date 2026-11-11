@@ -64,7 +64,7 @@
           <button type="button" class="member-nav-btn {{ $activeTab === 'orders' ? 'active' : '' }}" data-member-tab="orders" style="display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s;">
             <span style="display: flex; align-items: center; gap: 10px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-              Pesanan Saya
+              {{ __('Pesanan Saya') }}
             </span>
             @if($orders->count() > 0)
               <span style="background: #F3F4F6; color: #111827; font-size: 11px; padding: 1px 7px; border-radius: 9999px; font-weight: 700;">{{ $orders->count() }}</span>
@@ -73,37 +73,37 @@
 
           <button type="button" class="member-nav-btn {{ $activeTab === 'profile' ? 'active' : '' }}" data-member-tab="profile" style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            Profil &amp; Kontak Saya
+            {{ __('Profil & Kontak Saya') }}
           </button>
 
           <button type="button" class="member-nav-btn {{ $activeTab === 'addresses' ? 'active' : '' }}" data-member-tab="addresses" style="display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s;">
             <span style="display: flex; align-items: center; gap: 10px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              Alamat Pengiriman
+              {{ __('Alamat Pengiriman') }}
             </span>
             <span style="background: #F3F4F6; color: #111827; font-size: 11px; padding: 1px 7px; border-radius: 9999px; font-weight: 700;">{{ count($addressBook) }}</span>
           </button>
 
           <button type="button" class="member-nav-btn {{ $activeTab === 'bank' ? 'active' : '' }}" data-member-tab="bank" style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-            Rekening &amp; Pembayaran
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="10" y1="10" x2="23" y2="10"></line></svg>
+            {{ __('Rekening & Pembayaran') }}
           </button>
 
           <button type="button" class="member-nav-btn {{ $activeTab === 'security' ? 'active' : '' }}" data-member-tab="security" style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; transition: all 0.15s;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            Ubah Password
+            {{ __('Ubah Password') }}
           </button>
         </nav>
 
         <div style="border-top: 1px solid #F3F4F6; margin-top: 16px; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;">
           <button type="button" class="btn btn-outline open-livechat-btn" style="width: 100%; font-size: 12px; padding: 9px 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            Chat Concierge
+            {{ __('Chat Concierge') }}
           </button>
           <form action="{{ route('account.logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="btn btn-outline" style="width: 100%; font-size: 12px; padding: 9px 12px; color: #DC2626; border-color: #FCA5A5;">
-              Keluar Akun
+              {{ __('Keluar Akun') }}
             </button>
           </form>
         </div>

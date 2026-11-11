@@ -36,6 +36,7 @@ Route::middleware(['role:admin,store_admin,store_staff'])->group(function () {
     // 3. Katalog & Manajemen Stok Produk (Tambah, Edit, Sesuaikan Stok, Hapus)
     Route::get('/products', [ProductAdminController::class, 'index'])->name('products.index');
     Route::post('/products', [ProductAdminController::class, 'store'])->name('products.store');
+    Route::post('/products/auto-translate', [ProductAdminController::class, 'autoTranslate'])->name('products.auto_translate');
     Route::put('/products/{product}', [ProductAdminController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductAdminController::class, 'destroy'])->name('products.destroy');
     Route::post('/products/{product}/adjust-stock', [ProductAdminController::class, 'adjustStock'])->name('products.adjust_stock');
