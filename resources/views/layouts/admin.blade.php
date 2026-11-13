@@ -474,7 +474,7 @@
                 </svg>
                 <span>{{ $isId ? 'Katalog & Stok' : 'Store & Catalog' }}</span>
               </div>
-              <span class="sidebar-badge" style="background: #F2F4F7; color: #344054;">99+</span>
+              <span class="sidebar-badge" style="background: #F2F4F7; color: #344054;">{{ $sidebarMetrics['total_products'] ?? 0 }}</span>
             </a>
           </li>
 

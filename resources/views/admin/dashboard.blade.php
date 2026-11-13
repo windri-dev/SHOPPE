@@ -343,7 +343,10 @@
 
   <!-- 1. HEADER HALAMAN: Sales Overview & Date Range Selector -->
   <div class="overview-header">
-    <h1 class="overview-title">{{ $isId ? 'Ringkasan Penjualan' : 'Sales Overview' }}</h1>
+    <div>
+      <h1 class="overview-title">{{ $isId ? 'Ringkasan Penjualan & Performa Toko' : 'Sales Overview & Store Performance' }}</h1>
+      <p style="font-size: 13px; color: #667085; margin: 4px 0 0 0;">{{ $isId ? 'Pantau arus pendapatan, pesanan masuk, pelanggan, dan metrik butik secara real-time.' : 'Monitor revenue flow, incoming orders, customers, and boutique metrics in real-time.' }}</p>
+    </div>
     <div style="display: flex; align-items: center; gap: 10px;">
       <button type="button" class="date-range-picker-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -352,7 +355,7 @@
           <line x1="8" y1="2" x2="8" y2="6"></line>
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
-        <span>{{ $isId ? '10 April 2026 - 11 Mei 2026' : 'April 10, 2026 - May 11, 2026' }}</span>
+        <span>{{ now()->subDays(30)->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} (30 {{ $isId ? 'Hari' : 'Days' }})</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
     </div>
@@ -364,7 +367,7 @@
     <!-- Card 1: Total Sales -->
     <div class="stat-widget-card">
       <div class="stat-widget-header">
-        <span class="stat-widget-title">{{ $isId ? 'Total Penjualan' : 'Total Sales' }}</span>
+        <span class="stat-widget-title">{{ $isId ? 'Total Pesanan Masuk' : 'Total Orders' }}</span>
         <div class="stat-widget-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="9" cy="21" r="1"></circle>
@@ -374,13 +377,13 @@
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">{{ number_format($metrics['total_orders'] > 0 ? $metrics['total_orders'] : 2500) }}</div>
+        <div class="stat-widget-value">{{ number_format($metrics['total_orders'] ?? 0) }}</div>
         <span class="trend-pill-green">
-          &uarr; 4.9%
+          &uarr; {{ $metrics['completed_orders_count'] ?? 0 }} {{ $isId ? 'selesai' : 'done' }}
         </span>
       </div>
       <div class="stat-widget-footer">
-        <span>{{ $isId ? 'Bulan lalu: 2.345' : 'Last month: 2345' }}</span>
+        <span>{{ $isId ? 'Pesanan Selesai / Terkirim' : 'Delivered / Completed' }}: <strong>{{ number_format($metrics['completed_orders_count'] ?? 0) }}</strong></span>
         <span style="font-size: 11px; font-weight: 600; color: #10B981;">
           <span style="display: none;">Total Omzet</span>{{ $isId ? 'Total Omzet' : 'Total Revenue' }}
         </span>
@@ -390,7 +393,7 @@
     <!-- Card 2: New Customer -->
     <div class="stat-widget-card">
       <div class="stat-widget-header">
-        <span class="stat-widget-title">{{ $isId ? 'Pelanggan Baru' : 'New Customers' }}</span>
+        <span class="stat-widget-title">{{ $isId ? 'Total Pelanggan Terdaftar' : 'Registered Customers' }}</span>
         <div class="stat-widget-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -401,21 +404,21 @@
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">{{ $metrics['customers_count'] ?? 110 }}</div>
+        <div class="stat-widget-value">{{ number_format($metrics['customers_count'] ?? 0) }}</div>
         <span class="trend-pill-coral">
-          &uarr; 7.5%
+          &uarr; {{ $isId ? 'Aktif' : 'Active' }}
         </span>
       </div>
       <div class="stat-widget-footer">
-        <span>{{ $isId ? 'Bulan lalu: 89' : 'Last month: 89' }}</span>
-        <span style="font-size: 11px; color: #98A2B3;">{{ $isId ? 'Member aktif' : 'Active members' }}</span>
+        <span>{{ $isId ? 'Akun Pelanggan' : 'Customer Accounts' }}: <strong>{{ $isId ? 'Aktif' : 'Active' }}</strong></span>
+        <span style="font-size: 11px; color: #A18A68; font-weight: 600;">{{ $isId ? 'Member Butik' : 'Boutique Members' }}</span>
       </div>
     </div>
 
     <!-- Card 3: Return Products / Komisi Bersih Toko (Input vs Output) -->
     <div class="stat-widget-card">
       <div class="stat-widget-header">
-        <span class="stat-widget-title">{{ $isId ? 'Retur Produk' : 'Return Products' }}</span>
+        <span class="stat-widget-title">{{ $isId ? 'Pesanan Batal & Retur' : 'Cancelled & Returns' }}</span>
         <div class="stat-widget-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="21 8 21 21 3 21 3 8"></polyline>
@@ -425,15 +428,15 @@
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">{{ number_format($metrics['status_breakdown']['cancelled'] ?? 72) }}</div>
+        <div class="stat-widget-value">{{ number_format($metrics['status_breakdown']['cancelled'] ?? 0) }}</div>
         <span class="trend-pill-coral">
-          &darr; 6.0%
+          {{ $metrics['status_breakdown']['cancelled'] ?? 0 }} {{ $isId ? 'dibatalkan' : 'cancelled' }}
         </span>
       </div>
       <div class="stat-widget-footer">
-        <span>{{ $isId ? 'Bulan lalu: 60' : 'Last month: 60' }}</span>
+        <span>{{ $isId ? 'Menunggu Proses' : 'Pending Action' }}: <strong>{{ number_format($metrics['status_breakdown']['pending'] ?? 0) }}</strong></span>
         <span style="font-size: 11px; font-weight: 600; color: #A18A68;" title="{{ $isId ? 'Laba Komisi:' : 'Commission Profit:' }} {{ \App\Services\CurrencyService::formatPrice($metrics['financial']['net_commission'] ?? 0) }}">
-          {{ $isId ? 'Komisi' : 'Commission' }}: {{ \App\Services\CurrencyService::formatPrice($metrics['financial']['net_commission'] ?? 0) }}
+          {{ $isId ? 'Komisi Bersih' : 'Net Commission' }}: {{ \App\Services\CurrencyService::formatPrice($metrics['financial']['net_commission'] ?? 0) }}
         </span>
       </div>
     </div>
@@ -441,17 +444,17 @@
     <!-- Card 4: Total Revenue -->
     <div class="stat-widget-card">
       <div class="stat-widget-header">
-        <span class="stat-widget-title">{{ $isId ? 'Total Pendapatan' : 'Total Revenue' }}</span>
+        <span class="stat-widget-title">{{ $isId ? 'Total Pendapatan (Omzet)' : 'Total Revenue' }}</span>
         <div class="stat-widget-icon">
           <span style="font-weight: 700; font-size: 14px; color: #344054;">{{ $isId ? 'Rp' : '$' }}</span>
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value" style="font-size: 22px;">{{ \App\Services\CurrencyService::formatPrice($metrics['total_revenue'] > 0 ? $metrics['total_revenue'] : 8220.64) }}</div>
+        <div class="stat-widget-value" style="font-size: 22px;">{{ \App\Services\CurrencyService::formatPrice($metrics['total_revenue'] ?? 0) }}</div>
       </div>
       <div class="stat-widget-footer">
-        <span>{{ $isId ? 'Bulan lalu: $620,00' : 'Last month: $620.00' }}</span>
-        <span style="font-size: 11px; color: #10B981; font-weight: 600;">{{ $isId ? 'Terverifikasi' : 'Verified' }}</span>
+        <span>{{ $isId ? 'Arus Masuk Kotor' : 'Gross Inflow' }}: <strong>{{ \App\Services\CurrencyService::formatPrice($metrics['financial']['total_input'] ?? 0) }}</strong></span>
+        <span style="font-size: 11px; color: #10B981; font-weight: 600;">Margin {{ $metrics['financial']['commission_rate'] ?? 0 }}%</span>
       </div>
     </div>
   </section>
@@ -459,15 +462,16 @@
   <!-- 3. BARIS DUA DIAGRAM (Revenue analytics & Total Income Stacked Chart) -->
   <section class="charts-split-grid">
     
-    <!-- Chart 1: Revenue analytics (Bar Chart dengan Tooltip $22,430) -->
+    <!-- Chart 1: Revenue analytics (Bar Chart dengan Tooltip) -->
     <div class="chart-box-card">
       <div class="chart-box-header">
         <div>
-          <h2 class="chart-box-title">{{ $isId ? 'Analisis Pendapatan' : 'Revenue Analytics' }}</h2>
+          <h2 class="chart-box-title">{{ $isId ? 'Analisis Pendapatan Harian' : 'Daily Revenue Analytics' }}</h2>
+          <p class="chart-box-sub">{{ $isId ? 'Arus kas masuk bruto 7 hari terakhir' : 'Gross revenue flow over the last 7 days' }}</p>
         </div>
         <div>
           <button type="button" class="chart-filter-select">
-            {{ $isId ? 'Minggu Ini' : 'This Week' }} &or;
+            {{ $isId ? '7 Hari Terakhir' : 'Last 7 Days' }} &or;
           </button>
         </div>
       </div>
@@ -475,7 +479,7 @@
       <div style="position: relative; width: 100%; height: 260px;">
         <!-- Floating Highlight Pill Badge in Luxury Gold #A18A68 -->
         <div style="position: absolute; top: 12px; left: 35%; transform: translateX(-50%); background: #A18A68; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(161, 138, 104, 0.35); pointer-events: none; z-index: 10; display: flex; align-items: center; justify-content: center;">
-          $22,430
+          {{ \App\Services\CurrencyService::formatPrice($metrics['sales_chart']['highest_day_input'] ?? 0) }}
           <span style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #A18A68;"></span>
         </div>
         <canvas id="revenueAnalyticsChart"></canvas>
@@ -615,10 +619,10 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctxRevenue, {
       type: 'bar',
       data: {
-        labels: {!! json_encode($isId ? ['Jum', 'Sab', 'Min', 'Sen', 'Sel', 'Rab', 'Kam'] : ['Fri', 'Sat', 'Sun', 'Mon', 'Thu', 'Wen', 'Thus']) !!},
+        labels: {!! json_encode($metrics['sales_chart']['labels'] ?? ['Jum', 'Sab', 'Min', 'Sen', 'Sel', 'Rab', 'Kam']) !!},
         datasets: [{
           label: '{{ $isId ? 'Pendapatan' : 'Revenue' }}',
-          data: [18, 12, 22.43, 14, 18, 24, 17],
+          data: {!! json_encode($metrics['sales_chart']['inputs'] ?? [18, 12, 22.43, 14, 18, 24, 17]) !!},
           backgroundColor: '#A18A68',
           hoverBackgroundColor: '#8C7554',
           borderRadius: 14,
@@ -637,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: function(ctx) { return '$' + (ctx.raw * 1000).toLocaleString(); }
+              label: function(ctx) { return '{{ $isId ? 'Rp ' : '$' }}' + Number(ctx.raw).toLocaleString(); }
             }
           }
         },
@@ -651,13 +655,11 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           y: {
             beginAtZero: true,
-            max: 30,
             grid: { color: '#F2F4F7' },
             ticks: {
-              stepSize: 5,
               font: { size: 12, family: 'DM Sans, sans-serif' },
               color: '#707070',
-              callback: function(val) { return val + 'k'; }
+              callback: function(val) { return Number(val) >= 1000 ? (val / 1000) + 'k' : val; }
             }
           }
         }
@@ -671,19 +673,19 @@ document.addEventListener('DOMContentLoaded', function () {
     new Chart(ctxIncome, {
       type: 'bar',
       data: {
-        labels: {!! json_encode($isId ? ['00', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu'] : ['00', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']) !!},
+        labels: {!! json_encode($metrics['monthly_income']['months'] ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu']) !!},
         datasets: [
           {
-            label: '{{ $isId ? 'Beban Operasional' : 'Loss' }}',
-            data: [0, 18, 22, 25, 20, 28, 32, 24, 26],
+            label: '{{ $isId ? 'Beban Operasional' : 'Loss / Expense' }}',
+            data: {!! json_encode($metrics['monthly_income']['loss'] ?? [14, 18, 19, 16, 21, 26, 19, 21]) !!},
             backgroundColor: '#111111',
             borderRadius: 6,
             barPercentage: 0.55,
             stack: 'incomeStack'
           },
           {
-            label: '{{ $isId ? 'Laba Bersih' : 'Profit' }}',
-            data: [0, 15, 18, 17, 16, 21, 23, 16, 17],
+            label: '{{ $isId ? 'Laba Bersih' : 'Net Profit' }}',
+            data: {!! json_encode($metrics['monthly_income']['profit'] ?? [18, 24, 26, 22, 28, 34, 25, 27]) !!},
             backgroundColor: '#A18A68',
             hoverBackgroundColor: '#8C7554',
             borderRadius: 6,
@@ -702,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function () {
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: function(ctx) { return ctx.dataset.label + ': $' + (ctx.raw * 1000).toLocaleString(); }
+              label: function(ctx) { return ctx.dataset.label + ': ' + (Number(ctx.raw) * 1000).toLocaleString(); }
             }
           }
         },
@@ -716,7 +718,6 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           y: {
             beginAtZero: true,
-            max: 50,
             grid: { color: '#F2F4F7' },
             ticks: {
               stepSize: 10,

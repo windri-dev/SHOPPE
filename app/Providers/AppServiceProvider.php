@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('sidebarMetrics', [
                 'pending_orders' => Order::query()->where('status', OrderStatus::PENDING)->count(),
                 'low_stock_products' => Product::query()->where('stock', '<=', 3)->count(),
+                'total_products' => Product::query()->count(),
                 'categories_count' => Category::query()->count(),
                 'blogs_count' => BlogPost::query()->count(),
                 'unread_inquiries' => Inquiry::query()->where('status', InquiryStatus::UNREAD)->count(),
