@@ -55,6 +55,76 @@
     background: #F9FAFB;
   }
 
+  /* Custom Dropdowns */
+  .custom-dropdown-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .custom-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 220px;
+    background: #FFFFFF;
+    border: 1px solid #EAECF0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(16, 24, 40, 0.1);
+    padding: 6px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    animation: dropdownFadeIn 0.15s ease-out forwards;
+  }
+
+  .custom-dropdown-menu.show {
+    display: flex;
+  }
+
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .custom-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #344054;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: all 0.15s ease;
+  }
+
+  .custom-dropdown-item:hover {
+    background: #F9FAFB;
+    color: #101828;
+  }
+
+  .custom-dropdown-item.active {
+    background: #FAF7F2;
+    color: #8C7554;
+    font-weight: 700;
+  }
+
+  .custom-dropdown-item svg {
+    color: #8C7554;
+  }
+
   /* 4 Top Stat Cards Grid */
   .stats-four-grid {
     display: grid;
@@ -348,16 +418,36 @@
       <p style="font-size: 13px; color: #667085; margin: 4px 0 0 0;">{{ $isId ? 'Pantau arus pendapatan, pesanan masuk, pelanggan, dan metrik butik secara real-time.' : 'Monitor revenue flow, incoming orders, customers, and boutique metrics in real-time.' }}</p>
     </div>
     <div style="display: flex; align-items: center; gap: 10px;">
-      <button type="button" class="date-range-picker-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-        <span>{{ now()->subDays(30)->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} (30 {{ $isId ? 'Hari' : 'Days' }})</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </button>
+      <div class="custom-dropdown-wrap">
+        <button type="button" class="date-range-picker-btn" id="dateRangeToggle" aria-haspopup="true" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span id="dateRangeLabel">{{ now()->subDays(30)->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} (30 {{ $isId ? 'Hari' : 'Days' }})</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="dateRangeArrow"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="custom-dropdown-menu" id="dateRangeMenu" role="menu">
+          <button type="button" class="custom-dropdown-item" data-range="7" data-label="{{ now()->subDays(7)->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} (7 {{ $isId ? 'Hari' : 'Days' }})">
+            <span>{{ $isId ? '7 Hari Terakhir' : 'Last 7 Days' }}</span>
+          </button>
+          <button type="button" class="custom-dropdown-item active" data-range="30" data-label="{{ now()->subDays(30)->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} (30 {{ $isId ? 'Hari' : 'Days' }})">
+            <span>{{ $isId ? '30 Hari Terakhir (Default)' : 'Last 30 Days (Default)' }}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button type="button" class="custom-dropdown-item" data-range="month" data-label="{{ now()->startOfMonth()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} ({{ $isId ? 'Bulan Ini' : 'This Month' }})">
+            <span>{{ $isId ? 'Bulan Ini (' . now()->locale('id')->isoFormat('MMMM Y') . ')' : 'This Month (' . now()->isoFormat('MMMM Y') . ')' }}</span>
+          </button>
+          <button type="button" class="custom-dropdown-item" data-range="year" data-label="{{ now()->startOfYear()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} &ndash; {{ now()->locale($isId ? 'id' : 'en')->isoFormat('D MMM Y') }} ({{ now()->year }})">
+            <span>{{ $isId ? 'Tahun Ini (' . now()->year . ')' : 'This Year (' . now()->year . ')' }}</span>
+          </button>
+          <button type="button" class="custom-dropdown-item" data-range="all" data-label="{{ $isId ? 'Semua Periode Transaksi' : 'All Time Transaction' }}">
+            <span>{{ $isId ? 'Semua Waktu' : 'All Time' }}</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -470,9 +560,24 @@
           <p class="chart-box-sub">{{ $isId ? 'Arus kas masuk bruto 7 hari terakhir' : 'Gross revenue flow over the last 7 days' }}</p>
         </div>
         <div>
-          <button type="button" class="chart-filter-select">
-            {{ $isId ? '7 Hari Terakhir' : 'Last 7 Days' }} &or;
-          </button>
+          <div class="custom-dropdown-wrap">
+            <button type="button" class="chart-filter-select" id="chartFilterToggle" aria-haspopup="true" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span id="chartFilterLabel">{{ $isId ? '7 Hari Terakhir' : 'Last 7 Days' }}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="custom-dropdown-menu" id="chartFilterMenu" role="menu" style="min-width: 170px;">
+              <button type="button" class="custom-dropdown-item active" data-chart-range="7">
+                <span>{{ $isId ? '7 Hari Terakhir' : 'Last 7 Days' }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+              <button type="button" class="custom-dropdown-item" data-chart-range="14">
+                <span>{{ $isId ? '14 Hari Terakhir' : 'Last 14 Days' }}</span>
+              </button>
+              <button type="button" class="custom-dropdown-item" data-chart-range="30">
+                <span>{{ $isId ? '30 Hari Terakhir' : 'Last 30 Days' }}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -520,26 +625,46 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" placeholder="{{ $isId ? 'Cari pesanan...' : 'Search orders...' }}" aria-label="{{ $isId ? 'Cari pesanan' : 'Search orders' }}">
+          <input type="text" id="orderSearchInput" placeholder="{{ $isId ? 'Cari pesanan...' : 'Search orders...' }}" aria-label="{{ $isId ? 'Cari pesanan' : 'Search orders' }}">
         </div>
 
-        <!-- Sort Pill -->
-        <button type="button" class="orders-sort-pill">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="7 15 12 20 17 15"></polyline>
-            <polyline points="17 9 12 4 7 9"></polyline>
-          </svg>
-          <span>{{ $isId ? 'Urutkan' : 'Sort by' }}</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </button>
+        <!-- Sort Pill Dropdown -->
+        <div class="custom-dropdown-wrap">
+          <button type="button" class="orders-sort-pill" id="ordersSortToggle" aria-haspopup="true" aria-expanded="false">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="7 15 12 20 17 15"></polyline>
+              <polyline points="17 9 12 4 7 9"></polyline>
+            </svg>
+            <span id="ordersSortLabel">{{ $isId ? 'Urutkan' : 'Sort by' }}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="custom-dropdown-menu" id="ordersSortMenu" role="menu" style="min-width: 200px;">
+            <button type="button" class="custom-dropdown-item active" data-sort="newest">
+              <span>{{ $isId ? 'Terbaru (Default)' : 'Newest First' }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button type="button" class="custom-dropdown-item" data-sort="oldest">
+              <span>{{ $isId ? 'Terlama' : 'Oldest First' }}</span>
+            </button>
+            <button type="button" class="custom-dropdown-item" data-sort="highest">
+              <span>{{ $isId ? 'Nominal Tertinggi' : 'Highest Amount' }}</span>
+            </button>
+            <button type="button" class="custom-dropdown-item" data-sort="lowest">
+              <span>{{ $isId ? 'Nominal Terendah' : 'Lowest Amount' }}</span>
+            </button>
+            <button type="button" class="custom-dropdown-item" data-sort="customer">
+              <span>{{ $isId ? 'Nama Pelanggan (A-Z)' : 'Customer Name (A-Z)' }}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="admin-table-wrap" style="border: none; overflow-x: auto;">
-      <table class="finexy-table">
+      <table class="finexy-table" id="ordersTable">
         <thead>
           <tr>
-            <th style="width: 32px;"><input type="checkbox" style="cursor: pointer; border-radius: 4px;"></th>
+            <th style="width: 32px;"><input type="checkbox" id="selectAllOrders" style="cursor: pointer; border-radius: 4px;"></th>
             <th>{{ $isId ? 'No. Pesanan' : 'Order ID' }}</th>
             <th>{{ $isId ? 'Tanggal' : 'Date' }}</th>
             <th>{{ $isId ? 'Pelanggan' : 'Customer' }}</th>
@@ -549,7 +674,7 @@
             <th style="text-align: right;">Total</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="ordersTableBody">
           @forelse($orders as $order)
             @php
               $firstItem = $order->items->first();
@@ -568,8 +693,14 @@
                 default => $isId ? 'Menunggu' : 'Pending'
               };
             @endphp
-            <tr>
-              <td><input type="checkbox" style="cursor: pointer; border-radius: 4px;"></td>
+            <tr class="order-row"
+                data-order-number="{{ strtolower($order->order_number) }}"
+                data-customer="{{ strtolower($order->customer_name) }}"
+                data-category="{{ strtolower($categoryName) }}"
+                data-status="{{ strtolower($order->status->value) }}"
+                data-amount="{{ (float) $order->grand_total }}"
+                data-timestamp="{{ $order->created_at?->timestamp ?? 0 }}">
+              <td><input type="checkbox" class="order-select-item" style="cursor: pointer; border-radius: 4px;"></td>
               <td>
                 <span style="font-weight: 600; color: #101828;">#{{ substr(str_replace('-', '', $order->order_number), -6) }}</span>
               </td>
@@ -601,6 +732,11 @@
               </td>
             </tr>
           @endforelse
+          <tr id="noOrdersMatchRow" style="display: none;">
+            <td colspan="8" style="text-align: center; padding: 32px; color: #667085;">
+              {{ $isId ? 'Tidak ada pesanan yang sesuai pencarian / filter.' : 'No orders matched your search / filter criteria.' }}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -728,6 +864,201 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }
       }
+    });
+  }
+
+  // 3. DROPDOWN HANDLERS & INTERACTIONS
+  const dropdownWrappers = document.querySelectorAll('.custom-dropdown-wrap');
+
+  function closeAllDropdowns() {
+    document.querySelectorAll('.custom-dropdown-menu').forEach(menu => {
+      menu.classList.remove('show');
+    });
+    document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  // Setup click toggles for all dropdown buttons
+  dropdownWrappers.forEach(wrap => {
+    const toggleBtn = wrap.querySelector('button[aria-haspopup="true"]');
+    const menu = wrap.querySelector('.custom-dropdown-menu');
+    if (!toggleBtn || !menu) return;
+
+    toggleBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const isAlreadyOpen = menu.classList.contains('show');
+      closeAllDropdowns();
+      if (!isAlreadyOpen) {
+        menu.classList.add('show');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Global click outside to close dropdowns
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.custom-dropdown-wrap')) {
+      closeAllDropdowns();
+    }
+  });
+
+  // Escape key closes dropdowns
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeAllDropdowns();
+    }
+  });
+
+  // 3A. Date Range Picker Dropdown Selection
+  const dateRangeMenu = document.getElementById('dateRangeMenu');
+  const dateRangeLabel = document.getElementById('dateRangeLabel');
+  if (dateRangeMenu && dateRangeLabel) {
+    dateRangeMenu.querySelectorAll('.custom-dropdown-item').forEach(item => {
+      item.addEventListener('click', function () {
+        const selectedLabel = this.getAttribute('data-label') || this.querySelector('span')?.textContent;
+        dateRangeLabel.textContent = selectedLabel;
+
+        // Update active checkmark
+        dateRangeMenu.querySelectorAll('.custom-dropdown-item').forEach(el => {
+          el.classList.remove('active');
+          el.querySelector('svg')?.remove();
+        });
+        this.classList.add('active');
+        this.insertAdjacentHTML('beforeend', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+        closeAllDropdowns();
+      });
+    });
+  }
+
+  // 3B. Chart Filter Dropdown Selection
+  const chartFilterMenu = document.getElementById('chartFilterMenu');
+  const chartFilterLabel = document.getElementById('chartFilterLabel');
+  if (chartFilterMenu && chartFilterLabel) {
+    chartFilterMenu.querySelectorAll('.custom-dropdown-item').forEach(item => {
+      item.addEventListener('click', function () {
+        const text = this.querySelector('span')?.textContent;
+        if (text) chartFilterLabel.textContent = text;
+
+        // Update active checkmark
+        chartFilterMenu.querySelectorAll('.custom-dropdown-item').forEach(el => {
+          el.classList.remove('active');
+          el.querySelector('svg')?.remove();
+        });
+        this.classList.add('active');
+        this.insertAdjacentHTML('beforeend', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+        closeAllDropdowns();
+      });
+    });
+  }
+
+  // 3C. Orders Table Sort & Live Search
+  const ordersSortMenu = document.getElementById('ordersSortMenu');
+  const ordersSortLabel = document.getElementById('ordersSortLabel');
+  const ordersTableBody = document.getElementById('ordersTableBody');
+  const orderSearchInput = document.getElementById('orderSearchInput');
+  const noOrdersMatchRow = document.getElementById('noOrdersMatchRow');
+  const selectAllOrders = document.getElementById('selectAllOrders');
+
+  // Select all checkbox
+  if (selectAllOrders && ordersTableBody) {
+    selectAllOrders.addEventListener('change', function () {
+      const isChecked = this.checked;
+      ordersTableBody.querySelectorAll('.order-select-item').forEach(cb => {
+        const row = cb.closest('.order-row');
+        if (row && row.style.display !== 'none') {
+          cb.checked = isChecked;
+        }
+      });
+    });
+  }
+
+  // Live Search filter
+  function filterOrders() {
+    if (!ordersTableBody) return;
+    const query = (orderSearchInput?.value || '').trim().toLowerCase();
+    const rows = ordersTableBody.querySelectorAll('.order-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const orderNum = row.getAttribute('data-order-number') || '';
+      const customer = row.getAttribute('data-customer') || '';
+      const category = row.getAttribute('data-category') || '';
+      const status = row.getAttribute('data-status') || '';
+
+      const match = !query || orderNum.includes(query) || customer.includes(query) || category.includes(query) || status.includes(query);
+      if (match) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (noOrdersMatchRow) {
+      noOrdersMatchRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+    }
+  }
+
+  if (orderSearchInput) {
+    orderSearchInput.addEventListener('input', filterOrders);
+  }
+
+  // Sort orders function
+  function sortOrders(criteria) {
+    if (!ordersTableBody) return;
+    const rows = Array.from(ordersTableBody.querySelectorAll('.order-row'));
+    if (!rows.length) return;
+
+    rows.sort((a, b) => {
+      if (criteria === 'newest') {
+        return (Number(b.getAttribute('data-timestamp')) || 0) - (Number(a.getAttribute('data-timestamp')) || 0);
+      }
+      if (criteria === 'oldest') {
+        return (Number(a.getAttribute('data-timestamp')) || 0) - (Number(b.getAttribute('data-timestamp')) || 0);
+      }
+      if (criteria === 'highest') {
+        return (Number(b.getAttribute('data-amount')) || 0) - (Number(a.getAttribute('data-amount')) || 0);
+      }
+      if (criteria === 'lowest') {
+        return (Number(a.getAttribute('data-amount')) || 0) - (Number(b.getAttribute('data-amount')) || 0);
+      }
+      if (criteria === 'customer') {
+        const nameA = a.getAttribute('data-customer') || '';
+        const nameB = b.getAttribute('data-customer') || '';
+        return nameA.localeCompare(nameB);
+      }
+      return 0;
+    });
+
+    // Re-append sorted rows before noOrdersMatchRow
+    rows.forEach(row => {
+      if (noOrdersMatchRow) {
+        ordersTableBody.insertBefore(row, noOrdersMatchRow);
+      } else {
+        ordersTableBody.appendChild(row);
+      }
+    });
+  }
+
+  if (ordersSortMenu && ordersSortLabel) {
+    ordersSortMenu.querySelectorAll('.custom-dropdown-item').forEach(item => {
+      item.addEventListener('click', function () {
+        const sortType = this.getAttribute('data-sort');
+        const text = this.querySelector('span')?.textContent;
+        if (text) ordersSortLabel.textContent = text;
+
+        // Update active checkmark
+        ordersSortMenu.querySelectorAll('.custom-dropdown-item').forEach(el => {
+          el.classList.remove('active');
+          el.querySelector('svg')?.remove();
+        });
+        this.classList.add('active');
+        this.insertAdjacentHTML('beforeend', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+
+        sortOrders(sortType);
+        closeAllDropdowns();
+      });
     });
   }
 });
