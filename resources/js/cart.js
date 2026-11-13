@@ -1,5 +1,5 @@
 /**
- * PUTRI.J - Cart State Management, Drawer, Cart Page & Checkout Summary Controller
+ * PUTRIJALVA - Cart State Management, Drawer, Cart Page & Checkout Summary Controller
  * Synchronizes shopping bag items across Drawer, /cart page, and /checkout form.
  */
 
@@ -23,6 +23,7 @@ class CartManager {
     this.badgeEl = document.getElementById('cartBadgeCount');
     this.itemCountEl = document.getElementById('drawerItemCount');
     this.subtotalLabelEl = document.getElementById('subtotalLabel');
+    this.currentShippingCost = 0;
 
     this.init();
   }
@@ -55,14 +56,6 @@ class CartManager {
   }
 
   loadCart() {
-    // Tamu (guest) yang belum login tidak memiliki item aktif
-    if (!this.isUserAuthenticated()) {
-      try {
-        localStorage.removeItem(this.storageKey);
-      } catch (e) {}
-      return [];
-    }
-
     try {
       const saved = localStorage.getItem(this.storageKey);
       if (saved) {
@@ -145,23 +138,16 @@ class CartManager {
     }
   }
 
-  addItem(product) {
+  addItem(product, openDrawer = true) {
     if (!product) return;
 
-    if (!this.isUserAuthenticated()) {
-      (window.ShoppeApp || window.appController)?.showToast('Silakan masuk (login) atau mendaftar terlebih dahulu untuk menambah produk!');
-      setTimeout(() => {
-        window.location.href = this.getLoginUrl();
-      }, 900);
-      return;
-    }
-
     const normalizedId = this.normalizeProductId(product.id);
-    const variant = product.variant || '18k Gold / Standard';
+    const size = product.size || 'M';
+    const variant = product.variant || `Size ${size}`;
     const qtyToAdd = Math.max(1, parseInt(product.quantity, 10) || 1);
 
     const existingIndex = this.items.findIndex(
-      item => this.normalizeProductId(item.id) === normalizedId
+      item => this.normalizeProductId(item.id) === normalizedId && (item.size || 'M') === size
     );
 
     if (existingIndex > -1) {
@@ -171,6 +157,7 @@ class CartManager {
         id: normalizedId,
         title: product.title || 'Apparel Item',
         price: parseFloat(product.price) || 20.00,
+        size: size,
         variant: variant,
         image: product.image || '/images/product-1.png',
         quantity: qtyToAdd
@@ -179,8 +166,10 @@ class CartManager {
 
     this.saveCart();
     this.triggerBadgeBump();
-    this.openDrawer();
-    (window.ShoppeApp || window.appController)?.showToast(`Added "${product.title}" to your shopping bag!`);
+    if (openDrawer) {
+      this.openDrawer();
+      (window.ShoppeApp || window.appController)?.showToast(`Added "${product.title}" to your shopping bag!`);
+    }
   }
 
   updateQuantity(index, delta) {
@@ -218,7 +207,13 @@ class CartManager {
   }
 
   formatPrice(num) {
-    return '$ ' + Number(num || 0).toFixed(2);
+    const val = Number(num || 0);
+    const curr = window.ShoppeCurrency || { locale: 'id', symbol: 'Rp', rate: 16000 };
+    if (curr.locale === 'id') {
+      const idr = Math.round((val * (Number(curr.rate) || 16000)) / 1000) * 1000;
+      return 'Rp ' + idr.toLocaleString('id-ID');
+    }
+    return '$ ' + val.toFixed(2);
   }
 
   render() {
@@ -361,6 +356,9 @@ class CartManager {
           `;
         }).join('');
 
+        const shippingFee = Number(this.currentShippingCost) || 0;
+        const grandTotal = subtotal + shippingFee;
+
         checkoutList.innerHTML = `
           <div class="order-summary-header">
             <span>PRODUCT</span>
@@ -375,11 +373,11 @@ class CartManager {
           </div>
           <div class="order-summary-calc-row">
             <span>SHIPPING</span>
-            <span>Free shipping</span>
+            <span>${shippingFee > 0 ? this.formatPrice(shippingFee) : (t.freeShipping || 'Free shipping')}</span>
           </div>
           <div class="order-summary-total-row">
             <span>TOTAL</span>
-            <span>${this.formatPrice(subtotal)}</span>
+            <span>${this.formatPrice(grandTotal)}</span>
           </div>
         `;
       }
@@ -389,12 +387,18 @@ class CartManager {
       hiddenInputs.innerHTML = this.items.map((item, idx) => {
         const cleanId = this.normalizeProductId(item.id);
         const cleanQty = Math.max(1, parseInt(item.quantity, 10) || 1);
+        const cleanSize = item.size || 'M';
         return `
           <input type="hidden" name="items[${idx}][id]" value="${cleanId}">
           <input type="hidden" name="items[${idx}][quantity]" value="${cleanQty}">
+          <input type="hidden" name="items[${idx}][size]" value="${cleanSize}">
         `;
       }).join('');
     }
+  }
+
+  renderCheckoutPage() {
+    this.updateTotals();
   }
 }
 

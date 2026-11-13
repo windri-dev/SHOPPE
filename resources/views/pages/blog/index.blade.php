@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', __('Jurnal & Blog') . ' - PUTRI.J')
+@section('title', __('Jurnal & Blog') . ' - PUTRIJALVA')
 
 @section('content')
 <div class="container blog-page">

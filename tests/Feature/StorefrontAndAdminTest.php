@@ -69,7 +69,7 @@ class StorefrontAndAdminTest extends TestCase
         ]);
 
         User::create([
-            'name' => 'PUTRI.J Store Manager',
+            'name' => 'PUTRIJALVA Store Manager',
             'email' => 'admin@shoppe.com',
             'password' => Hash::make('admin123'),
             'role' => UserRole::STORE_ADMIN,
@@ -87,7 +87,7 @@ class StorefrontAndAdminTest extends TestCase
     {
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('PUTRI.J');
+        $response->assertSee('PUTRIJALVA');
         $response->assertSee('Koleksi Terbaru');
 
         // English version sees "Shop The Latest"
@@ -131,45 +131,61 @@ class StorefrontAndAdminTest extends TestCase
         $enShowResponse->assertSee('Spring brings a renewed appreciation for effortless layering.');
     }
 
-    public function test_guest_cannot_access_checkout_and_is_redirected_to_login(): void
+    public function test_guest_can_access_checkout_and_process_order_without_login_with_complete_info_and_phone(): void
     {
+        // 1. Guest can access /checkout directly without being redirected to login
         $response = $this->get('/checkout');
-        $response->assertRedirect(route('login'));
-        $response->assertSessionHas('info');
+        $response->assertStatus(200);
+        $response->assertSee('Detail Penerima &amp; Alamat Pengiriman', false);
+        $response->assertSee('+62 812-3456-7890');
 
-        $jsonResponse = $this->postJson('/checkout', [
+        // 2. Checkout validation requires phone number for communication
+        $invalidResponse = $this->postJson('/checkout', [
             'first_name' => 'Tamu',
             'last_name' => 'Anonim',
             'email' => 'guest@example.com',
-            'phone' => '08123456789',
+            'phone' => '', // missing phone
             'country' => 'Indonesia',
-            'street_address' => 'Jl. Test No. 1',
-            'city' => 'Jakarta',
-            'postcode' => '12345',
+            'street_address' => 'Jl. Senopati No. 12',
+            'city' => 'Jakarta Selatan',
+            'postcode' => '12190',
             'payment_method' => 'bank_transfer',
             'items' => [
                 ['id' => $this->product->id, 'quantity' => 1],
             ],
         ]);
-        $jsonResponse->assertStatus(401);
+        $invalidResponse->assertStatus(422);
+        $invalidResponse->assertJsonValidationErrors(['phone']);
 
-        // Intended redirect verification: after login, customer is redirected back to /checkout
-        $loginResponse = $this->post(route('account.login'), [
-            'email' => 'buyer@shoppe.com',
-            'password' => 'buyer123',
+        // 3. Guest can submit checkout with complete info and reachable phone number
+        $jsonResponse = $this->postJson('/checkout', [
+            'first_name' => 'Tamu',
+            'last_name' => 'Anonim',
+            'email' => 'guest@example.com',
+            'phone' => '081298765432',
+            'country' => 'Indonesia',
+            'province' => 'DKI Jakarta',
+            'district' => 'Kebayoran Baru',
+            'city' => 'Jakarta Selatan',
+            'street_address' => 'Jl. Senopati No. 12, RT 01 / RW 02',
+            'postcode' => '12190',
+            'payment_method' => 'bank_transfer',
+            'items' => [
+                ['id' => $this->product->id, 'quantity' => 1],
+            ],
         ]);
-        $loginResponse->assertRedirect(route('checkout.index'));
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJson(['success' => true]);
 
-        // Logout and verify new registration also redirects back to /checkout
-        $this->post(route('account.logout'));
-        $this->get('/checkout'); // set intended URL again
-        $registerResponse = $this->post(route('account.register'), [
-            'name' => 'Dewi Sartika',
-            'email' => 'dewi@example.com',
-            'password' => 'dewi12345',
-            'password_confirmation' => 'dewi12345',
-        ]);
-        $registerResponse->assertRedirect(route('checkout.index'));
+        $orderNumber = $jsonResponse->json('order_number');
+        $this->assertNotNull($orderNumber);
+
+        // Verify order created in database with null user_id and valid phone
+        $order = Order::where('order_number', $orderNumber)->first();
+        $this->assertNotNull($order);
+        $this->assertNull($order->user_id);
+        $this->assertEquals('081298765432', $order->customer_phone);
+        $this->assertEquals('guest@example.com', $order->customer_email);
     }
 
     public function test_cart_and_checkout_flow_creates_order_and_decrements_stock(): void
@@ -594,7 +610,7 @@ class StorefrontAndAdminTest extends TestCase
 
         $response = $this->actingAs($admin)->get(route('admin.categories.index'));
         $response->assertStatus(200);
-        $response->assertSee('Klasifikasi &amp; Manajemen Kategori Busana', false);
+        $response->assertSee('Klasifikasi &amp; Manajemen Kategori Produk', false);
         $response->assertSee('Dresses');
     }
 
@@ -733,7 +749,7 @@ class StorefrontAndAdminTest extends TestCase
 
         $aiReply = (string) $response->json('data.ai_reply');
         $this->assertStringContainsString('Lira Silk Dress', $aiReply);
-        $this->assertStringContainsString('$ 20.00', $aiReply);
+        $this->assertStringContainsString($this->product->formatted_price, $aiReply);
         $this->assertStringContainsString('24 pcs', $aiReply);
     }
 
@@ -871,7 +887,7 @@ class StorefrontAndAdminTest extends TestCase
         // 2. Test autoLearnKnowledge
         $created = $concierge->autoLearnKnowledge(
             'Bagaimana cara merawat kain sutra silk agar awet?',
-            'Cuci kain sutra PUTRI.J dengan air dingin, deterjen lembut khusus sutra, dan jangan diperas kencang.'
+            'Cuci kain sutra PUTRIJALVA dengan air dingin, deterjen lembut khusus sutra, dan jangan diperas kencang.'
         );
         $this->assertNotNull($created);
         $this->assertEquals('knowledge', $created->type);
@@ -879,7 +895,7 @@ class StorefrontAndAdminTest extends TestCase
         // 3. Test that subsequent similar question is directly answered from the saved knowledge entry
         $result = $concierge->handleCustomerMessage('cara merawat kain sutra silk');
         $this->assertEquals($created->title, $result['rule_applied']);
-        $this->assertStringContainsString('Cuci kain sutra PUTRI.J', $result['reply']);
+        $this->assertStringContainsString('Cuci kain sutra PUTRIJALVA', $result['reply']);
 
         // 4. Test admin reply with save_as_knowledge flag
         $inquiry = Inquiry::create([
@@ -1091,7 +1107,7 @@ class StorefrontAndAdminTest extends TestCase
         $response = $this->get(route('faq'));
         $response->assertStatus(200);
         $response->assertSee('Frequently Asked Questions (FAQ)');
-        $response->assertSee('Bagaimana cara memesan busana di PUTRI.J?');
+        $response->assertSee('Bagaimana cara memesan busana di PUTRIJALVA?');
         $response->assertSee('application/ld+json', false);
     }
 

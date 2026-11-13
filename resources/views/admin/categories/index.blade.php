@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kategori Produk - PUTRI.J Admin')
+@section('title', 'Kategori Produk - PUTRIJALVA Admin')
 @section('page_title', 'Manajemen Kategori Produk')
 
 @section('content')
@@ -10,10 +10,10 @@
     <div>
       <h2 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h7"></path></svg>
-        Klasifikasi &amp; Manajemen Kategori Busana
+        Klasifikasi &amp; Manajemen Kategori Produk
       </h2>
       <p style="font-size: 13px; color: #6B7280; margin: 0;">
-        Sesuaikan struktur kategori toko, perbarui nama &amp; slug URL, serta pantau persediaan perhiasan di tiap koleksi.
+        Sesuaikan struktur kategori toko, perbarui nama &amp; slug URL, serta pantau persediaan produk di tiap koleksi.
       </p>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
@@ -220,7 +220,7 @@
 <div id="editCategoryModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 480px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Kategori Busana</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Kategori Produk</h3>
       <button type="button" onclick="closeEditCategoryModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 

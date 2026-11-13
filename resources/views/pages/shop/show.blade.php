@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', $product->name . ' - PUTRI.J')
+@section('title', $product->name . ' - PUTRIJALVA')
 @section('meta_description', \Illuminate\Support\Str::limit($product->description, 155))
 
 @section('content')
@@ -106,25 +106,55 @@
         </span>
       </a>
 
-      <p class="detail-short-desc">{{ $product->description }}</p>
+      @php
+        $availableSizes = array_keys($product->size_stocks);
+        $isSingleSizeOrAccessory = count($availableSizes) <= 1 || in_array('ALL SIZE', array_map('strtoupper', $availableSizes)) || in_array('ONE SIZE', array_map('strtoupper', $availableSizes));
+        $defaultSize = $isSingleSizeOrAccessory ? ($availableSizes[0] ?? 'All Size') : (in_array('M', $availableSizes) ? 'M' : ($availableSizes[0] ?? 'All Size'));
+        $defaultStock = $product->getStockForSize($defaultSize);
+      @endphp
 
-      <!-- Apparel Size Selector Pill -->
+      <!-- Apparel / Accessory Dynamic Size Selector -->
       <div style="margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="font-size: 13px; font-weight: 600; color: #111827;">{{ __('Pilihan Ukuran:') }}</span>
-          <button type="button" onclick="document.querySelector('[data-pdp-tab=\'tabInfo\']').click()" style="background: none; border: none; font-size: 12px; color: #A18A68; text-decoration: underline; cursor: pointer;">{{ __('Panduan Ukuran (Size Chart)') }}</button>
-        </div>
-        <div style="display: flex; gap: 8px;" id="pdpSizeSelector">
-          @foreach(['S', 'M', 'L', 'XL'] as $idx => $size)
-            <button
-              type="button"
-              class="pdp-size-btn {{ $idx === 1 ? 'active' : '' }}"
-              data-size="{{ $size }}"
-              style="min-width: 44px; height: 38px; border: 1px solid {{ $idx === 1 ? '#111827' : '#D1D5DB' }}; background: {{ $idx === 1 ? '#111827' : '#FFFFFF' }}; color: {{ $idx === 1 ? '#FFFFFF' : '#374151' }}; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
-            >
-              {{ $size }}
-            </button>
-          @endforeach
+        @if(!$isSingleSizeOrAccessory)
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 13px; font-weight: 600; color: #111827;">{{ __('Pilihan Ukuran:') }}</span>
+            <button type="button" onclick="document.querySelector('[data-pdp-tab=\'tabInfo\']').click()" style="background: none; border: none; font-size: 12px; color: #A18A68; text-decoration: underline; cursor: pointer;">{{ __('Panduan Ukuran (Size Chart)') }}</button>
+          </div>
+          <div style="display: flex; gap: 8px;" id="pdpSizeSelector">
+            @foreach($availableSizes as $idx => $size)
+              @php
+                $sizeStock = $product->getStockForSize($size);
+                $isAvailable = $sizeStock > 0;
+                $isActive = $size === $defaultSize;
+              @endphp
+              <button
+                type="button"
+                class="pdp-size-btn {{ $isActive ? 'active' : '' }}"
+                data-size="{{ $size }}"
+                data-stock="{{ $sizeStock }}"
+                style="min-width: 44px; height: 38px; border: 1px solid {{ $isActive ? '#111827' : '#D1D5DB' }}; background: {{ $isActive ? '#111827' : '#FFFFFF' }}; color: {{ $isActive ? '#FFFFFF' : ($isAvailable ? '#374151' : '#9CA3AF') }}; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; position: relative;"
+                title="{{ $isAvailable ? __('Stok: ') . $sizeStock . ' pcs' : __('Ukuran habis') }}"
+              >
+                {{ $size }}
+                @if(!$isAvailable)
+                  <span style="position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; background: #EF4444; border-radius: 50%;"></span>
+                @endif
+              </button>
+            @endforeach
+          </div>
+        @else
+          <!-- Single Size / Accessories Display -->
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 8px;">
+            <span style="font-size: 12.5px; font-weight: 600; color: #111827;">{{ __('Ukuran / Varian:') }}</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 3px 10px; border-radius: 9999px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #16A34A;"></span>
+              {{ $defaultSize }}
+            </span>
+          </div>
+        @endif
+
+        <div id="pdpSizeStockNotice" style="font-size: 12px; color: #6B7280; margin-top: 6px;">
+          {{ __('Tersedia:') }} <strong id="pdpSelectedStockText" style="color: #111827;">{{ $defaultStock }} pcs</strong> ({{ __('Ukuran') }} {{ $defaultSize }})
         </div>
       </div>
 
@@ -132,7 +162,7 @@
         <div class="detail-actions-row">
           <div class="qty-control" aria-label="Product quantity">
             <button type="button" class="qty-btn" id="pdpQtyMinus" aria-label="Decrease quantity">&minus;</button>
-            <input type="number" id="pdpQtyInput" class="qty-input" value="1" min="1" max="{{ $product->stock }}" aria-label="Quantity">
+            <input type="number" id="pdpQtyInput" class="qty-input" value="1" min="1" max="{{ $defaultStock > 0 ? $defaultStock : 1 }}" aria-label="Quantity">
             <button type="button" class="qty-btn" id="pdpQtyPlus" aria-label="Increase quantity">&#43;</button>
           </div>
 
@@ -144,9 +174,31 @@
             data-product-id="{{ $product->id }}"
             data-product-title="{{ $product->name }}"
             data-product-price="{{ $product->price }}"
+            data-product-size="{{ $defaultSize }}"
             data-product-img="{{ asset($product->primary_image) }}"
           >
-            {{ __('Add to Cart') }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>{{ __('Masukkan Keranjang') }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn-buy-now"
+            id="pdpBuyNowBtn"
+            data-product-id="{{ $product->id }}"
+            data-product-title="{{ $product->name }}"
+            data-product-price="{{ $product->price }}"
+            data-product-size="{{ $defaultSize }}"
+            data-product-img="{{ asset($product->primary_image) }}"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>{{ __('Beli Sekarang') }}</span>
           </button>
         </div>
       @else
@@ -158,14 +210,18 @@
       @endif
 
       <div class="detail-meta-social">
+        @php
+          $isWishlisted = $product->isWishlistedBy(auth()->user());
+        @endphp
         <button
           type="button"
-          class="wishlist-icon-btn"
+          class="wishlist-icon-btn {{ $isWishlisted ? 'active' : '' }}"
           data-action="wishlist"
           data-product-id="{{ $product->id }}"
-          aria-label="Add to wishlist"
+          title="{{ $isWishlisted ? __('Hapus dari Wishlist') : __('Tambah ke Wishlist') }}"
+          aria-label="{{ $isWishlisted ? __('Hapus dari Wishlist') : __('Tambah ke Wishlist') }}"
         >
-          <svg viewBox="0 0 24 24">
+          <svg viewBox="0 0 24 24" fill="{{ $isWishlisted ? '#D82700' : 'none' }}" stroke="{{ $isWishlisted ? '#D82700' : 'currentColor' }}">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
         </button>
@@ -193,7 +249,7 @@
         </div>
         <div class="meta-item">
           <strong>{{ __('Garansi:') }}</strong>
-          <span style="color: #4B5563;">{{ __('Complimentary Size Exchange 7 Hari') }}</span>
+          <span style="color: #4B5563;">{{ __('Garansi Retur 1 Hari') }}</span>
         </div>
       </div>
     </div>
@@ -202,25 +258,54 @@
   <!-- Product Tabs -->
   <section class="product-tabs-section">
     <div class="tab-nav-list" role="tablist">
-      <button type="button" class="tab-btn active" data-pdp-tab="tabDesc" role="tab" aria-selected="true">{{ __('Description') }}</button>
-      <button type="button" class="tab-btn" data-pdp-tab="tabInfo" role="tab" aria-selected="false">{{ __('Size Guide & Material') }}</button>
+      <button type="button" class="tab-btn active" data-pdp-tab="tabDesc" role="tab" aria-selected="true">{{ __('Deskripsi Produk') }}</button>
+      <button type="button" class="tab-btn" data-pdp-tab="tabInfo" role="tab" aria-selected="false">{{ __('Spesifikasi & Panduan Ukuran') }}</button>
     </div>
 
     <div class="tab-panel active" id="tabDesc" role="tabpanel">
-      <p style="line-height: 1.8; color: #4B5563;">{{ $product->description }}</p>
-      <div style="margin-top: 18px; padding: 16px; background: #FAF9F6; border-radius: 8px; border: 1px solid #E5E7EB;">
-        <h4 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 8px 0;">✨ {{ __('Catatan Styling PUTRI.J') }}</h4>
-        <p style="font-size: 13.5px; color: #6B7280; margin: 0; line-height: 1.6;">
-          {{ app()->getLocale() === 'en' ? 'Pair this piece with minimalist mules or delicate strappy heels for an understated luxury look. Breathable, fluid drape designed to move gracefully throughout your day.' : 'Padukan busana ini dengan sepatu hak minimalis atau mules santai untuk kesan refined luxury. Material berkarakter jatuh rapi dan bernapas sejuk, nyaman dikenakan sepanjang hari dalam berbagai suasana.' }}
-        </p>
+      <!-- Shopee-Style Header Bar -->
+      <div style="background: #FAFAFA; border: 1px solid #EAEAEA; border-radius: 6px; padding: 12px 18px; margin-bottom: 22px;">
+        <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: rgba(0,0,0,0.87); letter-spacing: -0.01em;">
+          {{ __('Deskripsi Produk') }}
+        </h3>
+      </div>
+
+      <div class="pdp-rich-description">
+        @php
+          $desc = $product->description ?? '';
+          $hasHtml = strip_tags($desc) !== $desc;
+        @endphp
+
+        @if($hasHtml)
+          {!! $desc !!}
+        @else
+          {!! nl2br(e($desc)) !!}
+        @endif
+      </div>
+
+      <div style="margin-top: 28px; padding: 18px 20px; background: #FAF9F6; border-radius: 8px; border: 1px solid #E5E7EB; display: flex; align-items: flex-start; gap: 12px;">
+        <div style="font-size: 20px; line-height: 1; flex-shrink: 0;">✨</div>
+        <div>
+          <h4 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 6px 0;">{{ __('Catatan Styling PUTRIJALVA') }}</h4>
+          <p style="font-size: 13.5px; color: #6B7280; margin: 0; line-height: 1.6;">
+            {{ app()->getLocale() === 'en' ? 'Pair this piece with minimalist mules or delicate strappy heels for an understated luxury look. Breathable, fluid drape designed to move gracefully throughout your day.' : 'Padukan busana ini dengan sepatu hak minimalis atau mules santai untuk kesan refined luxury. Material berkarakter jatuh rapi dan bernapas sejuk, nyaman dikenakan sepanjang hari dalam berbagai suasana.' }}
+          </p>
+        </div>
       </div>
     </div>
 
     <div class="tab-panel" id="tabInfo" role="tabpanel">
+      <!-- Shopee-Style Header Bar -->
+      <div style="background: #FAFAFA; border: 1px solid #EAEAEA; border-radius: 6px; padding: 12px 18px; margin-bottom: 22px;">
+        <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: rgba(0,0,0,0.87); letter-spacing: -0.01em;">
+          {{ __('Spesifikasi Produk & Panduan Ukuran') }}
+        </h3>
+      </div>
+
       <div class="additional-info-list">
         <div class="info-row">
           <span class="info-label">{{ __('Material Kain:') }}</span>
-          <span class="info-value">French Washed Linen, Mulberry Silk Blend, Organic Poplin Cotton</span>
+          <span class="info-value">Linen Halus Pilihan, Sutra Murbei & Katun Organik Indonesia</span>
         </div>
         <div class="info-row">
           <span class="info-label">{{ __('Pilihan Ukuran:') }}</span>
@@ -235,8 +320,8 @@
           <span class="info-value">{{ app()->getLocale() === 'en' ? 'Gentle wash in cold water (hand wash or delicate cycle), line dry inside out in shade, medium iron.' : 'Cuci lembut dengan air dingin (hand wash/delicate cycle), jemur terbalik di tempat teduh, setrika suhu sedang.' }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">{{ __('Garansi Tukar Ukuran:') }}</span>
-          <span class="info-value">{{ __('Tukar ukuran gratis 1x dalam 7 hari jika baju kebesaran atau kekecilan.') }}</span>
+          <span class="info-label">{{ __('Garansi Retur Produk:') }}</span>
+          <span class="info-value">{{ __('Retur untuk barang rusak atau tidak sesuai pesanan maksimal 1 hari setelah barang diterima.') }}</span>
         </div>
       </div>
     </div>
@@ -267,7 +352,7 @@
       </div>
     @endif
 
-    <!-- Shopee-Style Rating Overview Box (Themed to PUTRI.J Luxury Palette) -->
+    <!-- Shopee-Style Rating Overview Box (Themed to PUTRIJALVA Luxury Palette) -->
     <div class="shoppe-rating-overview" style="background: #FAF9F6; border: 1px solid #EAEAEA; border-radius: 6px; padding: 26px 30px; margin-bottom: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px;">
       <!-- Left: Big Score & Luxury Gold Stars -->
       <div style="min-width: 150px; text-align: center;">
@@ -446,7 +531,7 @@
               {{ $review->display_name }}
             </div>
 
-            <!-- Gold Stars (PUTRI.J Palette) -->
+            <!-- Gold Stars (PUTRIJALVA Palette) -->
             <div style="color: #A18A68; font-size: 13px; margin: 3px 0 4px 0; letter-spacing: 1px;">
               @for($s = 1; $s <= 5; $s++)
                 @if($s <= $review->rating)
@@ -591,12 +676,18 @@
     const minusBtn = document.getElementById('pdpQtyMinus');
     const plusBtn = document.getElementById('pdpQtyPlus');
     const addBtn = document.getElementById('pdpAddToCartBtn');
+    const buyNowBtn = document.getElementById('pdpBuyNowBtn');
+
+    function updateActionButtonsQty(val) {
+      if (addBtn) addBtn.setAttribute('data-product-qty', String(val));
+      if (buyNowBtn) buyNowBtn.setAttribute('data-product-qty', String(val));
+    }
 
     if (minusBtn && qtyInput) {
       minusBtn.addEventListener('click', function () {
         const val = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
         qtyInput.value = val;
-        if (addBtn) addBtn.setAttribute('data-product-qty', String(val));
+        updateActionButtonsQty(val);
       });
     }
 
@@ -605,14 +696,22 @@
         const max = parseInt(qtyInput.getAttribute('max') || '99', 10);
         const val = Math.min(max, (parseInt(qtyInput.value, 10) || 1) + 1);
         qtyInput.value = val;
-        if (addBtn) addBtn.setAttribute('data-product-qty', String(val));
+        updateActionButtonsQty(val);
       });
     }
 
     // Size Selector Buttons
     const sizeBtns = document.querySelectorAll('#pdpSizeSelector .pdp-size-btn');
+    const pdpAddCartBtn = document.getElementById('pdpAddToCartBtn');
+    const pdpBuyNowBtn = document.getElementById('pdpBuyNowBtn');
+    const pdpStockNotice = document.getElementById('pdpSelectedStockText');
+    const pdpQtyInput = document.getElementById('pdpQtyInput');
+
     sizeBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
+        const selectedSize = this.getAttribute('data-size') || 'M';
+        const stock = parseInt(this.getAttribute('data-stock'), 10) || 0;
+
         sizeBtns.forEach(function (b) {
           b.style.background = '#FFFFFF';
           b.style.color = '#374151';
@@ -623,8 +722,82 @@
         this.style.color = '#FFFFFF';
         this.style.borderColor = '#111827';
         this.classList.add('active');
+
+        if (pdpAddCartBtn) {
+          pdpAddCartBtn.setAttribute('data-product-size', selectedSize);
+          if (stock <= 0) {
+            pdpAddCartBtn.disabled = true;
+            pdpAddCartBtn.style.opacity = '0.5';
+            pdpAddCartBtn.style.cursor = 'not-allowed';
+            const spanText = pdpAddCartBtn.querySelector('span');
+            if (spanText) spanText.textContent = '{{ __("Ukuran Habis") }}';
+          } else {
+            pdpAddCartBtn.disabled = false;
+            pdpAddCartBtn.style.opacity = '1';
+            pdpAddCartBtn.style.cursor = 'pointer';
+            const spanText = pdpAddCartBtn.querySelector('span');
+            if (spanText) spanText.textContent = '{{ __("Masukkan Keranjang") }}';
+          }
+        }
+
+        if (pdpBuyNowBtn) {
+          pdpBuyNowBtn.setAttribute('data-product-size', selectedSize);
+          if (stock <= 0) {
+            pdpBuyNowBtn.disabled = true;
+            pdpBuyNowBtn.style.opacity = '0.5';
+            pdpBuyNowBtn.style.cursor = 'not-allowed';
+            const spanText = pdpBuyNowBtn.querySelector('span');
+            if (spanText) spanText.textContent = '{{ __("Habis") }}';
+          } else {
+            pdpBuyNowBtn.disabled = false;
+            pdpBuyNowBtn.style.opacity = '1';
+            pdpBuyNowBtn.style.cursor = 'pointer';
+            const spanText = pdpBuyNowBtn.querySelector('span');
+            if (spanText) spanText.textContent = '{{ __("Beli Sekarang") }}';
+          }
+        }
+
+        if (pdpStockNotice) {
+          pdpStockNotice.textContent = stock + ' pcs';
+          const noticeWrapper = document.getElementById('pdpSizeStockNotice');
+          if (noticeWrapper) {
+            noticeWrapper.innerHTML = '{{ __("Tersedia:") }} <strong style="color: #111827;">' + stock + ' pcs</strong> ({{ __("Ukuran") }} ' + selectedSize + ')';
+          }
+        }
+
+        if (pdpQtyInput) {
+          pdpQtyInput.max = String(Math.max(1, stock));
+          if (parseInt(pdpQtyInput.value, 10) > stock && stock > 0) {
+            pdpQtyInput.value = String(stock);
+            updateActionButtonsQty(stock);
+          }
+        }
       });
     });
+
+    // Buy Now Button Handler (Direct to Checkout)
+    if (pdpBuyNowBtn) {
+      pdpBuyNowBtn.addEventListener('click', function () {
+        const productId = this.getAttribute('data-product-id');
+        const productTitle = this.getAttribute('data-product-title');
+        const productPrice = parseFloat(this.getAttribute('data-product-price')) || 0;
+        const productSize = this.getAttribute('data-product-size') || 'M';
+        const productImg = this.getAttribute('data-product-img') || '';
+        const qty = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
+
+        if (window.cartManager) {
+          window.cartManager.addItem({
+            id: productId,
+            title: productTitle,
+            price: productPrice,
+            size: productSize,
+            image: productImg,
+            quantity: qty
+          }, false);
+          window.location.href = "{{ route('checkout.index') }}";
+        }
+      });
+    }
 
     // Tabs switching
     const tabBtns = document.querySelectorAll('[data-pdp-tab]');

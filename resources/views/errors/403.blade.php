@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', '403 Akses Ditolak - PUTRI.J')
+@section('title', '403 Akses Ditolak - PUTRIJALVA')
 
 @section('content')
 <div class="container" style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 60px 16px;">

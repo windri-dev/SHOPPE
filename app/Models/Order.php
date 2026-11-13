@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\Services\CurrencyService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -99,7 +100,7 @@ class Order extends Model
 
     public function getFormattedGrandTotalAttribute(): string
     {
-        return '$ '.number_format((float) $this->grand_total, 2);
+        return app(CurrencyService::class)->format((float) $this->grand_total);
     }
 
     public function isPaid(): bool

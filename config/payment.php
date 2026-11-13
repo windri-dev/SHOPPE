@@ -53,7 +53,7 @@ return [
         ],
 
         'simulated' => [
-            'name' => 'PUTRI.J Local PGA Simulator',
+            'name' => 'PUTRIJALVA Local PGA Simulator',
             'auto_settle' => env('SIMULATED_PAYMENT_AUTO_SETTLE', false),
         ],
     ],

@@ -333,6 +333,13 @@
   .checkout-coupon-box {
     padding: 24px 18px;
   }
+
+  /* Prevent involuntary iOS Safari auto-zoom on input focus */
+  .checkout-input,
+  .checkout-select,
+  .checkout-coupon-input {
+    font-size: 16px !important;
+  }
 }
 
 @media (max-width: 576px) {

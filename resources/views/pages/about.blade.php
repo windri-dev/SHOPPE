@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', __('Our Story') . ' - PUTRI.J')
+@section('title', __('Our Story') . ' - PUTRIJALVA')
 
 @section('content')
 <div class="container about-page">
@@ -14,11 +14,11 @@
   <div class="about-content">
     @if(app()->getLocale() === 'en')
       <p>
-        PUTRI.J was founded on the conviction that authentic elegance arises from precise silhouettes, pure organic fabrics, and meticulous artisanal craftsmanship. We create contemporary ready-to-wear pieces ranging from bias-cut silk slip dresses, relaxed French linen shirts, structured tailored blazers, to effortlessly refined knitwear sets.
+        PUTRIJALVA was founded on the conviction that authentic elegance arises from precise silhouettes, pure organic fabrics, and meticulous artisanal craftsmanship. We create contemporary ready-to-wear pieces ranging from bias-cut silk slip dresses, relaxed artisanal Indonesian linen shirts, structured tailored blazers, to effortlessly refined knitwear sets.
       </p>
 
       <div class="about-media">
-        <img src="{{ asset('images/hero-1.png') }}" alt="PUTRI.J Atelier Studio" loading="lazy">
+        <img src="{{ asset('images/hero-1.png') }}" alt="PUTRIJALVA Atelier Studio" loading="lazy">
       </div>
 
       <h2 class="about-section-title">Design Philosophy &amp; Fabric Excellence</h2>
@@ -27,11 +27,11 @@
       </p>
     @else
       <p>
-        PUTRI.J didirikan atas dasar keyakinan bahwa keindahan sejati terpancar dari potongan siluet yang presisi, kemurnian kain berkualitas tinggi, dan sentuhan pengerjaan jahitan yang teliti. Kami menciptakan busana kontemporer mulai dari gaun satin berpotongan bias, kemeja santai berbahan French linen, blazer tailored berstruktur, hingga setelan rajut yang anggun dan nyaman.
+        PUTRIJALVA didirikan atas dasar keyakinan bahwa keindahan sejati terpancar dari potongan siluet yang presisi, kemurnian kain berkualitas tinggi, dan sentuhan pengerjaan jahitan yang teliti. Kami menciptakan busana kontemporer mulai dari gaun satin berpotongan bias, kemeja santai berbahan linen alami Indonesia, blazer tailored berstruktur, hingga setelan rajut yang anggun dan nyaman.
       </p>
 
       <div class="about-media">
-        <img src="{{ asset('images/hero-1.png') }}" alt="PUTRI.J Atelier Studio" loading="lazy">
+        <img src="{{ asset('images/hero-1.png') }}" alt="PUTRIJALVA Atelier Studio" loading="lazy">
       </div>
 
       <h2 class="about-section-title">Filosofi &amp; Kualitas Kain</h2>

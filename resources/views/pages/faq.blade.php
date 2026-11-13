@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', 'FAQ & Pusat Bantuan Pelanggan - PUTRI.J')
-@section('meta_description', 'Pertanyaan yang sering diajukan (FAQ) seputar cara pemesanan, konfirmasi pembayaran, buku alamat pengiriman, pelacakan resi, garansi tukar ukuran, dan perawatan busana PUTRI.J.')
+@section('title', 'FAQ & Pusat Bantuan Pelanggan - PUTRIJALVA')
+@section('meta_description', 'Pertanyaan yang sering diajukan (FAQ) seputar cara pemesanan, konfirmasi pembayaran, buku alamat pengiriman, pelacakan resi, garansi tukar ukuran, dan perawatan busana PUTRIJALVA.')
 
 @section('content')
 <div class="container" style="padding-top: 48px; padding-bottom: 80px; max-width: 860px;">

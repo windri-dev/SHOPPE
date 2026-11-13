@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', __('Keranjang Belanja') . ' - PUTRI.J')
+@section('title', __('Keranjang Belanja') . ' - PUTRIJALVA')
 
 @section('content')
 <div class="container cart-page">
@@ -37,23 +37,18 @@
       </div>
 
       @guest
-        <div style="background: #FAF8F5; border: 1px solid #EAE4DA; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #5C5243; line-height: 1.5;">
-          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #111827; margin-bottom: 4px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <span>{{ __('Perhatian: Perlu Masuk / Mendaftar') }}</span>
+        <div style="background: #FDFBF7; border: 1px solid #EFE8DC; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 12.5px; color: #6B7280; line-height: 1.5;">
+          <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #111827; margin-bottom: 2px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>{{ __('Checkout Cepat Tanpa Login') }}</span>
           </div>
-          {{ __('Anda harus masuk ke akun Anda atau mendaftar terlebih dahulu sebelum dapat melanjutkan ke proses checkout pesanan.') }}
+          {{ __('Anda dapat langsung memesan sebagai Tamu (Guest) tanpa harus login. Cukup lengkapi data penerima dan nomor kontak aktif saat checkout.') }}
         </div>
-
-        <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          {{ __('LOGIN UNTUK CHECKOUT') }}
-        </a>
-      @else
-        <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout">
-          {{ __('PROCEED TO CHECKOUT') }}
-        </a>
       @endguest
+
+      <a href="{{ route('checkout.index') }}" class="btn-proceed-checkout">
+        {{ __('PROCEED TO CHECKOUT') }}
+      </a>
     </div>
   </div>
 </div>

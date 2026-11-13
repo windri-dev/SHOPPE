@@ -50,7 +50,7 @@ class LiveChatManager {
 
     const waHeaderBtn = this.wrapper.querySelector('.shoppe-livechat-btn-whatsapp');
     if (waHeaderBtn) {
-      waHeaderBtn.href = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent('Halo PUTRI.J Concierge, saya ingin konsultasi produk busana.')}`;
+      waHeaderBtn.href = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent('Halo PUTRIJALVA Concierge, saya ingin konsultasi produk busana.')}`;
     }
 
     this.loadHistory();
@@ -142,7 +142,7 @@ class LiveChatManager {
     }
 
     if (this.ticketInfo) {
-      this.ticketInfo.textContent = 'PUTRI.J Concierge • 09:00 - 21:00 WIB';
+      this.ticketInfo.textContent = 'PUTRIJALVA Concierge • 09:00 - 21:00 WIB';
     }
   }
 
@@ -229,22 +229,22 @@ class LiveChatManager {
       this.messages = [
         {
           sender: 'agent',
-          senderBadge: 'PUTRI.J Assistant',
-          text: 'Halo! Selamat datang di **PUTRI.J** ✨\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini?',
+          senderBadge: 'PUTRIJALVA Assistant',
+          text: 'Halo! Selamat datang di **PUTRIJALVA** ✨\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini?',
           time: this.getCurrentTime()
         }
       ];
       this.saveHistory();
     } else {
-      // Bersihkan pesan otomatis lama yang menampilkan nomor tiket & perbarui brand ke PUTRI.J
+      // Bersihkan pesan otomatis lama yang menampilkan nomor tiket & perbarui brand ke PUTRIJALVA
       this.messages = saved
         .filter(
           (m) => !(m.senderBadge === 'Mode Admin Manusia' || String(m.text || '').includes('Pesan Anda telah diterima di ruang obrolan'))
         )
         .map((m) => ({
           ...m,
-          text: String(m.text || '').replace(/SHOPPE/g, 'PUTRI.J'),
-          senderBadge: m.senderBadge ? String(m.senderBadge).replace(/SHOPPE/g, 'PUTRI.J') : m.senderBadge
+          text: String(m.text || '').replace(/SHOPPE|PUTRI\.J/g, 'PUTRIJALVA'),
+          senderBadge: m.senderBadge ? String(m.senderBadge).replace(/SHOPPE|PUTRI\.J/g, 'PUTRIJALVA') : m.senderBadge
         }));
       this.saveHistory();
     }
@@ -387,7 +387,7 @@ class LiveChatManager {
         if (data.ai_reply) {
           const badge = data.handled_by === 'handoff'
             ? 'Customer Service'
-            : (data.handled_by === 'ai_boundary' ? 'Informasi Layanan' : 'PUTRI.J Assistant');
+            : (data.handled_by === 'ai_boundary' ? 'Informasi Layanan' : 'PUTRIJALVA Assistant');
 
           this.sendAgentMessage(data.ai_reply, data.action_btn || null, badge);
         }
@@ -485,7 +485,7 @@ class LiveChatManager {
     }
   }
 
-  sendAgentMessage(text, actionBtn = null, senderBadge = 'PUTRI.J Assistant') {
+  sendAgentMessage(text, actionBtn = null, senderBadge = 'PUTRIJALVA Assistant') {
     this.removeTypingIndicator();
 
     const msg = {

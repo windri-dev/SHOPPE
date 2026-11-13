@@ -54,7 +54,7 @@ class InquirySeeder extends Seeder
                 'messages' => [
                     [
                         'sender_type' => 'customer',
-                        'message' => 'Selamat siang tim PUTRI.J, keliling jari saya 56mm. Untuk cincin Atelier Oval Signet lebih disarankan size 6 atau 7 ya?',
+                        'message' => 'Selamat siang tim PUTRIJALVA, keliling jari saya 56mm. Untuk cincin Atelier Oval Signet lebih disarankan size 6 atau 7 ya?',
                         'created_at' => Carbon::now()->subHours(5),
                     ],
                 ],
@@ -114,7 +114,7 @@ class InquirySeeder extends Seeder
                 'messages' => [
                     [
                         'sender_type' => 'customer',
-                        'message' => 'Halo, apakah PUTRI.J menyediakan layanan re-plating emas jika gelang saya nanti mulai kusam setelah dipakai bertahun-tahun?',
+                        'message' => 'Halo, apakah PUTRIJALVA menyediakan layanan re-plating emas jika gelang saya nanti mulai kusam setelah dipakai bertahun-tahun?',
                         'created_at' => Carbon::now()->subDays(1)->addMinutes(10),
                     ],
                     [
@@ -144,7 +144,7 @@ class InquirySeeder extends Seeder
                     ],
                     [
                         'sender_type' => 'admin',
-                        'message' => 'Tentu saja Kak Amanda, tim concierge kami dengan senang hati mengemasnya dengan wax seal dan pita hijau signature PUTRI.J tanpa biaya tambahan.',
+                        'message' => 'Tentu saja Kak Amanda, tim concierge kami dengan senang hati mengemasnya dengan wax seal dan pita hijau signature PUTRIJALVA tanpa biaya tambahan.',
                         'created_at' => Carbon::now()->subDays(2)->addHours(2),
                     ],
                 ],
@@ -169,7 +169,7 @@ class InquirySeeder extends Seeder
                     ],
                     [
                         'sender_type' => 'admin',
-                        'message' => 'Selamat siang Pak Michael, seluruh jam tangan artisan PUTRI.J dilengkapi kartu garansi resmi mesin 2 tahun dan gratis ganti baterai 1x di studio kami.',
+                        'message' => 'Selamat siang Pak Michael, seluruh jam tangan artisan PUTRIJALVA dilengkapi kartu garansi resmi mesin 2 tahun dan gratis ganti baterai 1x di studio kami.',
                         'created_at' => Carbon::now()->subDays(3)->addMinutes(20),
                     ],
                 ],
@@ -229,7 +229,7 @@ class InquirySeeder extends Seeder
                     ],
                     [
                         'sender_type' => 'admin',
-                        'message' => 'Tentu bisa Kak Dimas. Kebijakan PUTRI.J memungkinkan pertukaran size gratis dalam 7 hari setelah barang diterima, asalkan tag segel masih utuh.',
+                        'message' => 'Tentu bisa Kak Dimas. Kebijakan PUTRIJALVA memungkinkan pertukaran size gratis dalam 7 hari setelah barang diterima, asalkan tag segel masih utuh.',
                         'created_at' => Carbon::now()->subDays(15)->addHours(1),
                     ],
                     [

@@ -6,14 +6,16 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="user-auth" content="{{ auth()->check() ? '1' : '0' }}">
   <meta name="login-url" content="{{ route('login') }}">
-  <title>@yield('title', 'PUTRI.J - Contemporary Ready-to-Wear Fashion & Apparel')</title>
-  <meta name="description" content="@yield('meta_description', 'Koleksi busana kontemporer, midi dress elegan, atasan sutra, blazer tailored, dan pakaian wanita modern dari butik PUTRI.J.')">
+  <title>@yield('title', 'PUTRIJALVA - Contemporary Ready-to-Wear Fashion & Apparel')</title>
+  <meta name="description" content="@yield('meta_description', 'Koleksi busana kontemporer, midi dress elegan, atasan sutra, blazer tailored, dan pakaian wanita modern dari butik PUTRIJALVA.')">
   <meta name="theme-color" content="#A18A68">
 
   <!-- Favicons & Touch Icons -->
-  <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
+  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
   <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
   <link rel="manifest" href="{{ asset('site.webmanifest') }}">
 
   <!-- User Auth State for Client Scripts -->
@@ -23,6 +25,11 @@
       loginUrl: "{{ route('login') }}"
     };
     window.ShoppeLocale = "{{ app()->getLocale() }}";
+    window.ShoppeCurrency = {
+      locale: "{{ app()->getLocale() }}",
+      symbol: "{{ app()->getLocale() === 'id' ? 'Rp' : '$' }}",
+      rate: {{ (int) round(app(\App\Services\CurrencyService::class)->getUsdToIdrRate()) }},
+    };
     window.__trans = {
       emptyCartDrawer: "{{ __('Your shopping bag is currently empty.') }}",
       emptyCartPage: "{{ __('Keranjang belanja Anda saat ini kosong.') }}",

@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -30,8 +31,16 @@ class OrderController extends Controller
         if (! $order->isPaid()) {
             try {
                 $paymentSession = $this->paymentManager->initiatePayment($order);
+                Log::channel('transactions')->info("Payment session initiated for order [{$order->order_number}]", [
+                    'order_number' => $order->order_number,
+                    'provider' => $paymentSession['provider'] ?? 'unknown',
+                    'token_present' => ! empty($paymentSession['token']),
+                ]);
             } catch (\Exception $e) {
-                // Abaikan jika offline / dev fallback
+                Log::channel('transactions')->warning("Payment session initiation failed for order [{$order->order_number}]: {$e->getMessage()}", [
+                    'order_number' => $order->order_number,
+                    'exception' => $e::class,
+                ]);
             }
         }
 
@@ -84,7 +93,7 @@ class OrderController extends Controller
                 'status' => OrderStatus::PROCESSING,
             ]);
 
-            return back()->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan Anda saat ini sedang disiapkan oleh tim perajin PUTRI.J.');
+            return back()->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan Anda saat ini sedang disiapkan oleh tim perajin PUTRIJALVA.');
         }
 
         $note = "Konfirmasi Transfer: Bank {$validated['bank_name']} a.n. {$validated['sender_name']} (Rp ".number_format((float) $validated['transfer_amount'], 0, ',', '.').')';
@@ -99,6 +108,6 @@ class OrderController extends Controller
             'notes' => $existingNotes.$note,
         ]);
 
-        return back()->with('success', 'Bukti konfirmasi transfer Anda telah kami terima. Tim Finance PUTRI.J akan memverifikasi mutasi rekening dalam 15-30 menit.');
+        return back()->with('success', 'Bukti konfirmasi transfer Anda telah kami terima. Tim Finance PUTRIJALVA akan memverifikasi mutasi rekening dalam 15-30 menit.');
     }
 }

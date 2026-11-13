@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('original_price', 10, 2)->nullable();
             $table->integer('stock')->default(10);
+            $table->json('size_stocks')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_active')->default(true);
             $table->string('badge')->nullable();

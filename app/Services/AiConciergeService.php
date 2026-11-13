@@ -49,7 +49,7 @@ class AiConciergeService
 
         // 2. Cek permintaan eksplisit untuk berbicara dengan Admin / CS Manusia
         if ($this->isExplicitHumanRequest($q)) {
-            $handoffReply = 'Tentu Kak, percakapan Anda sedang kami hubungkan ke **Customer Service PUTRI.J**. Mohon tunggu sebentar, tim kami akan segera merespons pesan Anda di sini.';
+            $handoffReply = 'Tentu Kak, percakapan Anda sedang kami hubungkan ke **Customer Service PUTRIJALVA**. Mohon tunggu sebentar, tim kami akan segera merespons pesan Anda di sini.';
 
             if ($inquiry) {
                 $inquiry->update([
@@ -117,11 +117,11 @@ class AiConciergeService
             $isEn = app()->getLocale() === 'en';
             if ($isEn) {
                 $customerGreeting = $user ? "Hello **{$user->name}**!" : 'Hello!';
-                $greetingFallback = "{$customerGreeting} Welcome to **PUTRI.J** luxury fashion boutique ✨ How may we assist you with our collections, size guide, or your order today?";
+                $greetingFallback = "{$customerGreeting} Welcome to **PUTRIJALVA** luxury fashion boutique ✨ How may we assist you with our collections, size guide, or your order today?";
                 $actionLabel = 'Explore Collection';
             } else {
                 $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-                $greetingFallback = "{$customerGreeting} Selamat datang di butik busana **PUTRI.J** ✨ Ada yang bisa kami bantu seputar koleksi busana, panduan ukuran (size chart), atau pesanan Anda hari ini?";
+                $greetingFallback = "{$customerGreeting} Selamat datang di butik busana **PUTRIJALVA** ✨ Ada yang bisa kami bantu seputar koleksi busana, panduan ukuran (size chart), atau pesanan Anda hari ini?";
                 $actionLabel = 'Buka Katalog Busana';
             }
 
@@ -211,7 +211,7 @@ class AiConciergeService
         $maxPrice = (float) (Product::where('is_active', true)->max('price') ?? 120);
 
         $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRI.J** ✨\n\nSaat ini tersedia **{$totalActive} koleksi busana pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
+        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRIJALVA** ✨\n\nSaat ini tersedia **{$totalActive} koleksi busana pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
 
         $externalReply = $this->callExternalAiApi($cleanMessage, $fallbackReply, $user, $inquiry);
         $defaultReply = $externalReply ?? $fallbackReply;
@@ -256,7 +256,7 @@ class AiConciergeService
         if ($catalogCheck !== null) {
             $clean = str_replace('**', '', $catalogCheck['reply']);
 
-            return "Halo Kak {$inquiry->name}, terima kasih telah menghubungi PUTRI.J Concierge.\n\n{$clean}\n\nApakah ada varian atau ukuran yang ingin kami bantu siapkan?";
+            return "Halo Kak {$inquiry->name}, terima kasih telah menghubungi PUTRIJALVA Concierge.\n\n{$clean}\n\nApakah ada varian atau ukuran yang ingin kami bantu siapkan?";
         }
 
         $knowledge = $this->findMatchingKnowledge($q, ['knowledge', 'response_rule', 'boundary']);
@@ -264,7 +264,7 @@ class AiConciergeService
             return "Halo Kak {$inquiry->name}, terkait pertanyaan Anda mengenai {$knowledge->title}:\n\n{$knowledge->content}\n\nSilakan beri tahu saya jika ada hal lain yang dapat kami bantu.";
         }
 
-        return "Halo Kak {$inquiry->name}, terima kasih telah menghubungi tim Concierge PUTRI.J. Pesan Anda mengenai \"{$inquiry->subject}\" sedang kami tindak lanjuti secara langsung. Bagaimana kami dapat membantu melengkapi pesanan Anda hari ini?";
+        return "Halo Kak {$inquiry->name}, terima kasih telah menghubungi tim Concierge PUTRIJALVA. Pesan Anda mengenai \"{$inquiry->subject}\" sedang kami tindak lanjuti secara langsung. Bagaimana kami dapat membantu melengkapi pesanan Anda hari ini?";
     }
 
     protected function isExplicitHumanRequest(string $q): bool
@@ -317,7 +317,7 @@ class AiConciergeService
 
         $fillers = [
             'kak', 'kakak', 'min', 'admin', 'sis', 'sist', 'gan',
-            'putri', 'putrij', 'ya', 'dong', 'kah', 'apakah', 'ada', 'orang',
+            'putri', 'putrij', 'putrijalva', 'jalva', 'ya', 'dong', 'kah', 'apakah', 'ada', 'orang',
             'semua', 'di', 'sana', 'cs', 'assistant', 'bot',
         ];
 
@@ -596,7 +596,7 @@ class AiConciergeService
         }
 
         $query = Product::with('category')->where('is_active', true);
-        $filterLabel = 'Koleksi Katalog PUTRI.J';
+        $filterLabel = 'Koleksi Katalog PUTRIJALVA';
 
         if ($matchedCategorySlug !== null) {
             $categoryModel = Category::where('slug', $matchedCategorySlug)->first();
@@ -649,7 +649,7 @@ class AiConciergeService
         }
 
         if ($isRecommendationIntent) {
-            $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi busana pilihan terfavorit di butik **PUTRI.J** yang siap kirim (*ready stock*):'];
+            $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi busana pilihan terfavorit di butik **PUTRIJALVA** yang siap kirim (*ready stock*):'];
             foreach ($results as $p) {
                 $descClean = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $p->description)));
                 $descShort = Str::limit($descClean, 80);
@@ -657,7 +657,7 @@ class AiConciergeService
             }
             $lines[] = "\nKoleksi di atas dibuat dengan material premium pilihan (Linen, Silk, & Katun Organik) yang adem dan berpotongan rapi, serta dilengkapi garansi tukar ukuran (size exchange). Apakah ada model yang paling sesuai dengan selera Kakak?";
         } else {
-            $lines = ["Berikut pilihan koleksi busana untuk **{$filterLabel}** di butik PUTRI.J:"];
+            $lines = ["Berikut pilihan koleksi busana untuk **{$filterLabel}** di butik PUTRIJALVA:"];
             foreach ($results as $p) {
                 $stockBadge = $p->stock > 0 ? "Ready {$p->stock} pcs" : 'Habis';
                 $promoInfo = ($p->original_price && (float) $p->original_price > (float) $p->price)
@@ -798,7 +798,7 @@ class AiConciergeService
             ? 'Jawab dalam Bahasa Inggris yang elegan dan natural (Respond in refined, concise English).'
             : 'Jawab dalam Bahasa Indonesia yang ramah dan elegan (atau dalam Bahasa Inggris jika pelanggan bertanya dalam Bahasa Inggris).';
 
-        $systemPrompt = "Anda adalah Aria, asisten konsultan butik busana wanita & ready-to-wear PUTRI.J (dress, atasan/blouse, blazer, celana, rok, dan setelan rajut).\n"
+        $systemPrompt = "Anda adalah Aria, asisten konsultan butik busana wanita & ready-to-wear PUTRIJALVA (dress, atasan/blouse, blazer, celana, rok, dan setelan rajut).\n"
             ."Jawab sapaan dan pertanyaan pelanggan seputar rekomendasi busana, ukuran (size chart), bahan kain premium, dan bantuan belanja.\n"
             ."Pedoman Bahasa: {$langInstruction}\n\n"
             ."Koleksi Utama:\n{$catalogSnapshot}\n\n"

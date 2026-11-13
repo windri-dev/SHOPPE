@@ -13,6 +13,7 @@ use App\Http\Requests\Account\UpdateShippingAddressRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use App\Models\Wishlist;
 use App\Services\Auth\RoleRedirectService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,10 @@ class AccountController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
             $user = Auth::user();
+
+            if ($user) {
+                Wishlist::syncGuestSessionToDatabase($user->id);
+            }
 
             return $this->roleRedirectService->redirectBasedOnRole($user);
         }
@@ -105,6 +110,8 @@ class AccountController extends Controller
         ]);
 
         Auth::login($user);
+
+        Wishlist::syncGuestSessionToDatabase($user->id);
 
         return $this->roleRedirectService->redirectBasedOnRole($user);
     }

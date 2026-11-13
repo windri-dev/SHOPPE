@@ -22,7 +22,7 @@ class ProcessCheckoutRequest extends FormRequest
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:150'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['required', 'string', 'min:8', 'max:25', 'regex:/^(\+62|62|0)[0-9\-\s]{7,20}$/'],
             'country' => ['required', 'string', 'max:100'],
             'province' => ['nullable', 'string', 'max:100'],
             'city' => ['required', 'string', 'max:100'],
@@ -38,6 +38,7 @@ class ProcessCheckoutRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.id' => ['required', 'integer', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.size' => ['nullable', 'string', 'max:20'],
         ];
     }
 
@@ -49,8 +50,11 @@ class ProcessCheckoutRequest extends FormRequest
         return [
             'first_name.required' => 'Nama depan wajib diisi.',
             'last_name.required' => 'Nama belakang wajib diisi.',
-            'email.required' => 'Alamat email wajib diisi.',
-            'street_address.required' => 'Alamat pengiriman wajib diisi.',
+            'email.required' => 'Alamat email aktif wajib diisi.',
+            'phone.required' => 'Nomor WhatsApp atau telepon yang bisa dihubungi wajib diisi untuk konfirmasi dan pengiriman pesanan.',
+            'phone.regex' => 'Format nomor telepon tidak valid. Masukkan nomor aktif Anda (contoh: 08123456789 atau +628123456789).',
+            'phone.min' => 'Nomor telepon minimal terdiri dari 8 digit.',
+            'street_address.required' => 'Alamat pengiriman wajib diisi dengan lengkap.',
             'city.required' => 'Kota pengiriman wajib diisi.',
             'postcode.required' => 'Kode pos wajib diisi.',
             'items.required' => 'Keranjang belanja Anda masih kosong.',

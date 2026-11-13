@@ -33,7 +33,7 @@ class ProductReviewFactory extends Factory
             'fit_tag' => fake()->randomElement(['Pas di badan', 'Sesuai ukuran']),
             'comment' => fake()->paragraph(),
             'images' => ['images/product-1.png'],
-            'seller_reply' => 'Terima kasih atas ulasan dan kepercayaannya berbelanja di PUTRI.J!',
+            'seller_reply' => 'Terima kasih atas ulasan dan kepercayaannya berbelanja di PUTRIJALVA!',
             'seller_replied_at' => now(),
             'is_verified_purchase' => true,
             'is_approved' => true,

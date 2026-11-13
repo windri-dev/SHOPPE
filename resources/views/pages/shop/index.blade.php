@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Shop - Contemporary Fashion & Apparel | PUTRI.J')
+@section('title', 'Shop - Contemporary Fashion & Apparel | PUTRIJALVA')
 
 @section('content')
 <div class="container shop-page">

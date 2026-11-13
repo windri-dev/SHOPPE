@@ -28,7 +28,44 @@ class ProductSeeder extends Seeder
                 'is_active' => true,
                 'badge' => 'Best Seller',
                 'sales_count' => 142,
-                'description' => 'Gaun midi anggun berpotongan bias drape lembut dari material silk-blend satin premium. Jatuh mengikuti lekuk tubuh dengan tali spageti yang dapat diatur. Sangat cocok untuk acara semi-formal, dinner romantis, maupun garden party elegan.',
+                'description' => 'Gaun midi anggun berpotongan bias drape lembut dari material silk-blend satin premium. Jatuh mengikuti lekuk tubuh dengan tali spageti yang dapat diatur. Sangat cocok untuk acara semi-formal, dinner romantis, maupun garden party elegan.
+
+Fitur Utama:
+• Material Silk-Blend Premium: Karakter kain halus, lembut di kulit, dan berkesan jatuh rapi tanpa menerawang.
+• Siluet Bias Cut: Membalut lekuk tubuh secara proporsional dan memberikan efek siluet jenjang feminin.
+• Tali Bahu Adjustable: Mudah disesuaikan panjang pendeknya sesuai kenyamanan Anda.
+• Desain Versatile: Anggun dipadukan bersama blazer formal, cardigan rajut, atau dikenakan langsung untuk pesta malam.
+
+Spesifikasi Produk:
+• Bahan: Silk-Blend Satin Grade A (Adem, Ringan & Berkilau Mewah)
+• Panjang Gaun: Midi (± 118 - 122 cm)
+• Pilihan Ukuran: S (LD 88 cm), M (LD 94 cm), L (LD 100 cm), XL (LD 106 cm)
+• Petunjuk Perawatan: Cuci lembut dengan tangan (cold wash), jemur terbalik di tempat teduh, setrika suhu sedang.
+
+Gaun ini dilengkapi furing lembut di bagian dada untuk kenyamanan ekstra dan tidak jiplak. Pilihan sempurna untuk menciptakan penampilan elegan yang timeless dan memikat di setiap momen spesial Anda!
+
+<div class="desc-banner-img">
+  <img src="/images/product-1.png" alt="Keanggunan Siluet & Material Silk-Blend Premium">
+</div>
+
+<div class="desc-feature-grid">
+  <div class="desc-feature-card">
+    <div class="feat-title">✨ Karakter Mewah</div>
+    <div class="feat-desc">Kilau satin natural elegan</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">🌿 Nyaman Dipakai</div>
+    <div class="feat-desc">Serat bernapas tidak gerah</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">👗 Jahitan Rapi</div>
+    <div class="feat-desc">Standar butik profesional</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">⚡ Siap Kirim</div>
+    <div class="feat-desc">Packing aman & higienis</div>
+  </div>
+</div>',
                 'images' => ['images/product-1.png', 'images/product-2.png'],
                 'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
             ],
@@ -44,7 +81,7 @@ class ProductSeeder extends Seeder
                 'is_active' => true,
                 'badge' => '-20%',
                 'sales_count' => 98,
-                'description' => 'Maxi wrap dress berbahan 100% French washed linen yang sejuk dan breathable. Dilengkapi aksen belt pinggang terikat dan rok berjenjang (tiered flare) yang mengayun indah saat melangkah.',
+                'description' => 'Maxi wrap dress berbahan 100% linen alami Indonesia yang sejuk dan breathable. Dilengkapi aksen belt pinggang terikat dan rok berjenjang (tiered flare) yang mengayun indah saat melangkah.',
                 'images' => ['images/product-2.png', 'images/product-3.png'],
                 'video_url' => null,
             ],
@@ -94,7 +131,7 @@ class ProductSeeder extends Seeder
                 'is_active' => true,
                 'badge' => '-20%',
                 'sales_count' => 165,
-                'description' => 'Kemeja linen oversized dengan jahitan prancis yang kokoh dan kancing mutiara asli. Mudah dipadukan sebagai atasan mandiri atau outer terbuka di atas tank top favorit Anda.',
+                'description' => 'Kemeja linen oversized dengan jahitan butik Indonesia yang rapi dan kancing mutiara asli. Mudah dipadukan sebagai atasan mandiri atau outer terbuka di atas tank top favorit Anda.',
                 'images' => ['images/product-5.png', 'images/product-6.png'],
                 'video_url' => null,
             ],
@@ -335,6 +372,23 @@ class ProductSeeder extends Seeder
         foreach ($products as $prodData) {
             $prodData['name_en'] = $prodData['name_en'] ?? $prodData['name'];
             $prodData['description_en'] = $prodData['description_en'] ?? $prodData['description'];
+
+            if (! isset($prodData['size_stocks'])) {
+                $stock = max(0, (int) ($prodData['stock'] ?? 0));
+                if ($stock === 0) {
+                    $prodData['size_stocks'] = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+                } else {
+                    $q = (int) floor($stock / 4);
+                    $rem = $stock % 4;
+                    $prodData['size_stocks'] = [
+                        'S' => $q + ($rem > 0 ? 1 : 0),
+                        'M' => $q + ($rem > 1 ? 1 : 0),
+                        'L' => $q + ($rem > 2 ? 1 : 0),
+                        'XL' => $q,
+                    ];
+                }
+            }
+
             Product::updateOrCreate(['sku' => $prodData['sku']], $prodData);
         }
     }

@@ -32,7 +32,7 @@ class IssueCommand extends Command
      *
      * @var string
      */
-    protected $description = 'CLI Manajemen Issues / Tiket Pelanggan dan GitHub Issues untuk PUTRI.J';
+    protected $description = 'CLI Manajemen Issues / Tiket Pelanggan dan GitHub Issues untuk PUTRIJALVA';
 
     /**
      * Execute the console command.

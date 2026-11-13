@@ -97,6 +97,7 @@ class PaymentGatewayManager
 
         // 1. Validasi Keaslian Signature Webhook
         if (! $gateway->verifyWebhookSignature($request)) {
+            Log::channel('transactions')->warning("Payment Gateway Webhook Invalid Signature [{$gateway->getDriverName()}]: ", $request->all());
             Log::warning("Payment Gateway Webhook Invalid Signature [{$gateway->getDriverName()}]: ", $request->all());
 
             return [
@@ -149,7 +150,7 @@ class PaymentGatewayManager
             }
 
             // Simpan / update catatan PaymentTransaction untuk audit trail
-            PaymentTransaction::updateOrCreate(
+            $transaction = PaymentTransaction::updateOrCreate(
                 [
                     'provider' => $gateway->getDriverName(),
                     'transaction_id' => $parsed['transaction_id'],
@@ -174,6 +175,12 @@ class PaymentGatewayManager
                     'payment_channel' => $parsed['payment_channel'] ?? $order->payment_channel,
                 ]);
 
+                Log::channel('transactions')->info("Payment Gateway Order [{$orderNumber}] successfully SETTLED via {$gateway->getDriverName()} ({$parsed['payment_channel']})", [
+                    'order_number' => $orderNumber,
+                    'provider' => $gateway->getDriverName(),
+                    'channel' => $parsed['payment_channel'] ?? null,
+                    'transaction_id' => $transaction->id,
+                ]);
                 Log::info("Payment Gateway Order [{$orderNumber}] successfully SETTLED via {$gateway->getDriverName()} ({$parsed['payment_channel']})");
             } elseif (in_array($parsed['status'], ['deny', 'cancel', 'expire'], true)) {
                 $order->update([
@@ -182,6 +189,12 @@ class PaymentGatewayManager
                     'payment_gateway' => $order->payment_gateway ?: $gateway->getDriverName(),
                 ]);
 
+                Log::channel('transactions')->info("Payment Gateway Order [{$orderNumber}] marked as {$parsed['status']}", [
+                    'order_number' => $orderNumber,
+                    'provider' => $gateway->getDriverName(),
+                    'status' => $parsed['status'],
+                    'transaction_id' => $transaction->id,
+                ]);
                 Log::info("Payment Gateway Order [{$orderNumber}] marked as {$parsed['status']}");
             }
 

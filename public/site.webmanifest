@@ -1,6 +1,6 @@
 {
-  "name": "PUTRI.J Luxury Jewelry",
-  "short_name": "PUTRI.J",
+  "name": "PUTRIJALVA Contemporary Ready-to-Wear",
+  "short_name": "PUTRIJALVA",
   "icons": [
     {
       "src": "/favicon-16x16.png",
@@ -16,10 +16,20 @@
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "theme_color": "#A18A68",
-  "background_color": "#111827",
+  "background_color": "#ffffff",
   "display": "standalone"
 }
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('content');
             $table->longText('content_en')->nullable();
             $table->string('image')->nullable();
-            $table->string('author')->default('PUTRI.J Editorial');
+            $table->string('author')->default('PUTRIJALVA Editorial');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Services\CurrencyService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ class Product extends Model
         'price',
         'original_price',
         'stock',
+        'size_stocks',
         'is_featured',
         'is_active',
         'badge',
@@ -38,6 +40,8 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'original_price' => 'decimal:2',
+            'stock' => 'integer',
+            'size_stocks' => 'array',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
             'images' => 'array',
@@ -90,7 +94,7 @@ class Product extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$ '.number_format((float) $this->price, 2);
+        return app(CurrencyService::class)->format((float) $this->price);
     }
 
     public function getPriceFormattedAttribute(): string
@@ -100,7 +104,9 @@ class Product extends Model
 
     public function getFormattedOriginalPriceAttribute(): ?string
     {
-        return $this->original_price ? '$ '.number_format((float) $this->original_price, 2) : null;
+        return $this->original_price !== null
+            ? app(CurrencyService::class)->format((float) $this->original_price)
+            : null;
     }
 
     public function getOriginalPriceFormattedAttribute(): ?string
@@ -248,5 +254,86 @@ class Product extends Model
         }
 
         return $this->video_url;
+    }
+
+    /**
+     * @return HasMany<Wishlist, Product>
+     */
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function isWishlistedBy(?User $user): bool
+    {
+        if (! $user) {
+            $sessionWishlist = session('wishlist', []);
+
+            return in_array($this->id, $sessionWishlist, true);
+        }
+
+        if ($this->relationLoaded('wishlists')) {
+            return $this->wishlists->contains('user_id', $user->id);
+        }
+
+        return $this->wishlists()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * Dapatkan matriks kuota stok per ukuran pakaian (S, M, L, XL).
+     *
+     * @return array<string, int>
+     */
+    public function getSizeStocksAttribute(): array
+    {
+        $stocks = $this->attributes['size_stocks'] ?? null;
+        if ($stocks !== null) {
+            $decoded = is_string($stocks) ? json_decode($stocks, true) : $stocks;
+            if (is_array($decoded) && count($decoded) > 0) {
+                return array_map('intval', $decoded);
+            }
+        }
+
+        $total = max(0, (int) ($this->attributes['stock'] ?? 0));
+        $quarter = (int) floor($total / 4);
+        $remainder = $total % 4;
+
+        return [
+            'S' => $quarter + ($remainder > 0 ? 1 : 0),
+            'M' => $quarter + ($remainder > 1 ? 1 : 0),
+            'L' => $quarter + ($remainder > 2 ? 1 : 0),
+            'XL' => $quarter,
+        ];
+    }
+
+    public function getStockForSize(string $size): int
+    {
+        $normalized = strtoupper(trim($size));
+        $matrix = $this->size_stocks;
+
+        return (int) ($matrix[$normalized] ?? 0);
+    }
+
+    public function hasStockForSize(string $size, int $qty = 1): bool
+    {
+        return $this->getStockForSize($size) >= max(1, $qty);
+    }
+
+    public function decrementSizeStock(string $size, int $qty = 1): bool
+    {
+        $normalized = strtoupper(trim($size));
+        $matrix = $this->size_stocks;
+        $current = (int) ($matrix[$normalized] ?? 0);
+
+        if ($current < $qty) {
+            return false;
+        }
+
+        $matrix[$normalized] = $current - $qty;
+        $this->size_stocks = $matrix;
+        $this->stock = array_sum($matrix);
+        $this->save();
+
+        return true;
     }
 }

@@ -13,14 +13,24 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Dresses',
-                'slug' => 'dresses',
-                'description' => 'Midi slip dress, pleated wrap dresses, dan gaun kontemporer berbahan silk & linen pilihan untuk segala suasana.',
+                'name' => 'Crop Tops',
+                'slug' => 'crop-tops',
+                'description' => 'Koleksi atasan crop top wanita modis: ribbed knit crop, linen button-up crop, halter tank crop, dan basic cotton crop.',
             ],
             [
                 'name' => 'Blouses & Tops',
                 'slug' => 'blouses-tops',
                 'description' => 'Koleksi atasan wanita elegan, kemeja relaxed linen, satin drape blouse, dan kemeja katun berkancing.',
+            ],
+            [
+                'name' => 'Accessories',
+                'slug' => 'accessories',
+                'description' => 'Pelengkap gaya wanita modern: perhiasan anting, kalung, hair clip, sabuk, dan tas pilihan.',
+            ],
+            [
+                'name' => 'Dresses',
+                'slug' => 'dresses',
+                'description' => 'Midi slip dress, pleated wrap dresses, dan gaun kontemporer berbahan silk & linen pilihan untuk segala suasana.',
             ],
             [
                 'name' => 'Outerwear & Blazers',

@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', __('Contact Us') . ' - PUTRI.J')
+@section('title', __('Contact Us') . ' - PUTRIJALVA')
 
 @section('content')
 <div class="container contact-page">

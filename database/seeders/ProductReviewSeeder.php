@@ -51,7 +51,7 @@ class ProductReviewSeeder extends Seeder
                 'headline' => null,
                 'quality_tag' => 'Sutra premium jatuh rapi',
                 'fit_tag' => 'Sesuai size chart',
-                'comment' => 'Pengemasannya super duper aman. 2 lapis bubble wrap + boks eksklusif PUTRI.J (selain pouch kain).. barangnya juga ori. Terima kasih',
+                'comment' => 'Pengemasannya super duper aman. 2 lapis bubble wrap + boks eksklusif PUTRIJALVA (selain pouch kain).. barangnya juga ori. Terima kasih',
                 'images' => [
                     'images/product-2.png',
                     'images/product-1.png',
@@ -77,7 +77,7 @@ class ProductReviewSeeder extends Seeder
                 'images' => [
                     'images/product-1.png',
                 ],
-                'seller_reply' => 'Terima kasih banyak Kak Clara atas review bintang 5 dan apresiasi luar biasa untuk koleksi gaun sutra PUTRI.J. Senang sekali gaunnya membuat penampilan Kakak memukau di acara gala dinner! Ditunggu pesanan berikutnya ya Kak.',
+                'seller_reply' => 'Terima kasih banyak Kak Clara atas review bintang 5 dan apresiasi luar biasa untuk koleksi gaun sutra PUTRIJALVA. Senang sekali gaunnya membuat penampilan Kakak memukau di acara gala dinner! Ditunggu pesanan berikutnya ya Kak.',
                 'seller_replied_at' => now()->subDays(9),
                 'is_verified_purchase' => true,
                 'is_approved' => true,
@@ -161,7 +161,7 @@ class ProductReviewSeeder extends Seeder
                 'images' => [
                     'images/product-3.png',
                 ],
-                'seller_reply' => 'Terima kasih banyak Kak! Senang sekali gaun halterneck PUTRI.J sukses mencuri perhatian di acara pesta!',
+                'seller_reply' => 'Terima kasih banyak Kak! Senang sekali gaun halterneck PUTRIJALVA sukses mencuri perhatian di acara pesta!',
                 'seller_replied_at' => now()->subDays(18),
                 'is_verified_purchase' => true,
                 'is_approved' => true,

@@ -1,5 +1,5 @@
 /**
- * PUTRI.J - Main Storefront Application Controller
+ * PUTRIJALVA - Main Storefront Application Controller
  * Handles Navigation, Search Overlay, Product Card Actions (Quick Add, Wishlist, Quick View),
  * Newsletter Subscription, and Accessible Toast Notifications.
  */
@@ -71,12 +71,42 @@ class AppController {
 
   init() {
     this.syncWishlistButtons();
+    this.fetchWishlistCount();
     this.setupHeaderScroll();
     this.setupMobileNav();
     this.setupSearch();
     this.setupProductCards();
     this.setupQuickView();
     this.setupNewsletter();
+  }
+
+  fetchWishlistCount() {
+    fetch('/wishlist/count', { headers: { 'Accept': 'application/json' } })
+      .then(res => res.json())
+      .then(data => {
+        if (typeof data.count === 'number') {
+          this.updateWishlistBadge(data.count);
+        }
+      })
+      .catch(() => {});
+  }
+
+  updateWishlistBadge(count) {
+    const badge = document.getElementById('wishlistBadgeCount');
+    const wishlistBtn = document.querySelector('.icon-btn.wishlist-btn');
+    if (!badge) return;
+
+    badge.textContent = count;
+    if (count > 0) {
+      badge.style.display = 'flex';
+      badge.classList.remove('bump');
+      void badge.offsetWidth;
+      badge.classList.add('bump');
+      wishlistBtn?.classList.add('has-items');
+    } else {
+      badge.style.display = 'none';
+      wishlistBtn?.classList.remove('has-items');
+    }
   }
 
   syncWishlistButtons() {
@@ -89,6 +119,48 @@ class AppController {
     });
   }
 
+  async toggleWishlist(productId, productTitle, triggerBtn) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const willBeActive = !triggerBtn?.classList.contains('active');
+
+    // Optimistic UI updates across all buttons representing this product
+    document.querySelectorAll(`[data-action="wishlist"][data-product-id="${productId}"]`).forEach(btn => {
+      btn.classList.toggle('active', willBeActive);
+      const svg = btn.querySelector('svg');
+      if (svg) {
+        svg.style.fill = willBeActive ? '#D82700' : 'none';
+        svg.style.stroke = willBeActive ? '#D82700' : 'currentColor';
+      }
+    });
+
+    try {
+      const response = await fetch('/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken || '',
+        },
+        body: JSON.stringify({ product_id: productId }),
+      });
+
+      const data = await response.json();
+      if (data && data.success) {
+        this.updateWishlistBadge(data.count);
+        this.showToast(data.message || (data.in_wishlist ? `Added "${productTitle}" to wishlist!` : `Removed "${productTitle}" from wishlist.`));
+
+        if (data.in_wishlist) {
+          this.wishlist.add(String(productId));
+        } else {
+          this.wishlist.delete(String(productId));
+        }
+        this.saveWishlist();
+      }
+    } catch (err) {
+      console.error('Wishlist toggle error:', err);
+    }
+  }
+
   extractProductData(element) {
     const card = element.closest('.product-card');
     const id = element.dataset.productId || card?.dataset.productId || card?.dataset.id;
@@ -96,14 +168,15 @@ class AppController {
     const price = parseFloat(element.dataset.productPrice || card?.dataset.price || '35') || 35;
     const image = element.dataset.productImg || card?.dataset.image || card?.querySelector('img')?.src || '/images/product-1.png';
     const url = card?.dataset.url || card?.querySelector('.product-title a')?.href || '/shop';
-    const description = card?.dataset.description || 'Busana kontemporer rancangan eksklusif PUTRI.J berbahan premium lembut dan berkarakter anggun.';
+    const description = card?.dataset.description || 'Busana kontemporer rancangan eksklusif PUTRIJALVA berbahan premium lembut dan berkarakter anggun.';
     const inStock = (card?.dataset.stock ?? 'true') !== 'false';
     const quantity = Math.max(1, parseInt(element.dataset.productQty || '1', 10) || 1);
+    const size = element.dataset.productSize || card?.dataset.size || 'M';
     const video = card?.dataset.video || '';
     const videoType = card?.dataset.videoType || 'none';
     const videoEmbed = card?.dataset.videoEmbed || '';
 
-    return { id, title, price, image, url, description, inStock, quantity, video, videoType, videoEmbed };
+    return { id, title, price, image, url, description, inStock, quantity, size, video, videoType, videoEmbed };
   }
 
   // 1. Header scroll effect
@@ -203,7 +276,8 @@ class AppController {
             id: product.id,
             title: product.title,
             price: product.price,
-            variant: '18k Gold / Standard',
+            size: product.size || 'M',
+            variant: `Size ${product.size || 'M'}`,
             image: product.image,
             quantity: product.quantity
           });
@@ -219,17 +293,7 @@ class AppController {
         const productId = String(product.id || '');
         if (!productId) return;
 
-        if (this.wishlist.has(productId)) {
-          this.wishlist.delete(productId);
-          wishBtn.classList.remove('active');
-          this.saveWishlist();
-          this.showToast(`Removed "${product.title}" from wishlist.`);
-        } else {
-          this.wishlist.add(productId);
-          wishBtn.classList.add('active');
-          this.saveWishlist();
-          this.showToast(`Added "${product.title}" to wishlist!`);
-        }
+        this.toggleWishlist(productId, product.title, wishBtn);
         return;
       }
 
@@ -436,7 +500,7 @@ class AppController {
       const input = document.getElementById('newsletterEmail');
       const email = input?.value.trim();
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        this.showToast('Thank you for subscribing to PUTRI.J newsletter!');
+        this.showToast('Thank you for subscribing to PUTRIJALVA newsletter!');
         if (input) input.value = '';
       } else {
         this.showToast('Please enter a valid email address.');

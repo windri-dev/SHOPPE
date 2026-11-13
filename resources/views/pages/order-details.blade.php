@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Order ' . $order->order_number . ' - PUTRI.J')
+@section('title', 'Order ' . $order->order_number . ' - PUTRIJALVA')
 
 @section('content')
 <div class="container order-details-page">
@@ -20,7 +20,7 @@
       </svg>
     </span>
     <span class="order-confirmation-text">
-      We've received your order <strong>{{ $order->order_number }}</strong> — thank you for shopping with PUTRI.J.
+      We've received your order <strong>{{ $order->order_number }}</strong> — thank you for shopping with PUTRIJALVA.
     </span>
   </div>
 
@@ -71,7 +71,7 @@
           <div>
             <h4 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700; color: #1E40AF;">Verifikasi Sedang Berlangsung</h4>
             <p style="margin: 0; font-size: 13.5px; color: #1E40AF; line-height: 1.5;">
-              Bukti konfirmasi pembayaran Anda telah masuk ke sistem kami. Tim finance PUTRI.J sedang mencocokkan mutasi rekening Anda. Status pesanan akan otomatis terbarui menjadi <strong>Diproses</strong> setelah verifikasi selesai.
+              Bukti konfirmasi pembayaran Anda telah masuk ke sistem kami. Tim finance PUTRIJALVA sedang mencocokkan mutasi rekening Anda. Status pesanan akan otomatis terbarui menjadi <strong>Diproses</strong> setelah verifikasi selesai.
             </p>
           </div>
         </div>
@@ -125,6 +125,19 @@
                 {{ __('Simulasi Lunas Sandbox') }}
               </button>
             </form>
+
+            <!-- WhatsApp Concierge Support Button -->
+            <a
+              href="https://wa.me/6281234567890?text={{ urlencode('Halo Concierge Butik PUTRIJALVA, saya ingin konfirmasi pesanan #' . $order->order_number . ' atas nama ' . $order->customer_name . ' dengan total ' . $order->formatted_grand_total . '. Mohon bantuannya.') }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
+              style="padding: 11px 18px; font-size: 13px; font-weight: 700; border-color: #25D366; color: #128C7E; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;"
+              title="Hubungi Concierge Butik via WhatsApp"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+              <span>{{ __('WhatsApp Concierge') }}</span>
+            </a>
           </div>
 
           <!-- Channel Badges -->
@@ -144,7 +157,7 @@
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; background: #FAFAFA; padding: 14px 18px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-              <div style="font-size: 13.5px; font-weight: 700; color: #374151;">Atau Transfer Bank Manual ke Rekening PUTRI.J</div>
+              <div style="font-size: 13.5px; font-weight: 700; color: #374151;">Atau Transfer Bank Manual ke Rekening PUTRIJALVA</div>
               <div style="font-size: 12px; color: #6B7280;">Memerlukan upload konfirmasi transfer yang diverifikasi tim finance kami.</div>
             </div>
             <button
@@ -168,7 +181,7 @@
                   <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 1px 5px; border-radius: 4px; font-weight: 600;">Manual</span>
                 </div>
                 <div style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">123-456-7890</div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. PT Putri.J Luxury Indonesia</div>
+                <div style="font-size: 11px; color: #6B7280;">a.n. PT PUTRIJALVA INDONESIA</div>
               </div>
 
               <!-- Mandiri -->
@@ -178,7 +191,7 @@
                   <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 1px 5px; border-radius: 4px; font-weight: 600;">Manual</span>
                 </div>
                 <div style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">102-00-1234567-8</div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. PT Putri.J Luxury Indonesia</div>
+                <div style="font-size: 11px; color: #6B7280;">a.n. PT PUTRIJALVA INDONESIA</div>
               </div>
             </div>
 
@@ -283,6 +296,25 @@
           <p class="order-info-value">{{ $order->status->label() }}</p>
         </div>
       </div>
+
+      <!-- Store Concierge Contact Box -->
+      <div style="margin-top: 24px; background: #FAF9F6; border: 1px dashed #D5CBBB; border-radius: 10px; padding: 18px 20px;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #111827; margin-bottom: 4px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>{{ __('Customer Concierge & Layanan Bantuan') }}</span>
+            </div>
+            <p style="margin: 0; font-size: 13px; color: #4B5563; line-height: 1.5;">
+              {{ __('Ada pertanyaan mengenai pesanan Anda atau butuh perubahan alamat pengiriman? Hubungi kami via WhatsApp resmi di:') }}
+              <strong style="color: #111827;">+62 812-3456-7890</strong>
+            </p>
+          </div>
+          <a href="{{ app(\App\Services\Notification\WhatsAppNotificationService::class)->generateOrderConfirmationUrl($order) }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #059669; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
+            <span>{{ __('Konfirmasi via WhatsApp') }}</span> &nearr;
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Right: Order Summary -->
@@ -299,19 +331,19 @@
           @foreach($order->items as $item)
             <li class="order-summary-item">
               <span class="order-summary-item-name">{{ $item->product_name }} &times; {{ $item->quantity }}</span>
-              <span class="order-summary-item-price">$ {{ number_format((float) $item->line_total, 2) }}</span>
+              <span class="order-summary-item-price">{{ app(\App\Services\CurrencyService::class)->format((float) $item->line_total) }}</span>
             </li>
           @endforeach
         </ul>
 
         <div class="order-summary-calc-row">
           <span>SUBTOTAL</span>
-          <span>$ {{ number_format((float) $order->subtotal, 2) }}</span>
+          <span>{{ app(\App\Services\CurrencyService::class)->format((float) $order->subtotal) }}</span>
         </div>
 
         <div class="order-summary-calc-row">
           <span>SHIPPING</span>
-          <span>{{ (float) $order->shipping_cost > 0 ? '$ ' . number_format((float) $order->shipping_cost, 2) : 'Free shipping' }}</span>
+          <span>{{ (float) $order->shipping_cost > 0 ? app(\App\Services\CurrencyService::class)->format((float) $order->shipping_cost) : __('Bebas Biaya Pengiriman') }}</span>
         </div>
 
         <div class="order-summary-total-row">

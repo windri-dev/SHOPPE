@@ -20,7 +20,7 @@
     </button>
   </div>
 
-  <button type="button" class="shoppe-livechat-trigger" id="shoppeLiveChatTrigger" aria-expanded="false" aria-label="Buka Live Chat PUTRI.J">
+  <button type="button" class="shoppe-livechat-trigger" id="shoppeLiveChatTrigger" aria-expanded="false" aria-label="Buka Live Chat PUTRIJALVA">
     <svg class="shoppe-livechat-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
@@ -39,7 +39,7 @@
           <span class="shoppe-livechat-avatar-status"></span>
         </div>
         <div class="shoppe-livechat-agent-info">
-          <h4>PUTRI.J Concierge</h4>
+          <h4>PUTRIJALVA Concierge</h4>
           <span id="shoppeLiveChatModeLabel">{{ __('Online') }} &bull; {{ app()->getLocale() === 'en' ? 'Ready to Assist' : 'Siap Membantu' }}</span>
         </div>
       </div>
@@ -60,7 +60,7 @@
         </button>
 
         <a
-          href="https://wa.me/https://www.whatsapp.com/?text=Halo%20PUTRI.J,%20saya%20ingin%20konsultasi%20produk%20busana"
+          href="https://wa.me/6281234567890?text=Halo%20PUTRIJALVA,%20saya%20ingin%20konsultasi%20produk%20busana"
           target="_blank"
           rel="noopener noreferrer"
           class="shoppe-livechat-btn-header shoppe-livechat-btn-whatsapp"

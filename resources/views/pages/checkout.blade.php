@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Checkout - PUTRI.J')
+@section('title', 'Checkout - PUTRIJALVA')
 
 @section('content')
 <div class="container checkout-page">
@@ -66,6 +66,38 @@
     </div>
   @endauth
 
+  @guest
+    <!-- Guest Checkout Notice Banner -->
+    <div style="background: #FDFBF7; border: 1px solid #EFE8DC; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 38px; height: 38px; border-radius: 8px; background: #FAF7F2; border: 1px solid #EAE4DA; display: flex; align-items: center; justify-content: center; color: #A18A68; flex-shrink: 0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <div>
+          <div style="font-weight: 700; font-size: 14.5px; color: #111827;">{{ __('Checkout Sebagai Tamu (Tanpa Perlu Login)') }}</div>
+          <div style="font-size: 13px; color: #6B7280; margin-top: 2px;">{{ __('Pesanan Anda langsung diproses. Mohon pastikan nomor telepon/WhatsApp aktif agar kami dapat mengirimkan konfirmasi pesanan.') }}</div>
+        </div>
+      </div>
+      <a href="{{ route('login') }}" class="btn btn-outline" style="font-size: 12px; padding: 8px 16px; border-color: #D1D5DB; color: #374151; font-weight: 600;">
+        {{ __('Sudah Punya Akun? Masuk di Sini') }} &rarr;
+      </a>
+    </div>
+  @endguest
+
+  <!-- Store Concierge Contact Information Banner -->
+  <div style="background: #FAF9F6; border: 1px dashed #D5CBBB; border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #4B5563;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+      <span>
+        <strong>{{ __('Butuh Bantuan Checkout atau Konfirmasi Ukuran?') }}</strong>
+        {{ __('Layanan Butik & WhatsApp Concierge:') }} <strong style="color: #111827;">+62 812-3456-7890</strong>
+      </span>
+    </div>
+    <a href="https://wa.me/6281234567890?text={{ rawurlencode('Halo Concierge PUTRIJALVA, saya butuh bantuan saat checkout.') }}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: #047857; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 5px 12px; border-radius: 6px;">
+      <span>Chat WhatsApp</span> &nearr;
+    </a>
+  </div>
+
   <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm" class="checkout-grid">
     @csrf
 
@@ -83,10 +115,12 @@
 
       <div class="checkout-form-row">
         <div class="checkout-field-wrap">
-          <input type="tel" name="phone" id="chkPhone" value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="{{ __('Nomor Telepon / WhatsApp *') }}" class="checkout-input" required>
+          <input type="tel" name="phone" id="chkPhone" value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="{{ __('Nomor Telepon / WhatsApp Aktif *') }}" class="checkout-input" required>
+          <small style="display: block; font-size: 11px; color: #6B7280; margin-top: 4px;">{{ __('Wajib diisi untuk konfirmasi status pesanan dan koordinasi kurir.') }}</small>
         </div>
         <div class="checkout-field-wrap">
-          <input type="email" name="email" id="chkEmail" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="{{ __('Alamat Email *') }}" class="checkout-input" required>
+          <input type="email" name="email" id="chkEmail" value="{{ old('email', auth()->user()->email ?? '') }}" placeholder="{{ __('Alamat Email Aktif *') }}" class="checkout-input" required>
+          <small style="display: block; font-size: 11px; color: #6B7280; margin-top: 4px;">{{ __('Invoice resmi dan pelacakan akan dikirimkan ke email ini.') }}</small>
         </div>
       </div>
 
@@ -164,6 +198,39 @@
           <!-- Populated from cart JS -->
         </div>
 
+        <!-- Shipping Method Selection -->
+        <div style="margin: 20px 0; padding-top: 18px; border-top: 1px solid #E5E7EB;">
+          <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin-bottom: 10px;">
+            {{ __('Pilihan Layanan Pengiriman:') }}
+          </label>
+          <div style="display: flex; flex-direction: column; gap: 8px;" id="shippingOptionsWrapper">
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1.5px solid #111827; border-radius: 6px; cursor: pointer; background: #FAF9F6; transition: all 0.2s ease;" class="shipping-option-label">
+              <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #111827;">
+                <input type="radio" name="shipping_service" value="reguler" data-cost="0" checked style="accent-color: #111827;">
+                <span>{{ __('Reguler (JNE / SiCepat / Anteraja)') }}</span>
+              </span>
+              <span style="font-size: 12px; font-weight: 700; color: #059669;">{{ __('GRATIS') }}</span>
+            </label>
+
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 6px; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;" class="shipping-option-label">
+              <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #374151;">
+                <input type="radio" name="shipping_service" value="express" data-cost="2" style="accent-color: #111827;">
+                <span>{{ __('Express Next Day (JNE YES / SiCepat BEST)') }}</span>
+              </span>
+              <span style="font-size: 12.5px; font-weight: 600; color: #111827;">{{ \App\Services\CurrencyService::formatPrice(2) }}</span>
+            </label>
+
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 6px; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;" class="shipping-option-label">
+              <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #374151;">
+                <input type="radio" name="shipping_service" value="sameday" data-cost="3.5" style="accent-color: #111827;">
+                <span>{{ __('Sameday & Instant (Grab / Gojek - Jabodetabek)') }}</span>
+              </span>
+              <span style="font-size: 12.5px; font-weight: 600; color: #111827;">{{ \App\Services\CurrencyService::formatPrice(3.5) }}</span>
+            </label>
+          </div>
+          <input type="hidden" name="shipping_cost" id="checkoutShippingCost" value="0">
+        </div>
+
         <div class="checkout-payment-methods">
           <div class="payment-method-item">
             <label class="payment-method-header">
@@ -196,10 +263,40 @@
   </form>
 </div>
 
-@auth
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Shipping Courier Option Selection & Dynamic Grand Total
+    const shippingRadios = document.querySelectorAll('input[name="shipping_service"]');
+    const shippingHidden = document.getElementById('checkoutShippingCost');
+    const shippingLabels = document.querySelectorAll('.shipping-option-label');
+
+    shippingRadios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        const cost = parseFloat(this.getAttribute('data-cost')) || 0;
+        if (shippingHidden) shippingHidden.value = String(cost);
+
+        shippingLabels.forEach(function (lbl) {
+          lbl.style.borderColor = '#E5E7EB';
+          lbl.style.background = '#FFFFFF';
+        });
+        const currentLabel = this.closest('.shipping-option-label');
+        if (currentLabel) {
+          currentLabel.style.borderColor = '#111827';
+          currentLabel.style.background = '#FAF9F6';
+        }
+
+        if (window.cartManager) {
+          window.cartManager.currentShippingCost = cost;
+          if (typeof window.cartManager.renderCheckoutPage === 'function') {
+            window.cartManager.renderCheckoutPage();
+          } else if (typeof window.cartManager.updateTotals === 'function') {
+            window.cartManager.updateTotals();
+          }
+        }
+      });
+    });
+
     const selector = document.getElementById('savedAddressSelector');
     if (!selector) return;
 
@@ -244,5 +341,4 @@
   });
 </script>
 @endpush
-@endauth
 @endsection

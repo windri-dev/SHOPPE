@@ -1,5 +1,5 @@
 /**
- * PUTRI.J - Hero Carousel Slider
+ * PUTRIJALVA - Hero Carousel Slider
  * Smooth transitions, autoplay with pause on hover, pagination dots & touch swipe.
  */
 

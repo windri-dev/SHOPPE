@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Jurnal & Artikel Blog - PUTRI.J Admin')
+@section('title', 'Jurnal & Artikel Blog - PUTRIJALVA Admin')
 @section('page_title', 'Manajemen Jurnal & Artikel Editorial')
 
 @section('content')
@@ -13,7 +13,7 @@
         Manajemen Jurnal &amp; Artikel Editorial
       </h2>
       <p style="font-size: 13px; color: #6B7280; margin: 0;">
-        Terbitkan artikel tren perhiasan, panduan perawatan emas, dan cerita di balik layar pengerjaan pengrajin PUTRI.J.
+        Terbitkan artikel tren atasan &amp; crop top, panduan perawatan pakaian, dan cerita di balik layar kurasi PUTRIJALVA.
       </p>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">

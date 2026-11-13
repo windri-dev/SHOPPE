@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Live Chat & AI Concierge Hybrid - PUTRI.J Admin')
+@section('title', 'Live Chat & AI Concierge Hybrid - PUTRIJALVA Admin')
 @section('page_title', 'Live Chat & AI Concierge Hybrid')
 
 @section('content')
@@ -222,17 +222,17 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
             Buat Draft AI
           </button>
-          <button type="button" class="chat-template-chip" data-template="Halo! Saya staf Admin Concierge PUTRI.J yang mengambil alih percakapan Anda. Ada yang bisa saya bantu tindak lanjuti secara langsung?">
+          <button type="button" class="chat-template-chip" data-template="Halo! Saya staf Admin Concierge PUTRIJALVA yang mengambil alih percakapan Anda. Ada yang bisa saya bantu tindak lanjuti secara langsung?">
             + Ambil Alih Admin
           </button>
           <button type="button" class="chat-template-chip" data-template="Produk ini saat ini ready stock di gudang utama kami dan siap dikirim hari ini.">
             + Info Stok Ready
           </button>
-          <button type="button" class="chat-template-chip" data-template="Kami menyediakan garansi tukar barang/size dalam 14 hari setelah pesanan diterima dengan menyertakan video unboxing.">
-            + Garansi 14 Hari
+          <button type="button" class="chat-template-chip" data-template="Kami menyediakan garansi retur untuk barang rusak atau tidak sesuai pesanan maksimal 1 hari setelah pesanan diterima dengan menyertakan video unboxing.">
+            + Garansi Retur 1 Hari
           </button>
-          <button type="button" class="chat-template-chip" data-template="Seluruh perhiasan PUTRI.J dibuat dari bahan Premium Brass 18K Gold-Dipped hypoallergenic bebas nikel & timbal.">
-            + Info Hypoallergenic
+          <button type="button" class="chat-template-chip" data-template="Seluruh koleksi pakaian &amp; atasan crop top PUTRIJALVA dibuat dari bahan alami pilihan berstandar butik yang nyaman di kulit.">
+            + Info Material Bahan
           </button>
         </div>
 

@@ -42,4 +42,28 @@ return [
         'endpoint' => env('AI_CONCIERGE_ENDPOINT'),
     ],
 
+    'currency' => [
+        'api_url' => env('CURRENCY_API_URL', 'https://open.er-api.com/v6/latest/USD'),
+        'default_usd_to_idr' => (float) env('CURRENCY_DEFAULT_USD_TO_IDR', 16000.0),
+        'cache_ttl' => (int) env('CURRENCY_CACHE_TTL', 86400),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    'whatsapp' => [
+        'driver' => env('WHATSAPP_DRIVER', 'log'),
+        'api_token' => env('WHATSAPP_API_TOKEN'),
+        'api_url' => env('WHATSAPP_API_URL', 'https://api.fonnte.com/send'),
+        'concierge_phone' => env('WHATSAPP_CONCIERGE_PHONE', '6281234567890'),
+    ],
+
+    'shipping' => [
+        'free_shipping_threshold_idr' => (float) env('SHIPPING_FREE_THRESHOLD_IDR', 500000.0),
+        'rajaongkir_api_key' => env('RAJAONGKIR_API_KEY'),
+        'origin_city_id' => env('SHIPPING_ORIGIN_CITY_ID', '152'),
+    ],
 ];

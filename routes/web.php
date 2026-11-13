@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\BlogController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\ContactController;
+use App\Http\Controllers\Web\GoogleAuthController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\OrderController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Web\PaymentWebhookController;
 use App\Http\Controllers\Web\ProductReviewController;
 use App\Http\Controllers\Web\ShopController;
 use App\Http\Controllers\Web\StaticPageController;
+use App\Http\Controllers\Web\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,11 +36,16 @@ Route::post('/reviews/{review}/helpful', [ProductReviewController::class, 'helpf
 // Keranjang Belanja
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
-// Checkout (Wajib Login / Registrasi Akun)
-Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
-});
+// Wishlist / Daftar Keinginan
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+Route::get('/wishlist/count', [WishlistController::class, 'count'])->name('wishlist.count');
+
+// Checkout (Bisa Checkout Langsung / Guest Checkout Tanpa Login)
+Route::post('/shipping/calculate', [CheckoutController::class, 'calculateShipping'])->name('shipping.calculate');
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 
 // Orders & Payment Integration
 Route::get('/orders/{orderNumber}', [OrderController::class, 'show'])->name('order.show');
@@ -65,6 +72,10 @@ Route::get('/livechat/thread/{ticketNumber}', [ContactController::class, 'livech
 // Default Login route alias
 Route::get('/login', [AccountController::class, 'index'])->name('login');
 Route::post('/login', [AccountController::class, 'login']);
+
+// Google OAuth Single Sign-On (SSO)
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 // Akun Pelanggan (Customer Only)
 Route::prefix('account')->name('account.')->group(function () {

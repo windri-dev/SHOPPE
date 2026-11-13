@@ -503,11 +503,7 @@ class OrderSeeder extends Seeder
             foreach ($data['items'] as $itemData) {
                 $sku = $itemData['sku'];
                 $qty = $itemData['qty'];
-                $product = $products->get($sku);
-
-                if (! $product) {
-                    continue;
-                }
+                $product = $products->get($sku) ?? $products->values()->get(abs(crc32($sku)) % $products->count());
 
                 $unitPrice = (float) $product->price;
                 $lineTotal = $unitPrice * $qty;

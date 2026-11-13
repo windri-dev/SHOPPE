@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', $post->title . ' - PUTRI.J Editorial')
+@section('title', $post->title . ' - PUTRIJALVA Editorial')
 @section('meta_description', \Illuminate\Support\Str::limit($post->excerpt, 155))
 
 @section('content')
@@ -8,7 +8,7 @@
   <header class="blog-single-header">
     <h1 class="blog-single-title">{{ $post->title }}</h1>
     <div class="blog-single-byline">
-      {{ __('by') }} <span class="author">{{ $post->author ?? 'PUTRI.J EDITORIAL' }}</span> - {{ ($post->published_at ?? $post->created_at)?->format('F j, Y') }}
+      {{ __('by') }} <span class="author">{{ $post->author ?? 'PUTRIJALVA EDITORIAL' }}</span> - {{ ($post->published_at ?? $post->created_at)?->format('F j, Y') }}
     </div>
   </header>
 

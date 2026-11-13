@@ -24,11 +24,7 @@
     </div>
     <div class="drawer-footer-actions">
       <a href="{{ route('cart.index') }}" class="btn btn-outline btn-block">{{ __('View Cart') }}</a>
-      @guest
-        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">{{ __('Login untuk Checkout') }}</a>
-      @else
-        <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">{{ __('Proceed To Checkout') }}</a>
-      @endguest
+      <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-block">{{ __('Proceed To Checkout') }}</a>
     </div>
   </div>
 </aside>

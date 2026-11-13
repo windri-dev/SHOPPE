@@ -1,3 +1,6 @@
+@php
+  $initialWishlistCount = auth()->check() ? auth()->user()->wishlist()->count() : count((array) session('wishlist', []));
+@endphp
 <header class="site-header" id="siteHeader">
   <div class="container header-container">
     <!-- Left: Hamburger Menu (Mobile) & Brand Logo -->
@@ -7,14 +10,16 @@
         <span></span>
         <span></span>
       </button>
-      <a href="{{ route('home') }}" class="header-logo" aria-label="PUTRI.J Home">PUTRI.J</a>
+      <a href="{{ route('home') }}" class="header-logo" aria-label="PUTRIJALVA Home">
+        <img src="{{ asset('images/logo.png') }}" alt="PUTRIJALVA" class="header-logo-image" width="160" height="46">
+      </a>
     </div>
 
     <!-- Center: Main Navigation Links -->
     <nav class="desktop-nav" aria-label="Main Navigation">
       <ul class="nav-links">
         <li class="nav-item"><a href="{{ route('shop.index') }}" class="{{ request()->routeIs('shop.*') ? 'active' : '' }}">{{ __('Shop') }}</a></li>
-        <li class="nav-item"><a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">{{ __('Blog') }}</a></li>
+        <li class="nav-item"><a href="{{ route('blog.index') }}" class="{{ request()->routeIs('blog.*') ? 'active' : '' }}">{{ __('Journal & Blog') }}</a></li>
         <li class="nav-item"><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">{{ __('Our Story') }}</a></li>
         <li class="nav-item"><a href="{{ route('faq') }}" class="{{ request()->routeIs('faq') ? 'active' : '' }}">{{ __('FAQ') }}</a></li>
         <li class="nav-item"><a href="{{ route('contact.index') }}" class="{{ request()->routeIs('contact.*') ? 'active' : '' }}">{{ __('Contact') }}</a></li>
@@ -48,6 +53,14 @@
         </svg>
       </button>
 
+      <!-- Wishlist / Favorites Icon -->
+      <a href="{{ route('wishlist.index') }}" class="icon-btn wishlist-btn {{ request()->routeIs('wishlist.*') ? 'active' : '' }}" aria-label="{{ __('Wishlist') }}" title="{{ __('Wishlist') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="wishlist-badge-count" id="wishlistBadgeCount" style="{{ $initialWishlistCount > 0 ? '' : 'display: none;' }}">{{ $initialWishlistCount }}</span>
+      </a>
+
       <!-- Shopping Cart Icon -->
       <button class="icon-btn cart-btn" data-action="open-cart" aria-label="{{ __('Shopping Cart') }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -59,7 +72,7 @@
       </button>
 
       <!-- User / Account Icon -->
-      <a href="{{ route('account.index') }}" class="icon-btn {{ request()->routeIs('account.*') ? 'active' : '' }}" aria-label="{{ __('My Account') }}">
+      <a href="{{ route('account.index') }}" class="icon-btn account-btn {{ request()->routeIs('account.*') ? 'active' : '' }}" aria-label="{{ __('My Account') }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
@@ -76,9 +89,11 @@
 <div class="drawer-backdrop" id="mobileNavBackdrop"></div>
 <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile Navigation Menu">
   <div class="mobile-nav-header">
-    <div style="display: flex; flex-direction: column; gap: 2px;">
-      <span class="header-logo">PUTRI.J</span>
-      <span style="font-size: 10.5px; color: #8C8273; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">{{ __('Contemporary Fashion & Apparel') }}</span>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <a href="{{ route('home') }}" class="header-logo" aria-label="PUTRIJALVA Home" style="display: inline-block;">
+        <img src="{{ asset('images/logo.png') }}" alt="PUTRIJALVA" class="header-logo-image" style="height: 38px; width: auto;">
+      </a>
+      <span style="font-size: 10px; color: #8C8273; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">{{ __('Contemporary Fashion & Apparel') }}</span>
     </div>
     <button class="drawer-close-btn" id="mobileNavClose" aria-label="Close Navigation">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -90,6 +105,7 @@
   <ul class="mobile-nav-links">
     <li><a href="{{ route('home') }}" class="mobile-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('Home') }} <span>&rarr;</span></a></li>
     <li><a href="{{ route('shop.index') }}" class="mobile-nav-link {{ request()->routeIs('shop.*') ? 'active' : '' }}">{{ __('Shop Collection') }} <span>&rarr;</span></a></li>
+    <li><a href="{{ route('wishlist.index') }}" class="mobile-nav-link {{ request()->routeIs('wishlist.*') ? 'active' : '' }}">{{ __('Wishlist') }} <span>&rarr;</span></a></li>
     <li><a href="{{ route('blog.index') }}" class="mobile-nav-link {{ request()->routeIs('blog.*') ? 'active' : '' }}">{{ __('Blog') }} <span>&rarr;</span></a></li>
     <li><a href="{{ route('about') }}" class="mobile-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('Our Story') }} <span>&rarr;</span></a></li>
     <li><a href="{{ route('faq') }}" class="mobile-nav-link {{ request()->routeIs('faq') ? 'active' : '' }}">{{ __('FAQ & Size Guide') }} <span>&rarr;</span></a></li>

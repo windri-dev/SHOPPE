@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PUTRI.J - Restricted Admin Login</title>
+  <title>PUTRIJALVA - Restricted Admin Login</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,8 +13,10 @@
 <body>
   <div class="admin-auth-gate">
     <div class="admin-auth-card">
-      <span class="admin-auth-badge">Restricted &bull; Store Staff Only</span>
-      <h1 class="admin-auth-logo">PUTRI.J</h1>
+      <div style="text-align: center; margin-bottom: 12px;">
+        <img src="{{ asset('images/logo-stacked.png') }}" alt="PUTRIJALVA" style="height: 78px; width: auto; object-fit: contain; margin: 0 auto 12px; display: block;">
+        <span class="admin-auth-badge">Restricted &bull; Store Staff Only</span>
+      </div>
       <h2 class="admin-auth-title">Master Store Management</h2>
       <p class="admin-auth-subtitle">Silakan masuk menggunakan kredensial pengelola toko internal Anda.</p>
 

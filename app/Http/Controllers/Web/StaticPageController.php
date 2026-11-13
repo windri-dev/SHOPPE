@@ -25,7 +25,7 @@ class StaticPageController extends Controller
             [
                 'category' => 'orders',
                 'category_label' => 'Pemesanan & Akun',
-                'question' => 'Bagaimana cara memesan busana di PUTRI.J?',
+                'question' => 'Bagaimana cara memesan busana di PUTRIJALVA?',
                 'answer' => 'Pilih busana favorit Anda di katalog Shop, tentukan ukuran (S, M, L, XL), klik tombol "Add to Cart", lalu lanjutkan ke halaman Checkout. Jika Anda sudah login dan melengkapi alamat di menu Akun Saya, seluruh data penerima dan lokasi pengiriman akan terisi secara otomatis.',
             ],
             [
@@ -37,7 +37,7 @@ class StaticPageController extends Controller
             [
                 'category' => 'payment',
                 'category_label' => 'Pembayaran & Konfirmasi',
-                'question' => 'Metode pembayaran apa saja yang tersedia di PUTRI.J?',
+                'question' => 'Metode pembayaran apa saja yang tersedia di PUTRIJALVA?',
                 'answer' => 'Kami melayani pembayaran melalui Transfer Bank Langsung (BCA & Mandiri), QRIS Instant Payment, serta Kartu Kredit/Debit Online. Untuk kemudahan pengujian dan transaksi cepat, tersedia juga fitur Simulasi Bayar Instan maupun Konfirmasi Bukti Transfer Manual di halaman Detail Pesanan.',
             ],
             [
@@ -62,19 +62,19 @@ class StaticPageController extends Controller
                 'category' => 'shipping',
                 'category_label' => 'Pengiriman & Pelacakan Resi',
                 'question' => 'Apakah pengiriman busana diasuransikan?',
-                'answer' => 'Ya, seluruh pengiriman busana PUTRI.J dilindungi oleh asuransi pengiriman penuh tanpa biaya tambahan dan dikemas dalam garment wrap pelindung debu dan air yang tersegel rapat.',
+                'answer' => 'Ya, seluruh pengiriman busana PUTRIJALVA dilindungi oleh asuransi pengiriman penuh tanpa biaya tambahan dan dikemas dalam garment wrap pelindung debu dan air yang tersegel rapat.',
             ],
             [
                 'category' => 'warranty',
-                'category_label' => 'Garansi & Tukar Ukuran',
-                'question' => 'Apakah saya bisa menukar ukuran baju jika kebesaran atau kekecilan?',
-                'answer' => 'Ya! Kami menyediakan layanan penukaran ukuran (Complimentary Size Exchange) gratis 1 kali dalam waktu 7 hari sejak paket diterima, selama pakaian belum pernah dicuci, tidak terkena parfum/noda, dan hangtag label masih terpasang rapi.',
+                'category_label' => 'Garansi & Retur Produk',
+                'question' => 'Apakah saya bisa mengajukan retur barang?',
+                'answer' => 'PUTRIJALVA menerima retur khusus untuk barang yang rusak, cacat produksi, atau tidak sesuai pesanan. Pengajuan klaim retur dapat dilakukan maksimal 1 hari (1x24 jam) setelah barang diterima pelanggan dengan melampirkan video unboxing.',
             ],
             [
                 'category' => 'warranty',
-                'category_label' => 'Garansi & Tukar Ukuran',
+                'category_label' => 'Garansi & Retur Produk',
                 'question' => 'Bagaimana prosedur klaim jika barang yang diterima cacat atau salah warna?',
-                'answer' => 'Mohon sertakan video unboxing tanpa jeda dan hubungi tim kami melalui fitur Live Chat di pojok kanan bawah layar dalam waktu maksimal 2x24 jam setelah paket diterima. Kami akan mengganti dengan unit baru 100% bebas biaya ongkos kirim.',
+                'answer' => 'Mohon sertakan video unboxing tanpa jeda dan hubungi tim kami melalui fitur Live Chat di pojok kanan bawah layar dalam waktu maksimal 1 hari (1x24 jam) setelah paket diterima. Kami akan mengganti dengan unit baru 100% bebas biaya ongkos kirim.',
             ],
             [
                 'category' => 'care',

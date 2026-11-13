@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'PUTRI.J - Contemporary Ready-to-Wear Fashion & Apparel')
+@section('title', 'PUTRIJALVA - Spesialis Baju Crop Top & Atasan Wanita Kontemporer')
 
 @section('content')
 <!-- Hero Section Carousel -->
@@ -10,34 +10,34 @@
       <div class="hero-slides">
         <!-- Slide 1 -->
         <div class="hero-slide active">
-          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Silk Wrap Dress" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
+          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Silk Wrap Crop Top" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h1 class="hero-title">Aurelia Silk Wrap Dress</h1>
-            <div class="hero-price">$ 65.00</div>
+            <h1 class="hero-title">Aurelia Silk Wrap Crop Top</h1>
+            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(65) }}</div>
             <a href="{{ route('shop.index') }}" class="btn">{{ __('Lihat Produk') }}</a>
           </div>
         </div>
 
         <!-- Slide 2 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-1.jpg') }}" alt="Tailored French Linen Shirt" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-1.jpg') }}" alt="Tailored Linen Crop Shirt" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Tailored French Linen Shirt</h2>
-            <div class="hero-price">$ 38.00</div>
+            <h2 class="hero-title">Tailored Linen Crop Shirt</h2>
+            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(38) }}</div>
             <a href="{{ route('shop.index') }}" class="btn">{{ __('Buka Koleksi') }}</a>
           </div>
         </div>
 
         <!-- Slide 3 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-2.jpg') }}" alt="Double-Breasted Structured Blazer" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-2.jpg') }}" alt="Elise Ribbed Knit Halter Crop" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Double-Breasted Blazer</h2>
-            <div class="hero-price">$ 78.00</div>
-            <a href="{{ route('shop.index') }}" class="btn">{{ __('Eksplorasi Busana') }}</a>
+            <h2 class="hero-title">Elise Ribbed Knit Halter Crop</h2>
+            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(78) }}</div>
+            <a href="{{ route('shop.index') }}" class="btn">{{ __('Eksplorasi Koleksi') }}</a>
           </div>
         </div>
       </div>
@@ -73,28 +73,28 @@
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"></path></svg>
         </div>
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">{{ __('Bahan Alami Berkualitas') }}</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('French Washed Linen, Mulberry Silk Blend & Organic Cotton.') }}</p>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Linen Alami Indonesia, Sutra Murbei Pilihan & Katun Organik.') }}</p>
       </div>
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
         </div>
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">{{ __('Bebas Biaya Pengiriman') }}</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Gratis ongkir untuk pesanan di atas $50 ke seluruh Indonesia.') }}</p>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Gratis ongkir untuk pesanan di atas :amount ke seluruh Indonesia.', ['amount' => app(\App\Services\CurrencyService::class)->formatPrice(config('services.shipping.free_shipping_threshold_idr', 500000) / max(1, app(\App\Services\CurrencyService::class)->getExchangeRate()))]) }}</p>
       </div>
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
         </div>
         <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">{{ __('Kemasan Busana Eksklusif') }}</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Dikemas rapi dalam garment bag & signature box khas PUTRI.J.') }}</p>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Dikemas rapi dalam garment bag & signature box khas PUTRIJALVA.') }}</p>
       </div>
       <div class="trust-feature-card" style="padding: 10px;">
         <div class="trust-feature-icon" style="margin-bottom: 10px; display: flex; justify-content: center;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
         </div>
-        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">{{ __('Garansi Tukar Ukuran Gratis') }}</h3>
-        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Garansi tukar ukuran 7 hari gratis jika baju kebesaran atau kekecilan.') }}</p>
+        <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 4px; color: #111827;">{{ __('Garansi Retur Produk') }}</h3>
+        <p style="font-size: 12.5px; color: #6B7280; margin: 0;">{{ __('Retur barang rusak atau tidak sesuai pesanan maksimal 1 hari setelah diterima.') }}</p>
       </div>
     </div>
   </div>
@@ -123,7 +123,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">{{ __('Pilihan Terlaris') }}</h2>
-          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">{{ __('Koleksi busana pilihan paling diminati dan direkomendasikan oleh personal stylist kami.') }}</p>
+          <p style="color: #6B7280; font-size: 13.5px; margin: 4px 0 0;">{{ __('Koleksi baju crop top dan atasan pilihan paling diminati dan direkomendasikan untuk gaya harian Anda.') }}</p>
         </div>
         <a href="{{ route('shop.index', ['sort' => 'popular']) }}" class="section-link">{{ __('Eksplorasi Populer') }}</a>
       </div>

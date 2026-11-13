@@ -44,7 +44,7 @@ class ProductTranslationService
         $model = (string) config('services.ai_concierge.model', 'ag/gemini-3.8-flash-low');
         $customEndpoint = rtrim(trim((string) config('services.ai_concierge.endpoint', '')), '/');
 
-        $systemPrompt = "You are a professional luxury fashion copywriter and translator for the contemporary women's apparel boutique PUTRI.J.\n"
+        $systemPrompt = "You are a professional luxury fashion copywriter and translator for the contemporary women's apparel boutique PUTRIJALVA.\n"
             ."Translate Indonesian fashion product names and descriptions into elegant, polished, and sophisticated English e-commerce copy.\n"
             ."Rules:\n"
             ."1. Maintain upscale boutique tone (e.g., 'French Washed Linen', 'Mulberry Silk', 'Tailored Blazer', 'Draped Midi Dress').\n"

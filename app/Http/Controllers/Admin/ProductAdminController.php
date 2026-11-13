@@ -100,10 +100,23 @@ class ProductAdminController extends Controller
         if (empty($nameEn) || empty($descriptionEn)) {
             $translated = $this->translationService->translateToEnglish(
                 $validated['name'],
-                $validated['description'] ?? 'Koleksi busana eksklusif PUTRI.J dengan material premium pilihan.'
+                $validated['description'] ?? 'Koleksi busana eksklusif PUTRIJALVA dengan material premium pilihan.'
             );
             $nameEn = $nameEn ?: $translated['name_en'];
             $descriptionEn = $descriptionEn ?: $translated['description_en'];
+        }
+
+        $stock = (int) $validated['stock'];
+        $sizeStocks = $validated['size_stocks'] ?? null;
+        if (! is_array($sizeStocks)) {
+            $q = (int) floor($stock / 4);
+            $rem = $stock % 4;
+            $sizeStocks = [
+                'S' => $q + ($rem > 0 ? 1 : 0),
+                'M' => $q + ($rem > 1 ? 1 : 0),
+                'L' => $q + ($rem > 2 ? 1 : 0),
+                'XL' => $q,
+            ];
         }
 
         $product = Product::create([
@@ -114,9 +127,10 @@ class ProductAdminController extends Controller
             'sku' => $sku,
             'price' => $validated['price'],
             'original_price' => $validated['original_price'] ?? null,
-            'stock' => (int) $validated['stock'],
+            'stock' => $stock,
+            'size_stocks' => $sizeStocks,
             'badge' => $badge,
-            'description' => $validated['description'] ?? 'Koleksi busana eksklusif PUTRI.J dengan material premium pilihan.',
+            'description' => $validated['description'] ?? 'Koleksi busana eksklusif PUTRIJALVA dengan material premium pilihan.',
             'description_en' => $descriptionEn,
             'images' => $images,
             'video_url' => $validated['video_url'] ?? null,
@@ -149,6 +163,22 @@ class ProductAdminController extends Controller
             $images = [$validated['image_url']];
         }
 
+        $sizeStocks = $validated['size_stocks'] ?? null;
+        if (is_array($sizeStocks)) {
+            $stock = array_sum(array_map('intval', $sizeStocks));
+        } elseif ($stock !== $product->stock) {
+            $q = (int) floor($stock / 4);
+            $rem = $stock % 4;
+            $sizeStocks = [
+                'S' => $q + ($rem > 0 ? 1 : 0),
+                'M' => $q + ($rem > 1 ? 1 : 0),
+                'L' => $q + ($rem > 2 ? 1 : 0),
+                'XL' => $q,
+            ];
+        } else {
+            $sizeStocks = $product->size_stocks;
+        }
+
         $nameEn = ! empty($validated['name_en']) ? trim($validated['name_en']) : null;
         $descriptionEn = ! empty($validated['description_en']) ? trim($validated['description_en']) : null;
 
@@ -170,6 +200,7 @@ class ProductAdminController extends Controller
             'price' => $validated['price'],
             'original_price' => $validated['original_price'] ?? null,
             'stock' => $stock,
+            'size_stocks' => $sizeStocks,
             'badge' => $badge,
             'description' => $validated['description'] ?? $product->getRawDescription(),
             'description_en' => $descriptionEn,
@@ -267,7 +298,7 @@ class ProductAdminController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:2000'],
+            'description' => ['nullable', 'string', 'max:65000'],
         ]);
 
         $translated = $this->translationService->translateToEnglish(

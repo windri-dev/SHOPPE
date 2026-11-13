@@ -58,7 +58,7 @@ class ProductReviewController extends Controller
 
         return redirect()
             ->to(route('shop.show', $product->slug).'#customer-reviews')
-            ->with('review_success', 'Terima kasih atas ulasan dan penilaian Anda! Kontribusi Anda sangat berharga bagi komunitas pelanggan PUTRI.J.');
+            ->with('review_success', 'Terima kasih atas ulasan dan penilaian Anda! Kontribusi Anda sangat berharga bagi komunitas pelanggan PUTRIJALVA.');
     }
 
     public function helpful(Request $request, ProductReview $review): JsonResponse|RedirectResponse

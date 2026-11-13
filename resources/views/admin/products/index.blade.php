@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Katalog & Manajemen Stok Produk - PUTRI.J Admin')
+@section('title', 'Katalog & Manajemen Stok Produk - PUTRIJALVA Admin')
 @section('page_title', 'Katalog & Persediaan Produk')
 
 @section('content')
@@ -45,7 +45,7 @@
     <div class="admin-card" style="padding: 16px 20px; border-left: 4px solid #111827;">
       <span style="font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em;">Total Katalog</span>
       <div style="font-size: 26px; font-weight: 700; color: #111827; margin-top: 4px;">{{ number_format($stats['total']) }}</div>
-      <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Busana terdaftar</div>
+      <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">Produk terdaftar</div>
     </div>
     <div class="admin-card" style="padding: 16px 20px; border-left: 4px solid #10B981;">
       <span style="font-size: 12px; font-weight: 600; color: #047857; text-transform: uppercase; letter-spacing: 0.05em;">Stok Aman</span>
@@ -106,7 +106,7 @@
           type="search"
           name="search"
           value="{{ request('search') }}"
-          placeholder="Cari SKU, Nama Busana..."
+          placeholder="Cari SKU, Nama Produk..."
           class="chat-search-input"
           style="padding-left: 12px; width: 220px;"
         >
@@ -129,7 +129,7 @@
         <thead>
           <tr>
             <th style="width: 60px;">Foto</th>
-            <th>Busana &amp; SKU</th>
+            <th>Produk &amp; SKU</th>
             <th>Kategori</th>
             <th>Harga Normal</th>
             <th>Terjual</th>
@@ -224,9 +224,26 @@
                   </button>
 
                   <!-- Tombol Edit Produk -->
+                  @php
+                    $prodJson = json_encode([
+                      'id' => $product->id,
+                      'name' => $product->getRawName(),
+                      'name_en' => $product->name_en ?? '',
+                      'sku' => $product->sku,
+                      'category_id' => $product->category_id,
+                      'price' => $product->price,
+                      'original_price' => $product->original_price ?? '',
+                      'stock' => $product->stock,
+                      'badge' => $product->badge ?? '',
+                      'description' => $product->getRawDescription() ?? '',
+                      'description_en' => $product->description_en ?? '',
+                      'video_url' => $product->video_url ?? '',
+                    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                  @endphp
                   <button
                     type="button"
-                    onclick="openEditProductModal('{{ $product->id }}', '{{ addslashes($product->getRawName()) }}', '{{ addslashes($product->name_en ?? '') }}', '{{ $product->sku }}', '{{ $product->category_id }}', '{{ $product->price }}', '{{ $product->original_price ?? '' }}', '{{ $product->stock }}', '{{ addslashes($product->badge ?? '') }}', '{{ addslashes($product->getRawDescription() ?? '') }}', '{{ addslashes($product->description_en ?? '') }}', '{{ addslashes($product->video_url ?? '') }}')"
+                    data-product="{!! $prodJson !!}"
+                    onclick="openEditProductModalFromData(this)"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 9px; font-size: 11px;"
                     title="Edit detail produk & harga"
@@ -311,7 +328,7 @@
 <div id="createProductModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 580px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Produk Busana Baru</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Produk Baru</h3>
       <button type="button" onclick="closeCreateProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
@@ -330,11 +347,11 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana (Indonesia) *</label>
-          <input type="text" name="name" id="createProdName" required placeholder="Contoh: Gaun Pesta Sutra Satin" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Produk (Indonesia) *</label>
+          <input type="text" name="name" id="createProdName" required placeholder="Contoh: Linen Crop Top Earth Tone" class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Busana (English - Auto AI)</label>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Produk (English - Auto AI)</label>
           <input type="text" name="name_en" id="createProdNameEn" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;">
         </div>
       </div>
@@ -385,15 +402,29 @@
         <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi (Indonesia)</label>
-          <textarea name="description" id="createProdDesc" rows="3" placeholder="Deskripsi potongan, bahan kain, ukuran, dan saran styling..." class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #111827;">Deskripsi Lengkap & Format Shopee (Indonesia)</label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung teks terstruktur, poin, & gambar infografis</span>
         </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi (English - Auto AI)</label>
-          <textarea name="description_en" id="createProdDescEn" rows="3" placeholder="Otomatis diterjemahkan AI ke English jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
+
+        <!-- Formatting Toolbar -->
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; background: #FAF9F6; border: 1px solid #D1D5DB; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 10px;">
+          <button type="button" onclick="insertDescTag('createProdDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Tebal"><strong>B</strong></button>
+          <button type="button" onclick="insertDescTag('createProdDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Subjudul (H4)">H4</button>
+          <button type="button" onclick="insertDescList('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Daftar Fitur">• Fitur List</button>
+          <button type="button" onclick="insertDescImage('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Sisipkan Banner/Gambar Infografis">🖼️ Gambar Banner</button>
+          <button type="button" onclick="applyShopeeTemplate('createProdDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">📋 Template Shopee</button>
+          <button type="button" onclick="toggleDescPreview('createProdDesc', 'createProdDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto;">👁️ Preview</button>
         </div>
+
+        <textarea name="description" id="createProdDesc" rows="7" placeholder="Tuliskan deskripsi lengkap, fitur utama, spesifikasi produk, atau klik tombol [Template Shopee] di atas..." class="chat-search-input" style="width: 100%; font-size: 13px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.5; font-family: inherit;"></textarea>
+        <div id="createProdDescPreview" style="display: none; padding: 14px; border: 1px solid #D1D5DB; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background: #FFFFFF; max-height: 240px; overflow-y: auto; font-size: 13px; line-height: 1.6;"></div>
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi English (Auto AI Translation / Optional)</label>
+        <textarea name="description_en" id="createProdDescEn" rows="3" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
@@ -451,7 +482,7 @@
 <div id="editProductModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 580px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Detail Busana &amp; Harga</h3>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Detail Produk &amp; Harga</h3>
       <button type="button" onclick="closeEditProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
@@ -470,11 +501,11 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Busana (Indonesia) *</label>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Produk (Indonesia) *</label>
           <input type="text" name="name" id="editProductName" required class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Busana (English - Auto AI)</label>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Produk (English - Auto AI)</label>
           <input type="text" name="name_en" id="editProductNameEn" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;">
         </div>
       </div>
@@ -519,15 +550,29 @@
         <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Deskripsi (Indonesia)</label>
-          <textarea name="description" id="editProductDesc" rows="3" class="chat-search-input" style="width: 100%; font-size: 13px;"></textarea>
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #111827;">Deskripsi Lengkap & Format Shopee (Indonesia)</label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung teks terstruktur, poin, & gambar infografis</span>
         </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi (English - Auto AI)</label>
-          <textarea name="description_en" id="editProductDescEn" rows="3" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
+
+        <!-- Formatting Toolbar -->
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; background: #FAF9F6; border: 1px solid #D1D5DB; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 10px;">
+          <button type="button" onclick="insertDescTag('editProductDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Tebal"><strong>B</strong></button>
+          <button type="button" onclick="insertDescTag('editProductDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Subjudul (H4)">H4</button>
+          <button type="button" onclick="insertDescList('editProductDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Daftar Fitur">• Fitur List</button>
+          <button type="button" onclick="insertDescImage('editProductDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Sisipkan Banner/Gambar Infografis">🖼️ Gambar Banner</button>
+          <button type="button" onclick="applyShopeeTemplate('editProductDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">📋 Template Shopee</button>
+          <button type="button" onclick="toggleDescPreview('editProductDesc', 'editProductDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto;">👁️ Preview</button>
         </div>
+
+        <textarea name="description" id="editProductDesc" rows="7" placeholder="Tuliskan deskripsi lengkap, fitur utama, spesifikasi produk..." class="chat-search-input" style="width: 100%; font-size: 13px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.5; font-family: inherit;"></textarea>
+        <div id="editProductDescPreview" style="display: none; padding: 14px; border: 1px solid #D1D5DB; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background: #FFFFFF; max-height: 240px; overflow-y: auto; font-size: 13px; line-height: 1.6;"></div>
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi English (Auto AI Translation / Optional)</label>
+        <textarea name="description_en" id="editProductDescEn" rows="3" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
@@ -559,6 +604,29 @@ function closeAdjustStockModal() {
 }
 
 // Modal Edit Produk
+function openEditProductModalFromData(btn) {
+  try {
+    const raw = btn.getAttribute('data-product');
+    const p = JSON.parse(raw);
+    openEditProductModal(
+      p.id,
+      p.name,
+      p.name_en,
+      p.sku,
+      p.category_id,
+      p.price,
+      p.original_price,
+      p.stock,
+      p.badge,
+      p.description,
+      p.description_en,
+      p.video_url
+    );
+  } catch (err) {
+    console.error('Error parsing product data:', err);
+  }
+}
+
 function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
@@ -572,10 +640,119 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
   document.getElementById('editProductVideoUrl').value = videoUrl || '';
   document.getElementById('editProductDesc').value = desc || '';
   document.getElementById('editProductDescEn').value = descEn || '';
+  const prev = document.getElementById('editProductDescPreview');
+  if (prev) prev.style.display = 'none';
   document.getElementById('editProductModalBackdrop').style.display = 'flex';
 }
 function closeEditProductModal() {
   document.getElementById('editProductModalBackdrop').style.display = 'none';
+}
+
+// Rich Description Formatting Helpers (Shopee Style)
+function insertDescTag(textareaId, openTag, closeTag) {
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+  const start = el.selectionStart;
+  const end = el.selectionEnd;
+  const val = el.value;
+  const selectedText = val.substring(start, end) || 'Teks Tebal';
+  el.value = val.substring(0, start) + openTag + selectedText + closeTag + val.substring(end);
+  el.focus();
+  el.setSelectionRange(start + openTag.length, start + openTag.length + selectedText.length);
+}
+
+function insertDescList(textareaId) {
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+  const snippet = "\nFitur Utama:\n• Material Berkualitas: Nyaman, lembut, dan sejuk di kulit\n• Desain Elegan: Cocok untuk acara formal maupun santai\n• Jahitan Rapi & Presisi: Awet dan tahan lama\n• Perawatan Mudah: Cepat kering dan tidak mudah kusut\n";
+  const start = el.selectionStart;
+  const val = el.value;
+  el.value = val.substring(0, start) + snippet + val.substring(start);
+  el.focus();
+}
+
+function insertDescImage(textareaId) {
+  const url = prompt('Masukkan URL Gambar Infografis / Banner Produk:', 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=80');
+  if (!url) return;
+  const alt = prompt('Keterangan Gambar (Opsional):', 'Infografis Keunggulan Produk') || 'Banner Produk';
+  const imgHtml = `\n<div class="desc-banner-img"><img src="${url}" alt="${alt}"></div>\n`;
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+  const start = el.selectionStart;
+  const val = el.value;
+  el.value = val.substring(0, start) + imgHtml + val.substring(start);
+  el.focus();
+}
+
+function applyShopeeTemplate(textareaId) {
+  if (!confirm('Terapkan template format Shopee lengkap (Fitur Utama, Spesifikasi, & Banner)? Ini akan mengganti atau melengkapi teks yang ada.')) {
+    return;
+  }
+  const template = `Koleksi Eksklusif & Elegan — Pilihan Terbaik untuk Tampil Anggun Percaya Diri
+
+Dirancang khusus dengan potongan presisi tinggi yang memberikan kenyamanan maksimal sepanjang hari. Menggunakan material grade premium berkarakter sejuk dan jatuh rapi, menjadikannya pilihan sempurna untuk melengkapi gaya berkelas Anda.
+
+Fitur Utama:
+• Material Premium Berkualitas: Tekstur lembut, bernapas sejuk, dan aman untuk kulit sensitif
+• Siluet Presisi & Fleksibel: Menyesuaikan bentuk tubuh dengan proporsional dan anggun
+• Jahitan Standar Butik: Kerapian ganda untuk ketahanan maksimal penggunaan jangka panjang
+• Warna Elegan Tahan Lama: Pigmen warna pekat dan tidak mudah pudar walau dicuci berulang
+
+Spesifikasi Produk:
+• Material: Silk Blend Satin Premium / Linen Organik
+• Potongan: Tailored Relaxed Fit
+• Pilihan Ukuran: S, M, L, XL
+• Petunjuk Perawatan: Cuci lembut dengan air dingin, setrika suhu sedang
+
+<div class="desc-banner-img">
+  <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Keunggulan Material & Koleksi Eksklusif">
+</div>
+
+<div class="desc-feature-grid">
+  <div class="desc-feature-card">
+    <div class="feat-title">✨ Kualitas Butik</div>
+    <div class="feat-desc">QC ketat setiap helai jahitan</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">🛡️ Garansi Retur</div>
+    <div class="feat-desc">Jaminan tukar jika cacat</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">🌿 Ramah Kulit</div>
+    <div class="feat-desc">Serat hipoalergenik nyaman</div>
+  </div>
+  <div class="desc-feature-card">
+    <div class="feat-title">⚡ Siap Kirim</div>
+    <div class="feat-desc">Packing aman & cepat</div>
+  </div>
+</div>`;
+  const el = document.getElementById(textareaId);
+  if (!el) return;
+  el.value = template;
+  el.focus();
+}
+
+function toggleDescPreview(textareaId, previewId) {
+  const ta = document.getElementById(textareaId);
+  const prev = document.getElementById(previewId);
+  if (!ta || !prev) return;
+
+  if (prev.style.display === 'none') {
+    let content = ta.value.trim();
+    if (!content) {
+      prev.innerHTML = '<p style="color: #9CA3AF; margin: 0; font-style: italic;">Belum ada deskripsi yang ditulis...</p>';
+    } else {
+      const hasHtml = /<[a-z][\s\S]*>/i.test(content);
+      if (hasHtml) {
+        prev.innerHTML = content;
+      } else {
+        prev.innerHTML = content.replace(/\n/g, '<br>');
+      }
+    }
+    prev.style.display = 'block';
+  } else {
+    prev.style.display = 'none';
+  }
 }
 
 // AI Auto Translate Helper
@@ -591,7 +768,7 @@ async function triggerAiTranslate(mode) {
   const descVal = descInput ? descInput.value.trim() : '';
 
   if (!nameVal) {
-    alert('Harap isi Nama Busana dalam Bahasa Indonesia terlebih dahulu.');
+    alert('Harap isi Nama Produk dalam Bahasa Indonesia terlebih dahulu.');
     if (nameInput) nameInput.focus();
     return;
   }

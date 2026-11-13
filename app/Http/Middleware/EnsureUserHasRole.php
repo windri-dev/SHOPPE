@@ -33,7 +33,7 @@ class EnsureUserHasRole
         }
 
         if (! in_array($userRoleValue, $roles, true)) {
-            abort(403, 'Akses Ditolak: Halaman ini hanya untuk Administrator dan Pengelola Toko PUTRI.J.');
+            abort(403, 'Akses Ditolak: Halaman ini hanya untuk Administrator dan Pengelola Toko PUTRIJALVA.');
         }
 
         return $next($request);

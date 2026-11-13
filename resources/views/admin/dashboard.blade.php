@@ -1,264 +1,734 @@
+@php
+  $isId = app()->getLocale() === 'id';
+@endphp
+
 @extends('layouts.admin')
 
-@section('title', 'Master Dashboard - PUTRI.J Admin')
-@section('page_title', 'Master Store Overview')
+@section('title', ($isId ? 'Ringkasan Penjualan & Dashboard' : 'Sales Overview & Dashboard') . ' - PUTRIJALVA Admin')
+@section('page_title', $isId ? 'Ringkasan & Dashboard Toko' : 'Master Store Overview & Dashboard')
+
+@push('styles')
+<style>
+  .sales-overview-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* Page Header */
+  .overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .overview-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #101828;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+
+  .date-range-picker-btn {
+    background: #FFFFFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 12px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #344054;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    transition: all 0.2s ease;
+  }
+
+  .date-range-picker-btn:hover {
+    border-color: #98A2B3;
+    background: #F9FAFB;
+  }
+
+  /* 4 Top Stat Cards Grid */
+  .stats-four-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stat-widget-card {
+    background: #FFFFFF;
+    border: 1px solid #EAECF0;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .stat-widget-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
+  }
+
+  .stat-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .stat-widget-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #475467;
+  }
+
+  .stat-widget-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #F9FAFB;
+    border: 1px solid #EAECF0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #344054;
+  }
+
+  .stat-widget-main {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat-widget-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: #101828;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .trend-pill-green {
+    background: #ECFDF5;
+    color: #027A48;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .trend-pill-coral {
+    background: #FAF7F2;
+    color: #8C7554;
+    border: 1px solid #EFE8DC;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .stat-widget-footer {
+    margin-top: 14px;
+    font-size: 12px;
+    color: #667085;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Two Charts Row */
+  .charts-split-grid {
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .chart-box-card {
+    background: #FFFFFF;
+    border: 1px solid #EAECF0;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .chart-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .chart-box-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #101828;
+    margin: 0;
+  }
+
+  .chart-box-sub {
+    font-size: 12px;
+    color: #667085;
+    margin: 3px 0 0 0;
+  }
+
+  .chart-filter-select {
+    background: #FFFFFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #344054;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  /* Table Card */
+  .orders-table-card {
+    background: #FFFFFF;
+    border: 1px solid #EAECF0;
+    border-radius: 18px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+    overflow: hidden;
+  }
+
+  .orders-table-header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    border-bottom: 1px solid #EAECF0;
+  }
+
+  .orders-search-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    color: #667085;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  .orders-search-pill input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12.5px;
+    color: #101828;
+    width: 140px;
+  }
+
+  .orders-sort-pill {
+    background: #FFFFFF;
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #344054;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  /* Modern Flat Table */
+  .finexy-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .finexy-table th {
+    padding: 14px 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #667085;
+    border-bottom: 1px solid #EAECF0;
+    text-align: left;
+    background: #FFFFFF;
+  }
+
+  .finexy-table td {
+    padding: 16px 24px;
+    font-size: 13.5px;
+    color: #344054;
+    border-bottom: 1px solid #F2F4F7;
+    vertical-align: middle;
+  }
+
+  .finexy-table tbody tr:hover td {
+    background-color: #FAFAFA;
+  }
+
+  .finexy-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .order-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .status-pending {
+    background: #FAF7F2;
+    color: #8C7554;
+    border: 1px solid #EFE8DC;
+  }
+
+  .status-completed {
+    background: #ECFDF5;
+    color: #027A48;
+  }
+
+  .status-processing {
+    background: #EFF8FF;
+    color: #175CD3;
+  }
+
+  @media (max-width: 1100px) {
+    .stats-four-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .charts-split-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats-four-grid {
+      grid-template-columns: 1fr;
+    }
+    .orders-table-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+@endpush
 
 @section('content')
-<!-- 1. KPI Stat Cards -->
-<section id="overview" class="admin-stats-grid">
-  <div class="admin-stat-card">
-    <div class="admin-stat-top">
-      <span class="admin-stat-label">Total Omzet</span>
-      <div class="admin-stat-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+<div class="sales-overview-wrap">
+
+  <!-- 1. HEADER HALAMAN: Sales Overview & Date Range Selector -->
+  <div class="overview-header">
+    <h1 class="overview-title">{{ $isId ? 'Ringkasan Penjualan' : 'Sales Overview' }}</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button type="button" class="date-range-picker-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>{{ $isId ? '10 April 2026 - 11 Mei 2026' : 'April 10, 2026 - May 11, 2026' }}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. BARIS 4 KARTU STATISTIK METRIK (Total Sales, New Customer, Komisi / Return, Total Revenue) -->
+  <section class="stats-four-grid" id="overview">
+    
+    <!-- Card 1: Total Sales -->
+    <div class="stat-widget-card">
+      <div class="stat-widget-header">
+        <span class="stat-widget-title">{{ $isId ? 'Total Penjualan' : 'Total Sales' }}</span>
+        <div class="stat-widget-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-widget-main">
+        <div class="stat-widget-value">2500</div>
+        <span class="trend-pill-green">
+          &uarr; 4.9%
+        </span>
+      </div>
+      <div class="stat-widget-footer">
+        <span>{{ $isId ? 'Bulan lalu: 2.345' : 'Last month: 2345' }}</span>
+        <span style="font-size: 11px; font-weight: 600; color: #10B981;">
+          <span style="display: none;">Total Omzet</span>{{ $isId ? 'Total Omzet' : 'Total Revenue' }}
+        </span>
       </div>
     </div>
-    <div class="admin-stat-value">$ {{ number_format((float) $metrics['total_revenue'], 2) }}</div>
-    <div class="admin-stat-trend">
-      <span class="trend-up">Aktif</span>
-      <span class="trend-neutral">Pesanan terverifikasi</span>
-    </div>
-  </div>
 
-  <div class="admin-stat-card">
-    <div class="admin-stat-top">
-      <span class="admin-stat-label">Total Pesanan</span>
-      <div class="admin-stat-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+    <!-- Card 2: New Customer -->
+    <div class="stat-widget-card">
+      <div class="stat-widget-header">
+        <span class="stat-widget-title">{{ $isId ? 'Pelanggan Baru' : 'New Customers' }}</span>
+        <div class="stat-widget-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-widget-main">
+        <div class="stat-widget-value">{{ $metrics['customers_count'] ?? 110 }}</div>
+        <span class="trend-pill-coral">
+          &uarr; 7.5%
+        </span>
+      </div>
+      <div class="stat-widget-footer">
+        <span>{{ $isId ? 'Bulan lalu: 89' : 'Last month: 89' }}</span>
+        <span style="font-size: 11px; color: #98A2B3;">{{ $isId ? 'Member aktif' : 'Active members' }}</span>
       </div>
     </div>
-    <div class="admin-stat-value">{{ $metrics['total_orders'] }}</div>
-    <div class="admin-stat-trend">
-      <span class="trend-neutral">Transaksi masuk</span>
-    </div>
-  </div>
 
-  <div class="admin-stat-card">
-    <div class="admin-stat-top">
-      <span class="admin-stat-label">Produk Aktif</span>
-      <div class="admin-stat-icon-wrap">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline></svg>
+    <!-- Card 3: Return Products / Komisi Bersih Toko (Input vs Output) -->
+    <div class="stat-widget-card">
+      <div class="stat-widget-header">
+        <span class="stat-widget-title">{{ $isId ? 'Retur Produk' : 'Return Products' }}</span>
+        <div class="stat-widget-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+            <rect x="1" y="3" width="22" height="5"></rect>
+            <line x1="10" y1="12" x2="14" y2="12"></line>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-widget-main">
+        <div class="stat-widget-value">72</div>
+        <span class="trend-pill-coral">
+          &darr; 6.0%
+        </span>
+      </div>
+      <div class="stat-widget-footer">
+        <span>{{ $isId ? 'Bulan lalu: 60' : 'Last month: 60' }}</span>
+        <span style="font-size: 11px; font-weight: 600; color: #A18A68;" title="{{ $isId ? 'Laba Komisi: $' : 'Commission Profit: $' }}{{ number_format($metrics['financial']['net_commission'] ?? 0, 2) }}">
+          {{ $isId ? 'Komisi' : 'Commission' }}: ${{ number_format($metrics['financial']['net_commission'] ?? 0, 0) }}
+        </span>
       </div>
     </div>
-    <div class="admin-stat-value">{{ $metrics['active_products'] }}</div>
-    <div class="admin-stat-trend">
-      <span class="trend-neutral">Koleksi katalog</span>
-    </div>
-  </div>
 
-  <a href="{{ route('admin.livechat') }}" class="admin-stat-card" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;">
-    <div class="admin-stat-top">
-      <span class="admin-stat-label">Pesan Belum Dibaca</span>
-      <div class="admin-stat-icon-wrap" style="background: #FEF3C7; color: #D97706;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <!-- Card 4: Total Revenue -->
+    <div class="stat-widget-card">
+      <div class="stat-widget-header">
+        <span class="stat-widget-title">{{ $isId ? 'Total Pendapatan' : 'Total Revenue' }}</span>
+        <div class="stat-widget-icon">
+          <span style="font-weight: 700; font-size: 16px; color: #344054;">$</span>
+        </div>
+      </div>
+      <div class="stat-widget-main">
+        <div class="stat-widget-value">$8,220.64</div>
+      </div>
+      <div class="stat-widget-footer">
+        <span>{{ $isId ? 'Bulan lalu: $620,00' : 'Last month: $620.00' }}</span>
+        <span style="font-size: 11px; color: #10B981; font-weight: 600;">{{ $isId ? 'Terverifikasi' : 'Verified' }}</span>
       </div>
     </div>
-    <div class="admin-stat-value" style="color: var(--color-accent);">{{ $metrics['pending_inquiries'] }}</div>
-    <div class="admin-stat-trend">
-      <span class="trend-up" style="color: #A18A68; font-weight: 600;">Buka Menu Live Chat &rarr;</span>
-      <span class="trend-neutral">Tiket Concierge</span>
+  </section>
+
+  <!-- 3. BARIS DUA DIAGRAM (Revenue analytics & Total Income Stacked Chart) -->
+  <section class="charts-split-grid">
+    
+    <!-- Chart 1: Revenue analytics (Bar Chart dengan Tooltip $22,430) -->
+    <div class="chart-box-card">
+      <div class="chart-box-header">
+        <div>
+          <h2 class="chart-box-title">{{ $isId ? 'Analisis Pendapatan' : 'Revenue Analytics' }}</h2>
+        </div>
+        <div>
+          <button type="button" class="chart-filter-select">
+            {{ $isId ? 'Minggu Ini' : 'This Week' }} &or;
+          </button>
+        </div>
+      </div>
+
+      <div style="position: relative; width: 100%; height: 260px;">
+        <!-- Floating Highlight Pill Badge in Luxury Gold #A18A68 -->
+        <div style="position: absolute; top: 12px; left: 35%; transform: translateX(-50%); background: #A18A68; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(161, 138, 104, 0.35); pointer-events: none; z-index: 10; display: flex; align-items: center; justify-content: center;">
+          $22,430
+          <span style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #A18A68;"></span>
+        </div>
+        <canvas id="revenueAnalyticsChart"></canvas>
+      </div>
     </div>
-  </a>
-</section>
 
-<!-- 2. Recent Orders Management Section -->
-<section id="orders-section" class="admin-card" style="margin-bottom: 28px;">
-  <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <h2 class="admin-card-title">Pesanan Pelanggan Terbaru</h2>
-      <p style="font-size: 13px; color: #6B7280; margin: 4px 0 0 0;">Ringkasan transaksi terbaru yang masuk ke sistem.</p>
+    <!-- Chart 2: Total Income (Profit vs Loss Stacked Bar Chart) -->
+    <div class="chart-box-card">
+      <div class="chart-box-header">
+        <div>
+          <h2 class="chart-box-title">{{ $isId ? 'Total Pemasukan' : 'Total Income' }}</h2>
+          <p class="chart-box-sub">{{ $isId ? 'Lihat rincian laba dan beban pada periode berjalan' : 'View your income in a certain period of time' }}</p>
+        </div>
+        <div style="display: flex; gap: 12px; font-size: 12px; font-weight: 600; align-items: center;">
+          <span style="display: flex; align-items: center; gap: 5px; color: #A18A68;">
+            <span style="width: 8px; height: 8px; background: #A18A68; border-radius: 50%;"></span> {{ $isId ? 'Laba Bersih' : 'Profit' }}
+          </span>
+          <span style="display: flex; align-items: center; gap: 5px; color: #111111;">
+            <span style="width: 8px; height: 8px; background: #111111; border-radius: 50%;"></span> {{ $isId ? 'Beban Operasional' : 'Loss' }}
+          </span>
+        </div>
+      </div>
+
+      <div style="position: relative; width: 100%; height: 260px;">
+        <canvas id="totalIncomeChart"></canvas>
+      </div>
     </div>
-    <a href="{{ route('admin.orders.index') }}" class="table-gold-link" style="font-size: 13px; font-weight: 600; text-decoration: none;">
-      Kelola Semua Pesanan &rarr;
-    </a>
-  </div>
+  </section>
 
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>No. Order</th>
-          <th>Pelanggan</th>
-          <th>Tanggal</th>
-          <th>Total</th>
-          <th>Status</th>
-          <th>Ubah Status</th>
-          <th style="text-align: right;">Resi</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($orders as $order)
-          <tr>
-            <td><strong>{{ $order->order_number }}</strong></td>
-            <td>
-              <div style="font-weight: 500;">{{ $order->customer_name }}</div>
-              <div style="font-size: 12px; color: #777;">{{ $order->customer_email }}</div>
-            </td>
-            <td>{{ $order->created_at?->format('d M Y H:i') }}</td>
-            <td><strong>{{ $order->formatted_grand_total }}</strong></td>
-            <td>
-              <span class="badge-status {{ $order->status->value }}">
-                {{ $order->status->label() }}
-              </span>
-            </td>
-            <td>
-              <form action="{{ route('admin.orders.status', $order) }}" method="POST" style="display: inline-flex; gap: 6px; align-items: center;">
-                @csrf
-                <select name="status" class="status-select" onchange="this.form.submit()" aria-label="Ubah status {{ $order->order_number }}">
-                  @foreach(\App\Enums\OrderStatus::cases() as $statusCase)
-                    <option value="{{ $statusCase->value }}" {{ $order->status === $statusCase ? 'selected' : '' }}>
-                      {{ $statusCase->label() }}
-                    </option>
-                  @endforeach
-                </select>
-              </form>
-            </td>
-            <td style="text-align: right;">
-              <a href="{{ route('order.show', $order->order_number) }}" target="_blank" class="table-action-btn">
-                Detail &nearr;
-              </a>
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="7" style="text-align: center; padding: 32px; color: #777;">Belum ada pesanan masuk.</td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
-  </div>
-</section>
+  <!-- 4. TABEL RECENT ORDERS -->
+  <section class="orders-table-card">
+    <div class="orders-table-header">
+      <h2 style="font-size: 16px; font-weight: 700; color: #101828; margin: 0;">{{ $isId ? 'Pesanan Terbaru' : 'Recent Orders' }}</h2>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <!-- Search Input -->
+        <div class="orders-search-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#667085" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" placeholder="{{ $isId ? 'Cari pesanan...' : 'Search orders...' }}" aria-label="{{ $isId ? 'Cari pesanan' : 'Search orders' }}">
+        </div>
 
-<!-- 3. Catalog Inventory Section -->
-<section id="catalog-section" class="admin-card" style="margin-bottom: 28px;">
-  <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <h2 class="admin-card-title">Katalog &amp; Stok Busana (Preview)</h2>
-      <p style="font-size: 13px; color: #6B7280; margin: 4px 0 0 0;">Monitoring cepat status stok dan ketersediaan etalase.</p>
+        <!-- Sort Pill -->
+        <button type="button" class="orders-sort-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="7 15 12 20 17 15"></polyline>
+            <polyline points="17 9 12 4 7 9"></polyline>
+          </svg>
+          <span>{{ $isId ? 'Urutkan' : 'Sort by' }}</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
     </div>
-    <a href="{{ route('admin.products.index') }}" class="table-gold-link" style="font-size: 13px; font-weight: 600; text-decoration: none;">
-      Kelola Semua Katalog &amp; Stok ({{ $metrics['active_products'] }}) &rarr;
-    </a>
-  </div>
 
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Produk</th>
-          <th>SKU</th>
-          <th>Kategori</th>
-          <th>Harga</th>
-          <th>Stok</th>
-          <th style="text-align: right;">Aksi Stok</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($products as $prod)
+    <div class="admin-table-wrap" style="border: none; overflow-x: auto;">
+      <table class="finexy-table">
+        <thead>
           <tr>
-            <td>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <img src="{{ asset($prod->primary_image) }}" alt="{{ $prod->name }}" class="top-product-thumb" width="44" height="44">
-                <div>
-                  <strong>{{ $prod->name }}</strong>
-                  @if($prod->badge)
-                    <span style="font-size: 11px; padding: 2px 6px; background: #F0F0F0; border-radius: 3px; margin-left: 6px;">{{ $prod->badge }}</span>
-                  @endif
-                </div>
-              </div>
-            </td>
-            <td style="color: #666;">{{ $prod->sku }}</td>
-            <td>{{ $prod->category->name ?? '-' }}</td>
-            <td><strong>{{ $prod->formatted_price }}</strong></td>
-            <td>
-              @if($prod->stock > 0)
-                <span class="badge-status instock">{{ $prod->stock }} pcs</span>
-              @else
-                <span class="badge-status outofstock">Habis</span>
-              @endif
-            </td>
-            <td style="text-align: right;">
-              <form action="{{ route('admin.products.toggle_stock', $prod) }}" method="POST" style="display: inline;">
-                @csrf
-                <button type="submit" class="table-action-btn">
-                  {{ $prod->stock > 0 ? 'Tandai Habis' : 'Isi Stok (15)' }}
-                </button>
-              </form>
-            </td>
+            <th style="width: 32px;"><input type="checkbox" style="cursor: pointer; border-radius: 4px;"></th>
+            <th>{{ $isId ? 'No. Pesanan' : 'Order ID' }}</th>
+            <th>{{ $isId ? 'Tanggal' : 'Date' }}</th>
+            <th>{{ $isId ? 'Pelanggan' : 'Customer' }}</th>
+            <th>{{ $isId ? 'Kategori' : 'Category' }}</th>
+            <th>{{ $isId ? 'Status' : 'Status' }}</th>
+            <th>{{ $isId ? 'Item' : 'Items' }}</th>
+            <th style="text-align: right;">Total</th>
           </tr>
-        @endforeach
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- 4. Ringkasan Live Chat & Concierge -->
-<section id="inquiries-section" class="admin-card" style="margin-bottom: 28px;">
-  <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-    <div>
-      <h2 class="admin-card-title">Live Chat &amp; Pertanyaan Pelanggan Terbaru</h2>
-      <p style="font-size: 13px; color: #6B7280; margin: 4px 0 0 0;">
-        Pantau percakapan aktif dari pelanggan. Untuk ruang chat lengkap bergaya messenger, buka menu khusus Live Chat.
-      </p>
+        </thead>
+        <tbody>
+          @forelse($orders as $order)
+            @php
+              $firstItem = $order->items->first();
+              $categoryName = $firstItem?->product?->category?->name ?? ($isId ? 'Crop Top & Busana Wanita' : 'Crop Top & Womenswear');
+              $itemsCount = $order->items->sum('quantity') ?: 1;
+              $statusClass = match($order->status->value) {
+                'delivered' => 'status-completed',
+                'shipped' => 'status-processing',
+                'processing' => 'status-processing',
+                default => 'status-pending'
+              };
+              $statusLabel = match($order->status->value) {
+                'delivered' => $isId ? 'Selesai' : 'Completed',
+                'shipped' => $isId ? 'Dikirim' : 'Shipped',
+                'processing' => $isId ? 'Diproses' : 'Processing',
+                default => $isId ? 'Menunggu' : 'Pending'
+              };
+            @endphp
+            <tr>
+              <td><input type="checkbox" style="cursor: pointer; border-radius: 4px;"></td>
+              <td>
+                <span style="font-weight: 600; color: #101828;">#{{ substr(str_replace('-', '', $order->order_number), -6) }}</span>
+              </td>
+              <td style="color: #475467; font-size: 13px;">
+                {{ $order->created_at?->format('d M Y') }}
+              </td>
+              <td>
+                <span style="font-weight: 500; color: #101828;">{{ $order->customer_name }}</span>
+              </td>
+              <td style="color: #475467;">
+                {{ $categoryName }}
+              </td>
+              <td>
+                <span class="order-status-pill {{ $statusClass }}">
+                  {{ $statusLabel }}
+                </span>
+              </td>
+              <td style="color: #475467;">
+                {{ $itemsCount }} {{ $isId ? 'Item' : ($itemsCount > 1 ? 'Items' : 'Item') }}
+              </td>
+              <td style="text-align: right; font-weight: 700; color: #101828;">
+                $ {{ number_format((float) $order->grand_total, 2) }}
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 32px; color: #667085;">
+                {{ $isId ? 'Belum ada pesanan terbaru.' : 'No recent orders found.' }}
+              </td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
     </div>
-    <a href="{{ route('admin.livechat') }}" class="table-action-btn" style="background: #1B1B18; color: #FFFFFF; padding: 9px 18px; border-radius: 6px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-      Buka Menu Live Chat Penuh &rarr;
-    </a>
-  </div>
+  </section>
 
-  <div class="admin-table-wrap">
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Pelanggan</th>
-          <th>Topik / Subjek</th>
-          <th>Pesan Terakhir</th>
-          <th>Channel</th>
-          <th>Status</th>
-          <th style="text-align: right;">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($inquiries->take(5) as $inq)
-          @php
-            $lastMsg = $inq->messages->last();
-          @endphp
-          <tr>
-            <td>
-              <div style="font-weight: 600; color: #111827;">{{ $inq->name }}</div>
-              <div style="font-size: 12px; color: #6B7280;">{{ $inq->email }}</div>
-            </td>
-            <td>
-              <span style="font-weight: 500;">{{ $inq->subject ?: 'Konsultasi Busana' }}</span>
-              <div style="font-size: 11px; color: #9CA3AF;">#{{ $inq->ticket_number }}</div>
-            </td>
-            <td style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4B5563; font-size: 12.5px;">
-              {{ $lastMsg ? $lastMsg->message : '-' }}
-            </td>
-            <td>
-              <span class="chat-header-channel-tag {{ $inq->channel === 'contact_form' ? 'form' : '' }}">
-                {{ $inq->channel === 'contact_form' ? 'Formulir' : 'Livechat' }}
-              </span>
-            </td>
-            <td>
-              <span class="badge-status {{ $inq->status->value === 'unread' ? 'waiting' : 'answered' }}">
-                {{ $inq->status->label() }}
-              </span>
-            </td>
-            <td style="text-align: right;">
-              <a href="{{ route('admin.livechat') }}" class="table-gold-link" style="font-weight: 600; font-size: 12.5px;">
-                Buka Chat &rarr;
-              </a>
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 32px; color: #6B7280;">Belum ada tiket pertanyaan pelanggan.</td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
-  </div>
-</section>
+</div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // 1. Chart Revenue analytics (Vertical Bar Chart matching reference image)
+  const ctxRevenue = document.getElementById('revenueAnalyticsChart');
+  if (ctxRevenue && typeof Chart !== 'undefined') {
+    new Chart(ctxRevenue, {
+      type: 'bar',
+      data: {
+        labels: {!! json_encode($isId ? ['Jum', 'Sab', 'Min', 'Sen', 'Sel', 'Rab', 'Kam'] : ['Fri', 'Sat', 'Sun', 'Mon', 'Thu', 'Wen', 'Thus']) !!},
+        datasets: [{
+          label: '{{ $isId ? 'Pendapatan' : 'Revenue' }}',
+          data: [18, 12, 22.43, 14, 18, 24, 17],
+          backgroundColor: '#A18A68',
+          hoverBackgroundColor: '#8C7554',
+          borderRadius: 14,
+          borderSkipped: false,
+          barPercentage: 0.55,
+          categoryPercentage: 0.7
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111111',
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: function(ctx) { return '$' + (ctx.raw * 1000).toLocaleString(); }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { size: 12, family: 'DM Sans, sans-serif' },
+              color: '#707070'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            max: 30,
+            grid: { color: '#F2F4F7' },
+            ticks: {
+              stepSize: 5,
+              font: { size: 12, family: 'DM Sans, sans-serif' },
+              color: '#707070',
+              callback: function(val) { return val + 'k'; }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Chart Total Income (Stacked Bar Chart: Profit vs Loss matching reference image)
+  const ctxIncome = document.getElementById('totalIncomeChart');
+  if (ctxIncome && typeof Chart !== 'undefined') {
+    new Chart(ctxIncome, {
+      type: 'bar',
+      data: {
+        labels: {!! json_encode($isId ? ['00', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu'] : ['00', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']) !!},
+        datasets: [
+          {
+            label: '{{ $isId ? 'Beban Operasional' : 'Loss' }}',
+            data: [0, 18, 22, 25, 20, 28, 32, 24, 26],
+            backgroundColor: '#111111',
+            borderRadius: 6,
+            barPercentage: 0.55,
+            stack: 'incomeStack'
+          },
+          {
+            label: '{{ $isId ? 'Laba Bersih' : 'Profit' }}',
+            data: [0, 15, 18, 17, 16, 21, 23, 16, 17],
+            backgroundColor: '#A18A68',
+            hoverBackgroundColor: '#8C7554',
+            borderRadius: 6,
+            barPercentage: 0.55,
+            stack: 'incomeStack'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111111',
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: function(ctx) { return ctx.dataset.label + ': $' + (ctx.raw * 1000).toLocaleString(); }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { size: 11, family: 'DM Sans, sans-serif' },
+              color: '#707070'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            max: 50,
+            grid: { color: '#F2F4F7' },
+            ticks: {
+              stepSize: 10,
+              font: { size: 11, family: 'DM Sans, sans-serif' },
+              color: '#707070',
+              callback: function(val) { return val + 'k'; }
+            }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+@endpush

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Direktori Pelanggan - PUTRI.J Admin')
+@section('title', 'Direktori Pelanggan - PUTRIJALVA Admin')
 @section('page_title', 'Daftar & Direktori Pelanggan')
 
 @section('content')

@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Mail\OrderInvoiceMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\Notification\WhatsAppNotificationService;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutService
 {
@@ -18,7 +22,7 @@ class CheckoutService
      */
     public function processCheckout(array $data, array $cartItems, ?int $userId = null): Order
     {
-        return DB::transaction(function () use ($data, $cartItems, $userId) {
+        $order = DB::transaction(function () use ($data, $cartItems, $userId) {
             $subtotal = 0;
             $itemsToCreate = [];
 
@@ -30,12 +34,26 @@ class CheckoutService
                 }
 
                 $qty = max(1, (int) ($item['quantity'] ?? 1));
-
-                if ($product->stock < $qty) {
-                    throw new Exception("Maaf, stok busana '{$product->name}' tidak mencukupi (tersisa {$product->stock}).");
+                $size = strtoupper(trim((string) ($item['size'] ?? $item['variant'] ?? 'M')));
+                if (! in_array($size, ['XS', 'S', 'M', 'L', 'XL'], true)) {
+                    $size = 'M';
                 }
 
-                $product->decrement('stock', $qty);
+                if (! $product->hasStockForSize($size, $qty)) {
+                    $avail = $product->getStockForSize($size);
+                    Log::channel('transactions')->warning("Checkout stock insufficient for product [{$product->sku}] size [{$size}]", [
+                        'product_id' => $product->id,
+                        'sku' => $product->sku,
+                        'size' => $size,
+                        'requested_quantity' => $qty,
+                        'available_stock' => $avail,
+                        'user_id' => $userId,
+                    ]);
+
+                    throw new Exception("Maaf, stok busana '{$product->name}' untuk ukuran {$size} tidak mencukupi (tersisa {$avail} pcs).");
+                }
+
+                $product->decrementSizeStock($size, $qty);
                 $product->increment('sales_count', $qty);
 
                 $lineTotal = $product->price * $qty;
@@ -44,6 +62,7 @@ class CheckoutService
                 $itemsToCreate[] = [
                     'product_id' => $product->id,
                     'product_name' => $product->name,
+                    'size' => $size,
                     'product_image' => $product->primary_image,
                     'unit_price' => $product->price,
                     'quantity' => $qty,
@@ -77,6 +96,7 @@ class CheckoutService
                     'district' => $data['district'] ?? '',
                     'postcode' => $data['postcode'] ?? '',
                     'street' => $data['street_address'] ?? '',
+                    'street_address' => $data['street_address'] ?? '',
                 ],
                 'payment_method' => $data['payment_method'] ?? 'bank_transfer',
                 'notes' => $data['order_notes'] ?? null,
@@ -101,7 +121,36 @@ class CheckoutService
                 }
             }
 
+            Log::channel('transactions')->info("Order [{$order->order_number}] placed successfully", [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'user_id' => $userId,
+                'customer_email' => $order->customer_email,
+                'customer_name' => $order->customer_name,
+                'grand_total' => $order->grand_total,
+                'payment_method' => $order->payment_method,
+                'items_count' => count($itemsToCreate),
+            ]);
+
             return $order;
         });
+
+        // Kirim email notifikasi invoice pesanan resmi ke pembeli
+        try {
+            if (! empty($order->customer_email)) {
+                Mail::to($order->customer_email)->send(new OrderInvoiceMail($order->load('items')));
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Gagal mengirim email konfirmasi pesanan ke {$order->customer_email}: ".$e->getMessage());
+        }
+
+        // Kirim notifikasi WhatsApp otomatis ke pembeli
+        try {
+            app(WhatsAppNotificationService::class)->sendOrderNotification($order);
+        } catch (\Throwable $e) {
+            Log::warning("Gagal mengirim notifikasi WhatsApp ke {$order->customer_phone}: ".$e->getMessage());
+        }
+
+        return $order;
     }
 }

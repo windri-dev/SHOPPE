@@ -8,10 +8,14 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateOrderPaymentRequest;
 use App\Http\Requests\Admin\UpdateOrderStatusRequest;
+use App\Mail\OrderShippedMail;
 use App\Models\Order;
+use App\Services\Notification\WhatsAppNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class OrderAdminController extends Controller
@@ -62,7 +66,32 @@ class OrderAdminController extends Controller
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
         $status = OrderStatus::from($request->validated('status'));
+        $oldStatus = $order->status->value;
         $order->update(['status' => $status]);
+
+        Log::channel('transactions')->info("Order [{$order->order_number}] status updated from [{$oldStatus}] to [{$status->value}] by admin [".(auth()->user()?->email ?? 'unknown').']', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'old_status' => $oldStatus,
+            'new_status' => $status->value,
+            'admin_id' => auth()->id(),
+        ]);
+
+        if ($status === OrderStatus::SHIPPED) {
+            if (! empty($order->customer_email)) {
+                try {
+                    Mail::to($order->customer_email)->send(new OrderShippedMail($order));
+                } catch (\Throwable $e) {
+                    Log::warning("Gagal mengirim email resi pengiriman ke {$order->customer_email}: ".$e->getMessage());
+                }
+            }
+
+            try {
+                app(WhatsAppNotificationService::class)->sendShippingNotification($order);
+            } catch (\Throwable $e) {
+                Log::warning("Gagal mengirim WhatsApp resi pengiriman ke {$order->customer_phone}: ".$e->getMessage());
+            }
+        }
 
         return back()->with('success', "Status pesanan {$order->order_number} berhasil diubah menjadi {$status->label()}.");
     }
@@ -100,7 +129,33 @@ class OrderAdminController extends Controller
             $updates['status'] = OrderStatus::SHIPPED;
         }
 
+        $isNewlyShipped = (! empty($validated['tracking_number']) && $order->tracking_number !== $validated['tracking_number'])
+            || (($updates['status'] ?? null) === OrderStatus::SHIPPED && $order->status !== OrderStatus::SHIPPED);
+
         $order->update($updates);
+
+        Log::channel('transactions')->info("Order [{$order->order_number}] payment/shipping details updated by admin [".(auth()->user()?->email ?? 'unknown').']', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'updates' => $updates,
+            'admin_id' => auth()->id(),
+        ]);
+
+        if ($isNewlyShipped) {
+            if (! empty($order->customer_email)) {
+                try {
+                    Mail::to($order->customer_email)->send(new OrderShippedMail($order));
+                } catch (\Throwable $e) {
+                    Log::warning("Gagal mengirim email resi pengiriman ke {$order->customer_email}: ".$e->getMessage());
+                }
+            }
+
+            try {
+                app(WhatsAppNotificationService::class)->sendShippingNotification($order);
+            } catch (\Throwable $e) {
+                Log::warning("Gagal mengirim WhatsApp resi pengiriman ke {$order->customer_phone}: ".$e->getMessage());
+            }
+        }
 
         return back()->with('success', "Status pembayaran & pengiriman pesanan {$order->order_number} berhasil diperbarui.");
     }
