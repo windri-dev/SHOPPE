@@ -265,16 +265,65 @@
     <div class="tab-panel active" id="tabDesc" role="tabpanel">
       <div class="pdp-rich-description">
         @php
-          $desc = $product->description ?? '';
-          $desc = preg_replace('/<div class="desc-feature-grid">[\s\S]*?<\/div>\s*<\/div>/i', '', $desc);
-          $hasHtml = strip_tags($desc) !== $desc;
+          $rawDesc = $product->description ?? '';
+          $rawDesc = preg_replace('/<div class="desc-feature-grid">[\s\S]*?<\/div>\s*<\/div>/i', '', $rawDesc);
+
+          $isRichHtml = preg_match('/<(p|h[1-6]|ul|ol|table)\b/i', $rawDesc);
+
+          if ($isRichHtml) {
+              $formattedDesc = $rawDesc;
+          } else {
+              $blocks = preg_split('/(<div[\s\S]*?<\/div>)/i', $rawDesc, -1, PREG_SPLIT_DELIM_CAPTURE);
+              $formattedDesc = '';
+
+              foreach ($blocks as $block) {
+                  $trimmed = trim($block);
+                  if (empty($trimmed)) continue;
+                  if (str_starts_with($trimmed, '<')) {
+                      $formattedDesc .= $trimmed . "\n";
+                      continue;
+                  }
+
+                  $paragraphs = preg_split('/\n{2,}/', $trimmed);
+                  foreach ($paragraphs as $para) {
+                      $para = trim($para);
+                      if (empty($para)) continue;
+
+                      $lines = explode("\n", $para);
+                      $inList = false;
+
+                      foreach ($lines as $line) {
+                          $line = trim($line);
+                          if (empty($line)) continue;
+
+                          if (preg_match('/^[•\-\*]\s*(.+)$/u', $line, $matches)) {
+                              if (!$inList) {
+                                  $formattedDesc .= "<ul class=\"pdp-bullet-list\">\n";
+                                  $inList = true;
+                              }
+                              $formattedDesc .= "  <li>" . htmlspecialchars($matches[1]) . "</li>\n";
+                          } else {
+                              if ($inList) {
+                                  $formattedDesc .= "</ul>\n";
+                                  $inList = false;
+                              }
+                              if (str_ends_with($line, ':')) {
+                                  $formattedDesc .= "<h4 class=\"pdp-desc-subtitle\">" . htmlspecialchars($line) . "</h4>\n";
+                              } else {
+                                  $formattedDesc .= "<p class=\"pdp-desc-p\">" . htmlspecialchars($line) . "</p>\n";
+                              }
+                          }
+                      }
+
+                      if ($inList) {
+                          $formattedDesc .= "</ul>\n";
+                      }
+                  }
+              }
+          }
         @endphp
 
-        @if($hasHtml)
-          {!! $desc !!}
-        @else
-          {!! nl2br(e($desc)) !!}
-        @endif
+        {!! $formattedDesc !!}
       </div>
     </div>
 
@@ -330,14 +379,14 @@
     @endif
 
     <!-- Shopee-Style Rating Overview Box (Themed to PUTRIJALVA Luxury Palette) -->
-    <div class="shoppe-rating-overview" style="background: #FAF9F6; border: 1px solid #EAEAEA; border-radius: 6px; padding: 26px 30px; margin-bottom: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 28px;">
+    <div class="shoppe-rating-overview">
       <!-- Left: Big Score & Luxury Gold Stars -->
-      <div style="min-width: 150px; text-align: center;">
+      <div class="rating-overview-score-box">
         <div style="line-height: 1;">
-          <span style="font-size: 32px; font-weight: 700; color: #111827;">{{ number_format($product->average_rating, 1) }}</span>
-          <span style="font-size: 16px; font-weight: 500; color: #A18A68; margin-left: 2px;">{{ __('dari 5') }}</span>
+          <span class="rating-big-number">{{ number_format($product->average_rating, 1) }}</span>
+          <span class="rating-max-number">{{ __('dari 5') }}</span>
         </div>
-        <div style="color: #A18A68; font-size: 20px; margin-top: 8px; letter-spacing: 2px;">
+        <div class="rating-stars-gold">
           @for($i = 1; $i <= 5; $i++)
             @if($i <= (int) round($product->average_rating))
               &#9733;
@@ -346,29 +395,28 @@
             @endif
           @endfor
         </div>
+        <div class="rating-total-count">
+          {{ $product->approved_reviews_count ?? $product->reviews_count }} {{ __('Penilaian Pembeli') }}
+        </div>
       </div>
 
       <!-- Right: Filter Pills -->
-      <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-        @php
-          $breakdown = $product->rating_breakdown;
-        @endphp
-        <button type="button" class="shoppe-filter-btn active" data-filter="all">{{ __('Semua') }}</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="5">5 {{ __('Bintang') }} ({{ $breakdown[5]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="4">4 {{ __('Bintang') }} ({{ $breakdown[4]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="3">3 {{ __('Bintang') }} ({{ $breakdown[3]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="2">2 {{ __('Bintang') }} ({{ $breakdown[2]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="1">1 {{ __('Bintang') }} ({{ $breakdown[1]['count'] }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="comment">{{ __('Dengan Komentar') }} ({{ $product->reviews_with_comment_count }})</button>
-        <button type="button" class="shoppe-filter-btn" data-filter="media">{{ __('Dengan Media') }} ({{ $product->reviews_with_media_count }})</button>
+      <div class="rating-overview-filters">
+        <div class="rating-filter-pills-wrap">
+          @php
+            $breakdown = $product->rating_breakdown;
+          @endphp
+          <button type="button" class="shoppe-filter-btn active" data-filter="all">{{ __('Semua') }}</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="5">5 {{ __('Bintang') }} ({{ $breakdown[5]['count'] }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="4">4 {{ __('Bintang') }} ({{ $breakdown[4]['count'] }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="3">3 {{ __('Bintang') }} ({{ $breakdown[3]['count'] }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="2">2 {{ __('Bintang') }} ({{ $breakdown[2]['count'] }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="1">1 {{ __('Bintang') }} ({{ $breakdown[1]['count'] }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="comment">{{ __('Dengan Komentar') }} ({{ $product->reviews_with_comment_count }})</button>
+          <button type="button" class="shoppe-filter-btn" data-filter="media">{{ __('Dengan Media') }} ({{ $product->reviews_with_media_count }})</button>
+        </div>
 
-        <button
-          type="button"
-          id="btnToggleReviewForm"
-          style="margin-left: auto; height: 32px; padding: 0 16px; background: #111827; color: #FFFFFF; border: 1px solid #111827; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
-          onmouseover="this.style.background='#A18A68'; this.style.borderColor='#A18A68';"
-          onmouseout="this.style.background='#111827'; this.style.borderColor='#111827';"
-        >
+        <button type="button" id="btnToggleReviewForm" class="btn-write-review">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
           {{ __('Tulis Penilaian') }}
         </button>

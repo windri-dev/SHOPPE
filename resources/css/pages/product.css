@@ -1107,5 +1107,267 @@
   }
 }
 
+/* ==========================================================================
+   Structured Product Description & Luxury Typography
+   ========================================================================== */
+.pdp-desc-p {
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.pdp-desc-subtitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+
+.pdp-bullet-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 12px 0 20px 0;
+}
+
+.pdp-bullet-list li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #4B5563;
+  margin-bottom: 8px;
+}
+
+.pdp-bullet-list li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #A18A68;
+}
+
+/* ==========================================================================
+   Shopee-Style Reviews Overview (Responsive Luxury Architecture)
+   ========================================================================== */
+.shoppe-rating-overview {
+  background: #FAF9F6;
+  border: 1px solid #EAEAEA;
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.rating-overview-score-box {
+  min-width: 150px;
+  text-align: center;
+}
+
+.rating-big-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.rating-max-number {
+  font-size: 16px;
+  font-weight: 500;
+  color: #A18A68;
+  margin-left: 2px;
+}
+
+.rating-stars-gold {
+  color: #A18A68;
+  font-size: 20px;
+  margin-top: 6px;
+  letter-spacing: 2px;
+}
+
+.rating-total-count {
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 6px;
+}
+
+.rating-overview-filters {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.rating-filter-pills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+
+.btn-write-review {
+  margin-left: auto;
+  height: 34px;
+  padding: 0 16px;
+  background: #111827;
+  color: #FFFFFF;
+  border: 1px solid #111827;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-write-review:hover {
+  background: #A18A68;
+  border-color: #A18A68;
+}
+
+/* ==========================================================================
+   Mobile Optimizations (< 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Product Meta Card */
+  .product-meta {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 14px !important;
+    background: #FAF9F6 !important;
+    border: 1px solid #EFE8DC !important;
+    border-radius: 8px !important;
+    margin-bottom: 24px !important;
+    font-size: 12.5px !important;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-item strong {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8C7554;
+    margin-right: 0;
+  }
+
+  /* Full Width Tab Buttons */
+  .product-tabs-section {
+    margin-top: 32px;
+    margin-bottom: 40px;
+  }
+
+  .tab-nav-list {
+    display: flex !important;
+    width: 100% !important;
+    gap: 0 !important;
+    border-bottom: 2px solid #E5E7EB !important;
+  }
+
+  .tab-btn {
+    flex: 1 !important;
+    text-align: center !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    padding: 12px 6px !important;
+    border-bottom: 2px solid transparent !important;
+    margin-bottom: -2px !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    color: #6B7280 !important;
+  }
+
+  .tab-btn.active {
+    color: #111827 !important;
+    border-bottom-color: #111827 !important;
+  }
+
+  .tab-panel {
+    padding: 18px 0 24px !important;
+  }
+
+  /* Mobile Rating Overview: Centered Stack with Wide Filter Pills */
+  .shoppe-rating-overview {
+    flex-direction: column !important;
+    padding: 20px 16px !important;
+    gap: 18px !important;
+    align-items: stretch !important;
+    border-radius: 10px !important;
+  }
+
+  .rating-overview-score-box {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid #EFE8DC !important;
+  }
+
+  .rating-big-number {
+    font-size: 38px !important;
+  }
+
+  .rating-overview-filters {
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .rating-filter-pills-wrap {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  .shoppe-filter-btn {
+    height: 32px !important;
+    padding: 0 12px !important;
+    font-size: 12px !important;
+    border-radius: 9999px !important;
+    flex-grow: 1 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-write-review {
+    width: 100% !important;
+    height: 42px !important;
+    margin-left: 0 !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Review item compact mobile styling */
+  .shoppe-review-item {
+    gap: 12px !important;
+    padding: 18px 0 !important;
+  }
+
+  .review-media-thumb {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 6px !important;
+  }
+}
+
 
 
