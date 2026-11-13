@@ -263,13 +263,6 @@
     </div>
 
     <div class="tab-panel active" id="tabDesc" role="tabpanel">
-      <!-- Shopee-Style Header Bar -->
-      <div style="background: #FAFAFA; border: 1px solid #EAEAEA; border-radius: 6px; padding: 12px 18px; margin-bottom: 22px;">
-        <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: rgba(0,0,0,0.87); letter-spacing: -0.01em;">
-          {{ __('Deskripsi Produk') }}
-        </h3>
-      </div>
-
       <div class="pdp-rich-description">
         @php
           $desc = $product->description ?? '';
@@ -286,13 +279,6 @@
     </div>
 
     <div class="tab-panel" id="tabInfo" role="tabpanel">
-      <!-- Shopee-Style Header Bar -->
-      <div style="background: #FAFAFA; border: 1px solid #EAEAEA; border-radius: 6px; padding: 12px 18px; margin-bottom: 22px;">
-        <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: rgba(0,0,0,0.87); letter-spacing: -0.01em;">
-          {{ __('Spesifikasi Produk & Panduan Ukuran') }}
-        </h3>
-      </div>
-
       <div class="additional-info-list">
         <div class="info-row">
           <span class="info-label">{{ __('Material Kain:') }}</span>
