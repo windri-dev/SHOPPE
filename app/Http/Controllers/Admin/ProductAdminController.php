@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\CurrencyService;
 use App\Services\ProductTranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -62,7 +63,9 @@ class ProductAdminController extends Controller
             'outofstock' => Product::where('stock', '<=', 0)->count(),
         ];
 
-        return view('admin.products.index', compact('products', 'categories', 'stats'));
+        $exchangeRate = app(CurrencyService::class)->getUsdToIdrRate();
+
+        return view('admin.products.index', compact('products', 'categories', 'stats', 'exchangeRate'));
     }
 
     /**
@@ -71,6 +74,20 @@ class ProductAdminController extends Controller
     public function store(StoreProductRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+
+        $rate = app(CurrencyService::class)->getUsdToIdrRate();
+
+        $price = (float) $validated['price'];
+        if ($price >= 1000) {
+            $price = round($price / $rate, 2);
+        }
+
+        $originalPrice = isset($validated['original_price']) && $validated['original_price'] !== null && $validated['original_price'] !== ''
+            ? (float) $validated['original_price']
+            : null;
+        if ($originalPrice !== null && $originalPrice >= 1000) {
+            $originalPrice = round($originalPrice / $rate, 2);
+        }
 
         $baseSlug = Str::slug($validated['name']);
         $slug = $baseSlug;
@@ -125,8 +142,8 @@ class ProductAdminController extends Controller
             'name_en' => $nameEn,
             'slug' => $slug,
             'sku' => $sku,
-            'price' => $validated['price'],
-            'original_price' => $validated['original_price'] ?? null,
+            'price' => $price,
+            'original_price' => $originalPrice,
             'stock' => $stock,
             'size_stocks' => $sizeStocks,
             'badge' => $badge,
@@ -192,13 +209,26 @@ class ProductAdminController extends Controller
             $descriptionEn = $descriptionEn ?: $translated['description_en'];
         }
 
+        $rate = app(CurrencyService::class)->getUsdToIdrRate();
+        $price = (float) $validated['price'];
+        if ($price >= 1000) {
+            $price = round($price / $rate, 2);
+        }
+
+        $originalPrice = isset($validated['original_price']) && $validated['original_price'] !== null && $validated['original_price'] !== ''
+            ? (float) $validated['original_price']
+            : null;
+        if ($originalPrice !== null && $originalPrice >= 1000) {
+            $originalPrice = round($originalPrice / $rate, 2);
+        }
+
         $product->update([
             'name' => $validated['name'],
             'name_en' => $nameEn,
             'category_id' => (int) $validated['category_id'],
             'sku' => strtoupper(trim($validated['sku'])),
-            'price' => $validated['price'],
-            'original_price' => $validated['original_price'] ?? null,
+            'price' => $price,
+            'original_price' => $originalPrice,
             'stock' => $stock,
             'size_stocks' => $sizeStocks,
             'badge' => $badge,

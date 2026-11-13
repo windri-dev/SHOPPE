@@ -15,6 +15,33 @@ class UpdateProductRequest extends FormRequest
         return $this->user() !== null && $this->user()->isAdmin();
     }
 
+    protected function prepareForValidation(): void
+    {
+        $mergeData = [];
+
+        if ($this->has('price')) {
+            $rawPrice = (string) $this->input('price');
+            $cleaned = preg_replace('/[^0-9.]/', '', $rawPrice) ?? '';
+            if (substr_count($cleaned, '.') > 1 || (strlen($cleaned) > 6 && str_contains($cleaned, '.'))) {
+                $cleaned = str_replace('.', '', $cleaned);
+            }
+            $mergeData['price'] = $cleaned !== '' ? (float) $cleaned : null;
+        }
+
+        if ($this->has('original_price')) {
+            $rawOrig = (string) $this->input('original_price');
+            $cleaned = preg_replace('/[^0-9.]/', '', $rawOrig) ?? '';
+            if (substr_count($cleaned, '.') > 1 || (strlen($cleaned) > 6 && str_contains($cleaned, '.'))) {
+                $cleaned = str_replace('.', '', $cleaned);
+            }
+            $mergeData['original_price'] = $cleaned !== '' ? (float) $cleaned : null;
+        }
+
+        if (! empty($mergeData)) {
+            $this->merge($mergeData);
+        }
+    }
+
     /**
      * @return array<string, mixed>
      */

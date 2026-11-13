@@ -13,7 +13,7 @@
         Katalog &amp; Manajemen Persediaan Produk
       </h2>
       <p style="font-size: 13px; color: #6B7280; margin: 0;">
-        Kelola 46 perhiasan, tambah perhiasan baru, sesuaikan stok masuk/keluar, dan perbarui harga jual etalase.
+        Kelola katalog busana butik, tambah koleksi baru, sesuaikan stok persediaan, dan kelola harga jual dalam Rupiah (Rp).
       </p>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
@@ -375,16 +375,25 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga ($) *</label>
-          <input type="number" step="0.01" name="price" required placeholder="45.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Jual (Rp) *</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
+            <input type="text" name="price" id="createProdPrice" required placeholder="720.000" oninput="updateLivePricePreview('create')" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 600; padding-left: 32px;">
+          </div>
+          <div id="createPriceUsdPreview" style="font-size: 11px; color: #8C7554; margin-top: 3px; font-weight: 500;">≈ $ 45.00 USD (Otomatis AI)</div>
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret ($)</label>
-          <input type="number" step="0.01" name="original_price" placeholder="60.00" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret / Normal (Rp)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
+            <input type="text" name="original_price" id="createProdOriginalPrice" placeholder="960.000" oninput="updateLivePricePreview('create')" class="chat-search-input" style="width: 100%; font-size: 13px; padding-left: 32px;">
+          </div>
+          <div id="createOrigPriceUsdPreview" style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Opsional diskon</div>
         </div>
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Stok Awal (pcs) *</label>
           <input type="number" name="stock" required value="15" min="0" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Kuantitas stok siap kirim</div>
         </div>
       </div>
 
@@ -540,16 +549,25 @@
 
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga ($) *</label>
-          <input type="number" step="0.01" name="price" id="editProductPrice" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Jual (Rp) *</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
+            <input type="text" name="price" id="editProductPrice" required oninput="updateLivePricePreview('edit')" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 600; padding-left: 32px;">
+          </div>
+          <div id="editPriceUsdPreview" style="font-size: 11px; color: #8C7554; margin-top: 3px; font-weight: 500;"></div>
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret ($)</label>
-          <input type="number" step="0.01" name="original_price" id="editProductOriginalPrice" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret / Normal (Rp)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
+            <input type="text" name="original_price" id="editProductOriginalPrice" oninput="updateLivePricePreview('edit')" class="chat-search-input" style="width: 100%; font-size: 13px; padding-left: 32px;">
+          </div>
+          <div id="editOrigPriceUsdPreview" style="font-size: 11px; color: #9CA3AF; margin-top: 3px;"></div>
         </div>
         <div>
           <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Stok (pcs) *</label>
           <input type="number" name="stock" id="editProductStock" required min="0" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Kuantitas stok siap kirim</div>
         </div>
       </div>
 
@@ -606,9 +624,46 @@
 </div>
 
 <script>
+const GLOBAL_EXCHANGE_RATE = {{ $exchangeRate ?? 16000 }};
+
+function updateLivePricePreview(mode) {
+  const isCreate = mode === 'create';
+  const priceInput = document.getElementById(isCreate ? 'createProdPrice' : 'editProductPrice');
+  const origInput = document.getElementById(isCreate ? 'createProdOriginalPrice' : 'editProductOriginalPrice');
+  const pricePreview = document.getElementById(isCreate ? 'createPriceUsdPreview' : 'editPriceUsdPreview');
+  const origPreview = document.getElementById(isCreate ? 'createOrigPriceUsdPreview' : 'editOrigPriceUsdPreview');
+
+  if (priceInput && pricePreview) {
+    const raw = (priceInput.value || '').replace(/[^0-9.]/g, '');
+    const num = parseFloat(raw);
+    if (!isNaN(num) && num > 0) {
+      const usd = num >= 1000 ? (num / GLOBAL_EXCHANGE_RATE).toFixed(2) : num.toFixed(2);
+      pricePreview.textContent = `≈ $ ${usd} USD (Otomatis dikonversi AI untuk pembeli global)`;
+      pricePreview.style.color = '#8C7554';
+    } else {
+      pricePreview.textContent = 'Masukkan nominal harga dalam Rupiah (Rp)';
+      pricePreview.style.color = '#9CA3AF';
+    }
+  }
+
+  if (origInput && origPreview) {
+    const raw = (origInput.value || '').replace(/[^0-9.]/g, '');
+    const num = parseFloat(raw);
+    if (!isNaN(num) && num > 0) {
+      const usd = num >= 1000 ? (num / GLOBAL_EXCHANGE_RATE).toFixed(2) : num.toFixed(2);
+      origPreview.textContent = `≈ $ ${usd} USD (Harga Coret)`;
+      origPreview.style.color = '#8C7554';
+    } else {
+      origPreview.textContent = 'Opsional diskon';
+      origPreview.style.color = '#9CA3AF';
+    }
+  }
+}
+
 // Modal Tambah Produk
 function openCreateProductModal() {
   document.getElementById('createProductModalBackdrop').style.display = 'flex';
+  updateLivePricePreview('create');
 }
 function closeCreateProductModal() {
   document.getElementById('createProductModalBackdrop').style.display = 'none';
@@ -655,8 +710,19 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
   document.getElementById('editProductNameEn').value = nameEn || '';
   document.getElementById('editProductSku').value = sku;
   document.getElementById('editProductCategory').value = categoryId;
-  document.getElementById('editProductPrice').value = price;
-  document.getElementById('editProductOriginalPrice').value = originalPrice || '';
+
+  // Tampilkan harga dalam Rupiah (Rp)
+  const numPrice = parseFloat(price);
+  const idrPrice = (!isNaN(numPrice) && numPrice < 1000) ? Math.round(numPrice * GLOBAL_EXCHANGE_RATE) : price;
+  document.getElementById('editProductPrice').value = idrPrice;
+
+  let idrOrigPrice = '';
+  if (originalPrice) {
+    const numOrig = parseFloat(originalPrice);
+    idrOrigPrice = (!isNaN(numOrig) && numOrig < 1000) ? Math.round(numOrig * GLOBAL_EXCHANGE_RATE) : originalPrice;
+  }
+  document.getElementById('editProductOriginalPrice').value = idrOrigPrice;
+
   document.getElementById('editProductStock').value = stock;
   document.getElementById('editProductBadge').value = badge || '';
   document.getElementById('editProductVideoUrl').value = videoUrl || '';
@@ -665,6 +731,8 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
   const prev = document.getElementById('editProductDescPreview');
   if (prev) prev.style.display = 'none';
   document.getElementById('editProductModalBackdrop').style.display = 'flex';
+
+  updateLivePricePreview('edit');
 }
 function closeEditProductModal() {
   document.getElementById('editProductModalBackdrop').style.display = 'none';
