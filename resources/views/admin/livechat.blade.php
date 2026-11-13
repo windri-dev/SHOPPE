@@ -253,7 +253,10 @@
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 6px; font-size: 11px;">
             <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #111827; font-weight: 600;">
               <input type="checkbox" id="adminSaveAsKnowledgeCheckbox" style="accent-color: #A18A68; width: 14px; height: 14px; cursor: pointer;">
-              <span>💡 Simpan balasan ini ke <strong>Knowledge Base</strong> (agar pertanyaan serupa dijawab otomatis oleh AI)</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6m-4 3h2m-5-8a6 6 0 1 1 8 0c-1 1-1.5 2-1.5 3h-5c0-1-.5-2-1.5-3z"/></svg>
+                <span>Simpan balasan ini ke <strong>Knowledge Base</strong> (agar pertanyaan serupa dijawab otomatis oleh AI)</span>
+              </span>
             </label>
             <span style="color: #6B7280;">Tiket otomatis beralih ke <strong>Mode Admin Manusia</strong> saat dikirim.</span>
           </div>
@@ -559,7 +562,7 @@
     }
   }
 
-  // Event listener tombol "💡 Simpan ke Knowledge" di setiap balon chat
+  // Event listener tombol "Simpan ke Knowledge" di setiap balon chat
   if (messagesStream) {
     messagesStream.addEventListener('click', function(e) {
       const btn = e.target.closest('.btn-quick-to-knowledge');
@@ -659,10 +662,11 @@
               class="btn-quick-to-knowledge"
               data-is-question="${isCustomer ? '1' : '0'}"
               data-message="${escapeHtml(msg.message)}"
-              style="background: none; border: none; color: #A18A68; font-size: 10px; font-weight: 700; cursor: pointer; padding: 0 4px; display: inline-flex; align-items: center; gap: 3px;"
+              style="background: none; border: none; color: #A18A68; font-size: 10px; font-weight: 700; cursor: pointer; padding: 0 4px; display: inline-flex; align-items: center; gap: 4px;"
               title="${isCustomer ? 'Simpan pertanyaan ini ke Knowledge Base' : 'Jadikan jawaban ini Knowledge Base'}"
             >
-              💡 ${isCustomer ? 'Simpan ke Knowledge' : 'Jadikan Knowledge'}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6m-4 3h2m-5-8a6 6 0 1 1 8 0c-1 1-1.5 2-1.5 3h-5c0-1-.5-2-1.5-3z"/></svg>
+              <span>${isCustomer ? 'Simpan ke Knowledge' : 'Jadikan Knowledge'}</span>
             </button>
           </div>
         </div>
@@ -907,7 +911,7 @@
 
         if (data.success) {
           if (data.data?.knowledge_saved) {
-            alert('🎉 ' + data.message + '\nPertanyaan dan balasan ini kini menjadi pengetahuan resmi AI untuk menjawab pelanggan serupa secara otomatis.');
+            alert(data.message + '\nPertanyaan dan balasan ini kini menjadi pengetahuan resmi AI untuk menjawab pelanggan serupa secara otomatis.');
             if (saveKnCheckbox) saveKnCheckbox.checked = false;
           }
           const newMsg = {

@@ -230,7 +230,7 @@ class LiveChatManager {
         {
           sender: 'agent',
           senderBadge: 'PUTRIJALVA Assistant',
-          text: 'Halo! Selamat datang di **PUTRIJALVA** ✨\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini?',
+          text: 'Halo! Selamat datang di **PUTRIJALVA**\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini?',
           time: this.getCurrentTime()
         }
       ];

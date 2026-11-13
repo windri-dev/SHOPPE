@@ -90,7 +90,7 @@
         <div style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #D1D5DB; margin-top: 4px;">Contemporary Ready-to-Wear Atelier</div>
       </div>
       <div class="email-body">
-        <h2 style="font-size: 20px; font-weight: 700; color: #111827; margin: 0 0 8px;">Koleksi Anda Sedang Menuju ke Alamat Anda! 📦</h2>
+        <h2 style="font-size: 20px; font-weight: 700; color: #111827; margin: 0 0 8px;">Koleksi Anda Sedang Menuju ke Alamat Anda!</h2>
         <p style="color: #4B5563; font-size: 14px; margin: 0 0 16px;">
           Halo <strong>{{ $order->customer_name }}</strong>, busana pilihan Anda dari pesanan <strong>#{{ $order->order_number }}</strong> telah selesai dikemas rapi dalam garment bag eksklusif PUTRIJALVA dan telah diserahkan kepada kurir pengiriman.
         </p>

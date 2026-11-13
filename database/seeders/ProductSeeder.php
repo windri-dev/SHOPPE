@@ -46,25 +46,6 @@ Gaun ini dilengkapi furing lembut di bagian dada untuk kenyamanan ekstra dan tid
 
 <div class="desc-banner-img">
   <img src="/images/product-1.png" alt="Keanggunan Siluet & Material Silk-Blend Premium">
-</div>
-
-<div class="desc-feature-grid">
-  <div class="desc-feature-card">
-    <div class="feat-title">✨ Karakter Mewah</div>
-    <div class="feat-desc">Kilau satin natural elegan</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">🌿 Nyaman Dipakai</div>
-    <div class="feat-desc">Serat bernapas tidak gerah</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">👗 Jahitan Rapi</div>
-    <div class="feat-desc">Standar butik profesional</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">⚡ Siap Kirim</div>
-    <div class="feat-desc">Packing aman & higienis</div>
-  </div>
 </div>',
                 'images' => ['images/product-1.png', 'images/product-2.png'],
                 'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',

@@ -337,11 +337,13 @@
 
       <!-- Auto-Translate AI Banner -->
       <div style="background: #FDF8F0; border: 1px solid #F3E2C7; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4;">
-          <strong>✨ Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Cukup ketik Nama &amp; Deskripsi dalam Bahasa Indonesia. Sistem AI akan otomatis menerjemahkan ke Bahasa Inggris saat disimpan, atau klik tombol di samping untuk preview instan.
+        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" style="flex-shrink: 0;"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+          <div><strong>Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Cukup ketik Nama &amp; Deskripsi dalam Bahasa Indonesia. Sistem AI akan otomatis menerjemahkan ke Bahasa Inggris saat disimpan, atau klik tombol di samping untuk preview instan.</div>
         </div>
-        <button type="button" id="btnAutoTranslateCreate" onclick="triggerAiTranslate('create')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
-          ✨ Translate ke EN
+        <button type="button" id="btnAutoTranslateCreate" onclick="triggerAiTranslate('create')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+          Translate ke EN
         </button>
       </div>
 
@@ -413,9 +415,18 @@
           <button type="button" onclick="insertDescTag('createProdDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Tebal"><strong>B</strong></button>
           <button type="button" onclick="insertDescTag('createProdDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Subjudul (H4)">H4</button>
           <button type="button" onclick="insertDescList('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Daftar Fitur">• Fitur List</button>
-          <button type="button" onclick="insertDescImage('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Sisipkan Banner/Gambar Infografis">🖼️ Gambar Banner</button>
-          <button type="button" onclick="applyShopeeTemplate('createProdDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">📋 Template Shopee</button>
-          <button type="button" onclick="toggleDescPreview('createProdDesc', 'createProdDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto;">👁️ Preview</button>
+          <button type="button" onclick="insertDescImage('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff; display: inline-flex; align-items: center; gap: 4px;" title="Sisipkan Banner/Gambar Infografis">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Gambar Banner
+          </button>
+          <button type="button" onclick="applyShopeeTemplate('createProdDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Template Shopee
+          </button>
+          <button type="button" onclick="toggleDescPreview('createProdDesc', 'createProdDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto; display: inline-flex; align-items: center; gap: 4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            Preview
+          </button>
         </div>
 
         <textarea name="description" id="createProdDesc" rows="7" placeholder="Tuliskan deskripsi lengkap, fitur utama, spesifikasi produk, atau klik tombol [Template Shopee] di atas..." class="chat-search-input" style="width: 100%; font-size: 13px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.5; font-family: inherit;"></textarea>
@@ -491,11 +502,13 @@
       @method('PUT')
 
       <div style="background: #FDF8F3; border: 1px solid #F3E8D8; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4;">
-          <strong>✨ Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Ubah teks Bahasa Indonesia lalu klik Translate ke EN untuk memperbarui versi Inggris dengan AI.
+        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" style="flex-shrink: 0;"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+          <div><strong>Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Ubah teks Bahasa Indonesia lalu klik Translate ke EN untuk memperbarui versi Inggris dengan AI.</div>
         </div>
-        <button type="button" id="btnAutoTranslateEdit" onclick="triggerAiTranslate('edit')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
-          ✨ Translate ke EN
+        <button type="button" id="btnAutoTranslateEdit" onclick="triggerAiTranslate('edit')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+          Translate ke EN
         </button>
       </div>
 
@@ -561,9 +574,18 @@
           <button type="button" onclick="insertDescTag('editProductDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Tebal"><strong>B</strong></button>
           <button type="button" onclick="insertDescTag('editProductDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Subjudul (H4)">H4</button>
           <button type="button" onclick="insertDescList('editProductDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Daftar Fitur">• Fitur List</button>
-          <button type="button" onclick="insertDescImage('editProductDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Sisipkan Banner/Gambar Infografis">🖼️ Gambar Banner</button>
-          <button type="button" onclick="applyShopeeTemplate('editProductDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">📋 Template Shopee</button>
-          <button type="button" onclick="toggleDescPreview('editProductDesc', 'editProductDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto;">👁️ Preview</button>
+          <button type="button" onclick="insertDescImage('editProductDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff; display: inline-flex; align-items: center; gap: 4px;" title="Sisipkan Banner/Gambar Infografis">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Gambar Banner
+          </button>
+          <button type="button" onclick="applyShopeeTemplate('editProductDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Template Shopee
+          </button>
+          <button type="button" onclick="toggleDescPreview('editProductDesc', 'editProductDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto; display: inline-flex; align-items: center; gap: 4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            Preview
+          </button>
         </div>
 
         <textarea name="description" id="editProductDesc" rows="7" placeholder="Tuliskan deskripsi lengkap, fitur utama, spesifikasi produk..." class="chat-search-input" style="width: 100%; font-size: 13px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.5; font-family: inherit;"></textarea>
@@ -706,25 +728,6 @@ Spesifikasi Produk:
 
 <div class="desc-banner-img">
   <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Keunggulan Material & Koleksi Eksklusif">
-</div>
-
-<div class="desc-feature-grid">
-  <div class="desc-feature-card">
-    <div class="feat-title">✨ Kualitas Butik</div>
-    <div class="feat-desc">QC ketat setiap helai jahitan</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">🛡️ Garansi Retur</div>
-    <div class="feat-desc">Jaminan tukar jika cacat</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">🌿 Ramah Kulit</div>
-    <div class="feat-desc">Serat hipoalergenik nyaman</div>
-  </div>
-  <div class="desc-feature-card">
-    <div class="feat-title">⚡ Siap Kirim</div>
-    <div class="feat-desc">Packing aman & cepat</div>
-  </div>
 </div>`;
   const el = document.getElementById(textareaId);
   if (!el) return;

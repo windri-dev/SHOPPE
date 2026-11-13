@@ -9,8 +9,9 @@
   data-user-phone="{{ auth()->user()->phone ?? '' }}"
 >
   <div class="shoppe-livechat-teaser" id="shoppeLiveChatTeaser" style="display: none;">
-    <span class="shoppe-livechat-teaser-text">
-      Butuh rekomendasi busana? Chat kami di sini ✨
+    <span class="shoppe-livechat-teaser-text" style="display: inline-flex; align-items: center; gap: 6px;">
+      Butuh rekomendasi busana? Chat kami di sini
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="#A18A68" aria-hidden="true"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
     </span>
     <button type="button" class="shoppe-livechat-teaser-close" id="shoppeLiveChatTeaserClose" aria-label="Tutup notifikasi">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

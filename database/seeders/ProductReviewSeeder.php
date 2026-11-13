@@ -28,7 +28,7 @@ class ProductReviewSeeder extends Seeder
                 'headline' => null,
                 'quality_tag' => 'Sangat bagus & adem',
                 'fit_tag' => 'Pas di badan',
-                'comment' => 'barang mendarat dengan aman, seller responsif dan langsung respon jika ada pertanyaan. semua sesuai pesanan dan ok punya, thank you min! 🥰',
+                'comment' => 'barang mendarat dengan aman, seller responsif dan langsung respon jika ada pertanyaan. semua sesuai pesanan dan ok punya, thank you min!',
                 'images' => [
                     'images/product-1.png',
                     'images/product-2.png',

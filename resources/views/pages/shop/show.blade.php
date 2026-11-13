@@ -273,6 +273,7 @@
       <div class="pdp-rich-description">
         @php
           $desc = $product->description ?? '';
+          $desc = preg_replace('/<div class="desc-feature-grid">[\s\S]*?<\/div>\s*<\/div>/i', '', $desc);
           $hasHtml = strip_tags($desc) !== $desc;
         @endphp
 
@@ -281,16 +282,6 @@
         @else
           {!! nl2br(e($desc)) !!}
         @endif
-      </div>
-
-      <div style="margin-top: 28px; padding: 18px 20px; background: #FAF9F6; border-radius: 8px; border: 1px solid #E5E7EB; display: flex; align-items: flex-start; gap: 12px;">
-        <div style="font-size: 20px; line-height: 1; flex-shrink: 0;">✨</div>
-        <div>
-          <h4 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0 0 6px 0;">{{ __('Catatan Styling PUTRIJALVA') }}</h4>
-          <p style="font-size: 13.5px; color: #6B7280; margin: 0; line-height: 1.6;">
-            {{ app()->getLocale() === 'en' ? 'Pair this piece with minimalist mules or delicate strappy heels for an understated luxury look. Breathable, fluid drape designed to move gracefully throughout your day.' : 'Padukan busana ini dengan sepatu hak minimalis atau mules santai untuk kesan refined luxury. Material berkarakter jatuh rapi dan bernapas sejuk, nyaman dikenakan sepanjang hari dalam berbagai suasana.' }}
-          </p>
-        </div>
       </div>
     </div>
 
