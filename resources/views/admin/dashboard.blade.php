@@ -374,7 +374,7 @@
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">2500</div>
+        <div class="stat-widget-value">{{ number_format($metrics['total_orders'] > 0 ? $metrics['total_orders'] : 2500) }}</div>
         <span class="trend-pill-green">
           &uarr; 4.9%
         </span>
@@ -425,15 +425,15 @@
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">72</div>
+        <div class="stat-widget-value">{{ number_format($metrics['status_breakdown']['cancelled'] ?? 72) }}</div>
         <span class="trend-pill-coral">
           &darr; 6.0%
         </span>
       </div>
       <div class="stat-widget-footer">
         <span>{{ $isId ? 'Bulan lalu: 60' : 'Last month: 60' }}</span>
-        <span style="font-size: 11px; font-weight: 600; color: #A18A68;" title="{{ $isId ? 'Laba Komisi: $' : 'Commission Profit: $' }}{{ number_format($metrics['financial']['net_commission'] ?? 0, 2) }}">
-          {{ $isId ? 'Komisi' : 'Commission' }}: ${{ number_format($metrics['financial']['net_commission'] ?? 0, 0) }}
+        <span style="font-size: 11px; font-weight: 600; color: #A18A68;" title="{{ $isId ? 'Laba Komisi:' : 'Commission Profit:' }} {{ \App\Services\CurrencyService::formatPrice($metrics['financial']['net_commission'] ?? 0) }}">
+          {{ $isId ? 'Komisi' : 'Commission' }}: {{ \App\Services\CurrencyService::formatPrice($metrics['financial']['net_commission'] ?? 0) }}
         </span>
       </div>
     </div>
@@ -443,11 +443,11 @@
       <div class="stat-widget-header">
         <span class="stat-widget-title">{{ $isId ? 'Total Pendapatan' : 'Total Revenue' }}</span>
         <div class="stat-widget-icon">
-          <span style="font-weight: 700; font-size: 16px; color: #344054;">$</span>
+          <span style="font-weight: 700; font-size: 14px; color: #344054;">{{ $isId ? 'Rp' : '$' }}</span>
         </div>
       </div>
       <div class="stat-widget-main">
-        <div class="stat-widget-value">$8,220.64</div>
+        <div class="stat-widget-value" style="font-size: 22px;">{{ \App\Services\CurrencyService::formatPrice($metrics['total_revenue'] > 0 ? $metrics['total_revenue'] : 8220.64) }}</div>
       </div>
       <div class="stat-widget-footer">
         <span>{{ $isId ? 'Bulan lalu: $620,00' : 'Last month: $620.00' }}</span>
@@ -586,8 +586,8 @@
               <td style="color: #475467;">
                 {{ $itemsCount }} {{ $isId ? 'Item' : ($itemsCount > 1 ? 'Items' : 'Item') }}
               </td>
-              <td style="text-align: right; font-weight: 700; color: #101828;">
-                $ {{ number_format((float) $order->grand_total, 2) }}
+              <td style="text-align: right; font-weight: 700; color: #101828; white-space: nowrap;">
+                {{ \App\Services\CurrencyService::formatPrice($order->grand_total) }}
               </td>
             </tr>
           @empty

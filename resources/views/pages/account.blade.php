@@ -45,6 +45,19 @@
       $notifPrefs = auth()->user()->notification_preferences ?? ['email_order' => true, 'whatsapp_shipping' => true, 'promo_newsletter' => true];
     @endphp
 
+    <style>
+      @media (max-width: 860px) {
+        .account-shopee-layout {
+          grid-template-columns: 1fr !important;
+          gap: 20px !important;
+        }
+        .dashboard-table-wrap {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+    </style>
+
     <!-- Shopee-Style Customer Account Center -->
     <div style="display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; margin-bottom: 60px;" class="account-shopee-layout">
       <!-- Left Sidebar -->

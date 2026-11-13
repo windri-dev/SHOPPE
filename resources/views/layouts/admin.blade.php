@@ -344,9 +344,30 @@
     }
 
     /* Mobile Responsive */
+    .admin-sidebar-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(17, 24, 39, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 95;
+      transition: opacity 0.25s ease;
+    }
+
+    .admin-sidebar-backdrop.active {
+      display: block;
+    }
+
     @media (max-width: 991px) {
+      #adminMobileToggle {
+        display: flex !important;
+      }
       .modern-sidebar {
         transform: translateX(-100%);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
       }
       .modern-sidebar.open {
         transform: translateX(0);
@@ -359,6 +380,12 @@
       }
       .modern-search-wrap {
         display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-content-area {
+        padding: 18px 14px !important;
       }
     }
   </style>
@@ -582,8 +609,11 @@
         </div>
       </header>
 
+      <!-- Backdrop for Mobile Sidebar -->
+      <div id="adminSidebarBackdrop" class="admin-sidebar-backdrop"></div>
+
       <!-- Content Area -->
-      <div style="padding: 28px 32px; flex: 1;">
+      <div class="admin-content-area" style="padding: 28px 32px; flex: 1;">
         <!-- Hidden accessibility anchor for testing compatibility -->
         <span style="display: none;">Master Store Overview</span>
 
@@ -611,13 +641,26 @@
     document.addEventListener('DOMContentLoaded', function () {
       const mobileToggle = document.getElementById('adminMobileToggle');
       const sidebar = document.getElementById('adminSidebar');
-      if (mobileToggle && sidebar) {
-        if (window.innerWidth <= 991) {
-          mobileToggle.style.display = 'flex';
+      const backdrop = document.getElementById('adminSidebarBackdrop');
+
+      function toggleSidebar() {
+        if (!sidebar) return;
+        const isOpen = sidebar.classList.toggle('open');
+        if (backdrop) {
+          backdrop.classList.toggle('active', isOpen);
         }
-        mobileToggle.addEventListener('click', function () {
-          sidebar.classList.toggle('open');
-        });
+      }
+
+      function closeSidebar() {
+        if (sidebar) sidebar.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('active');
+      }
+
+      if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleSidebar);
+      }
+      if (backdrop) {
+        backdrop.addEventListener('click', closeSidebar);
       }
     });
   </script>
