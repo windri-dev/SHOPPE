@@ -81,7 +81,15 @@ class Product extends Model
     public function getPrimaryImageAttribute(): string
     {
         if (is_array($this->images) && count($this->images) > 0) {
-            return $this->images[0];
+            $img = $this->images[0];
+            if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://') || str_starts_with($img, 'storage/')) {
+                return $img;
+            }
+            if (file_exists(public_path($img))) {
+                return $img;
+            }
+
+            return 'storage/'.$img;
         }
 
         return 'images/product-1.png';
@@ -89,7 +97,38 @@ class Product extends Model
 
     public function getFirstImageUrlAttribute(): string
     {
-        return asset($this->primary_image);
+        $primary = $this->primary_image;
+        if (str_starts_with($primary, 'http://') || str_starts_with($primary, 'https://')) {
+            return $primary;
+        }
+
+        return asset($primary);
+    }
+
+    /**
+     * Dapatkan daftar URL seluruh gambar produk yang siap ditampilkan.
+     *
+     * @return array<int, string>
+     */
+    public function getGalleryImageUrlsAttribute(): array
+    {
+        if (! is_array($this->images) || empty($this->images)) {
+            return [asset('images/product-1.png')];
+        }
+
+        return array_map(function (string $img): string {
+            if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+                return $img;
+            }
+            if (str_starts_with($img, 'storage/')) {
+                return asset($img);
+            }
+            if (file_exists(public_path($img))) {
+                return asset($img);
+            }
+
+            return asset('storage/'.$img);
+        }, $this->images);
     }
 
     public function getFormattedPriceAttribute(): string

@@ -15,6 +15,7 @@ use App\Services\ProductTranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -106,9 +107,30 @@ class ProductAdminController extends Controller
             $badge = 'Sold out';
         }
 
-        $images = ! empty($validated['image_url'])
-            ? [$validated['image_url']]
-            : ['images/product-1.png'];
+        $images = [];
+
+        // 1. Upload file gambar utama ke storage server
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $images[] = $request->file('image')->store('products', 'public');
+        }
+
+        // 2. Upload multiple gambar galeri ke storage server jika ada
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                if ($file->isValid()) {
+                    $images[] = $file->store('products', 'public');
+                }
+            }
+        }
+
+        // 3. Fallback jika tidak mengupload file (menggunakan URL gambar atau default butik)
+        if (empty($images)) {
+            if (! empty($validated['image_url'])) {
+                $images = [$validated['image_url']];
+            } else {
+                $images = ['images/product-1.png'];
+            }
+        }
 
         $nameEn = ! empty($validated['name_en']) ? trim($validated['name_en']) : null;
         $descriptionEn = ! empty($validated['description_en']) ? trim($validated['description_en']) : null;
@@ -175,9 +197,31 @@ class ProductAdminController extends Controller
             $badge = null;
         }
 
-        $images = $product->images;
-        if (! empty($validated['image_url'])) {
-            $images = [$validated['image_url']];
+        $images = is_array($product->images) && ! empty($product->images) ? $product->images : ['images/product-1.png'];
+
+        // 1. Upload file gambar baru jika ada
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $newPath = $request->file('image')->store('products', 'public');
+            // Bersihkan file lama jika tersimpan di disk public storage (bukan asset default)
+            if (! empty($images[0]) && ! str_starts_with($images[0], 'images/') && Storage::disk('public')->exists($images[0])) {
+                Storage::disk('public')->delete($images[0]);
+            }
+            $images[0] = $newPath;
+        }
+
+        // 2. Upload multiple gambar galeri jika ada
+        if ($request->hasFile('images')) {
+            $uploadedList = [];
+            foreach ($request->file('images') as $file) {
+                if ($file->isValid()) {
+                    $uploadedList[] = $file->store('products', 'public');
+                }
+            }
+            if (! empty($uploadedList)) {
+                $images = $uploadedList;
+            }
+        } elseif (! empty($validated['image_url'])) {
+            $images[0] = $validated['image_url'];
         }
 
         $sizeStocks = $validated['size_stocks'] ?? null;

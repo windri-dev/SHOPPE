@@ -235,6 +235,7 @@
                       'original_price' => $product->original_price ?? '',
                       'stock' => $product->stock,
                       'badge' => $product->badge ?? '',
+                      'image_url' => $product->first_image_url,
                       'description' => $product->getRawDescription() ?? '',
                       'description_en' => $product->description_en ?? '',
                       'video_url' => $product->video_url ?? '',
@@ -332,7 +333,7 @@
       <button type="button" onclick="closeCreateProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
-    <form action="{{ route('admin.products.store') }}" method="POST" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
       @csrf
 
       <!-- Auto-Translate AI Banner -->
@@ -403,14 +404,46 @@
           <input type="text" name="badge" placeholder="Contoh: Best Seller / -20%" class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Gambar (Opsional)</label>
-          <input type="text" name="image_url" placeholder="images/product-1.png" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube)</label>
+          <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
         </div>
       </div>
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube / Vimeo)</label>
-        <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
+      <!-- Section: Upload Foto ke Storage Server atau Tautkan Link -->
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Foto Produk (Upload ke Storage Server)
+          </label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung PNG, JPG, WEBP maks 10MB</span>
+        </div>
+
+        <!-- 1. Area Dropzone File Upload -->
+        <div>
+          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('createProdImageFile').click()" id="createDropzoneBox">
+            <input type="file" name="image" id="createProdImageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display: none;" onchange="handleImageFileSelect(this, 'createImgPreviewWrap', 'createImgPreviewElement', 'createImgFileName')">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 6px; display: block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <div style="font-size: 13px; font-weight: 600; color: #111827;">Pilih File Gambar dari Komputer / HP</div>
+            <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;">File otomatis disimpan ke storage server butik</div>
+          </div>
+
+          <!-- Preview File Terpilih -->
+          <div id="createImgPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
+            <img id="createImgPreviewElement" src="" alt="Preview Foto" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="createImgFileName">-</div>
+              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">File valid &amp; siap diupload ke storage server</div>
+            </div>
+            <button type="button" onclick="clearSelectedImage('createProdImageFile', 'createImgPreviewWrap')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Hapus</button>
+          </div>
+        </div>
+
+        <!-- 2. Alternatif Tautkan URL Gambar -->
+        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Gambar Eksternal (Opsional):</label>
+          <input type="text" name="image_url" id="createProdImageUrl" placeholder="Contoh: images/product-1.png atau https://domain.com/foto.jpg" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
+        </div>
       </div>
 
       <div>
@@ -506,7 +539,7 @@
       <button type="button" onclick="closeEditProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
     </div>
 
-    <form id="editProductForm" method="POST" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+    <form id="editProductForm" method="POST" enctype="multipart/form-data" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
       @csrf
       @method('PUT')
 
@@ -571,14 +604,63 @@
         </div>
       </div>
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
-        <input type="text" name="badge" id="editProductBadge" placeholder="Contoh: Bestseller / -20% Off" class="chat-search-input" style="width: 100%; font-size: 13px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
+          <input type="text" name="badge" id="editProductBadge" placeholder="Contoh: Bestseller / -20% Off" class="chat-search-input" style="width: 100%; font-size: 13px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube)</label>
+          <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
+        </div>
       </div>
 
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube / Vimeo)</label>
-        <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
+      <!-- Section: Foto Produk & Upload ke Storage Server -->
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Foto Produk (Storage Server)
+          </label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung PNG, JPG, WEBP maks 10MB</span>
+        </div>
+
+        <!-- Foto Aktif Saat Ini -->
+        <div id="editCurrentImgWrap" style="display: none; align-items: center; gap: 12px; padding: 10px 14px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px;">
+          <img id="editCurrentImgPreview" src="" alt="Foto Saat Ini" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid #D1D5DB;">
+          <div style="flex: 1;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #111827;">Foto Aktif Saat Ini</div>
+            <div style="font-size: 11px; color: #6B7280; margin-top: 1px;">Ditampilkan pada etalase toko pelanggan</div>
+          </div>
+          <span style="font-size: 11px; font-weight: 600; background: #ECFDF5; color: #027A48; padding: 2px 8px; border-radius: 99px;">Aktif</span>
+        </div>
+
+        <!-- 1. Ganti dengan Upload File Baru -->
+        <div>
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Ganti Foto: Upload File Baru ke Storage Server</label>
+          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('editProdImageFile').click()" id="editDropzoneBox">
+            <input type="file" name="image" id="editProdImageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display: none;" onchange="handleImageFileSelect(this, 'editImgPreviewWrap', 'editImgPreviewElement', 'editImgFileName')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 4px; display: block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <div style="font-size: 12.5px; font-weight: 600; color: #111827;">Pilih File Baru dari Komputer / HP</div>
+            <div style="font-size: 11px; color: #9CA3AF; margin-top: 2px;">File otomatis menggantikan foto lama di storage server</div>
+          </div>
+
+          <!-- Preview File Baru Terpilih -->
+          <div id="editImgPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
+            <img id="editImgPreviewElement" src="" alt="Preview Foto Baru" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="editImgFileName">-</div>
+              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">Foto baru akan disimpan ke storage server saat Anda klik Simpan</div>
+            </div>
+            <button type="button" onclick="clearSelectedImage('editProdImageFile', 'editImgPreviewWrap')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Batal Ganti</button>
+          </div>
+        </div>
+
+        <!-- 2. Atau Ubah Link URL -->
+        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Gambar Eksternal:</label>
+          <input type="text" name="image_url" id="editProductImageUrl" placeholder="Contoh: https://domain.com/foto.jpg" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
+        </div>
       </div>
 
       <div>
@@ -660,8 +742,33 @@ function updateLivePricePreview(mode) {
   }
 }
 
+// File Upload Handlers (Storage Server)
+function handleImageFileSelect(input, previewWrapId, previewImgId, fileNameId) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const previewWrap = document.getElementById(previewWrapId);
+      const previewImg = document.getElementById(previewImgId);
+      const fileNameEl = document.getElementById(fileNameId);
+      if (previewImg) previewImg.src = e.target.result;
+      if (fileNameEl) fileNameEl.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      if (previewWrap) previewWrap.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearSelectedImage(inputId, previewWrapId) {
+  const input = document.getElementById(inputId);
+  if (input) input.value = '';
+  const previewWrap = document.getElementById(previewWrapId);
+  if (previewWrap) previewWrap.style.display = 'none';
+}
+
 // Modal Tambah Produk
 function openCreateProductModal() {
+  clearSelectedImage('createProdImageFile', 'createImgPreviewWrap');
   document.getElementById('createProductModalBackdrop').style.display = 'flex';
   updateLivePricePreview('create');
 }
@@ -697,19 +804,35 @@ function openEditProductModalFromData(btn) {
       p.badge,
       p.description,
       p.description_en,
-      p.video_url
+      p.video_url,
+      p.image_url
     );
   } catch (err) {
     console.error('Error parsing product data:', err);
   }
 }
 
-function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl) {
+function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl, imageUrl) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
   document.getElementById('editProductNameEn').value = nameEn || '';
   document.getElementById('editProductSku').value = sku;
   document.getElementById('editProductCategory').value = categoryId;
+
+  // Handle current image preview & reset file input
+  clearSelectedImage('editProdImageFile', 'editImgPreviewWrap');
+  const currentImgWrap = document.getElementById('editCurrentImgWrap');
+  const currentImgPreview = document.getElementById('editCurrentImgPreview');
+  const editImgUrlInput = document.getElementById('editProductImageUrl');
+
+  if (editImgUrlInput) editImgUrlInput.value = imageUrl || '';
+
+  if (imageUrl && currentImgWrap && currentImgPreview) {
+    currentImgPreview.src = imageUrl;
+    currentImgWrap.style.display = 'flex';
+  } else if (currentImgWrap) {
+    currentImgWrap.style.display = 'none';
+  }
 
   // Tampilkan harga dalam Rupiah (Rp)
   const numPrice = parseFloat(price);

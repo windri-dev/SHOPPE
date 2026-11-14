@@ -18,7 +18,9 @@ use App\Models\ProductReview;
 use App\Models\User;
 use App\Services\AiConciergeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StorefrontAndAdminTest extends TestCase
@@ -1267,5 +1269,56 @@ class StorefrontAndAdminTest extends TestCase
         ]);
 
         $this->assertEquals(4, $review->fresh()->helpful_count);
+    }
+
+    public function test_admin_can_upload_product_image_file_to_storage_server(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();
+        $category = Category::firstOrFail();
+        $file = UploadedFile::fake()->image('produk-baru.jpg', 600, 600);
+
+        $response = $this->from(route('admin.products.index'))
+            ->actingAs($admin)
+            ->post(route('admin.products.store'), [
+                'name' => 'Gaun Pesta Mewah Satin',
+                'category_id' => $category->id,
+                'sku' => 'SKU-UPLOAD-01',
+                'price' => 750000,
+                'stock' => 15,
+                'image' => $file,
+                'description' => 'Gaun pesta mewah dari bahan satin berkualitas.',
+            ]);
+
+        $response->assertRedirect(route('admin.products.index'));
+
+        $product = Product::where('sku', 'SKU-UPLOAD-01')->firstOrFail();
+        $this->assertNotNull($product->images);
+        $this->assertCount(1, $product->images);
+        $this->assertStringStartsWith('products/', $product->images[0]);
+        Storage::disk('public')->assertExists($product->images[0]);
+
+        // Accessor should point to storage URL
+        $this->assertStringContainsString('storage/products/', $product->first_image_url);
+
+        // Update product with another image
+        $newFile = UploadedFile::fake()->image('produk-update.png', 800, 800);
+        $updateResponse = $this->from(route('admin.products.index'))
+            ->actingAs($admin)
+            ->put(route('admin.products.update', $product->id), [
+                'name' => 'Gaun Pesta Mewah Satin Update',
+                'category_id' => $category->id,
+                'sku' => 'SKU-UPLOAD-01',
+                'price' => 800000,
+                'stock' => 10,
+                'image' => $newFile,
+                'description' => 'Deskripsi update.',
+            ]);
+
+        $updateResponse->assertRedirect(route('admin.products.index'));
+        $product->refresh();
+        $this->assertStringStartsWith('products/', $product->images[0]);
+        Storage::disk('public')->assertExists($product->images[0]);
     }
 }

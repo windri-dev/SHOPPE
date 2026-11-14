@@ -59,7 +59,10 @@ class StoreProductRequest extends FormRequest
             'badge' => ['nullable', 'string', 'max:50'],
             'description' => ['nullable', 'string', 'max:65000'],
             'description_en' => ['nullable', 'string', 'max:65000'],
-            'image_url' => ['nullable', 'string', 'max:255'],
+            'image_url' => ['nullable', 'string', 'max:500'],
+            'image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:10240'], // 10MB
+            'images' => ['nullable', 'array'],
+            'images.*' => ['file', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:10240'],
             'video_url' => ['nullable', 'string', 'max:500'],
             'is_featured' => ['nullable', 'boolean'],
         ];

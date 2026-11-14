@@ -9,14 +9,12 @@
     <!-- Left: Gallery -->
     <div class="product-gallery">
       @php
-        $galleryImages = is_array($product->images) && count($product->images) > 0
-          ? $product->images
-          : [$product->primary_image];
+        $galleryImages = $product->gallery_image_urls;
       @endphp
       <div class="gallery-thumbs">
-        @foreach($galleryImages as $idx => $img)
-          <button type="button" class="thumb-item {{ $idx === 0 ? 'active' : '' }}" data-img="{{ asset($img) }}" aria-label="Thumbnail {{ $idx + 1 }}">
-            <img src="{{ asset($img) }}" alt="{{ $product->name }} thumbnail {{ $idx + 1 }}" width="96" height="96">
+        @foreach($galleryImages as $idx => $imgUrl)
+          <button type="button" class="thumb-item {{ $idx === 0 ? 'active' : '' }}" data-img="{{ $imgUrl }}" aria-label="Thumbnail {{ $idx + 1 }}">
+            <img src="{{ $imgUrl }}" alt="{{ $product->name }} thumbnail {{ $idx + 1 }}" width="96" height="96">
           </button>
         @endforeach
 
