@@ -72,7 +72,97 @@
   color: #6D5638;
 }
 
+/* Word Editor Box & Fullscreen (Layar Penuh) */
+.word-editor-box {
+  border: 1px solid #D1D5DB;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F8F9FA;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+  position: relative;
+}
+.word-editor-box.is-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #E2E8F0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+.word-editor-box.is-fullscreen .word-ribbon-bar {
+  padding: 10px 24px !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+.word-editor-box.is-fullscreen .word-canvas-wrapper {
+  flex: 1 !important;
+  height: calc(100vh - 88px) !important;
+  overflow-y: auto !important;
+  padding: 32px 24px !important;
+  resize: none !important;
+}
+.word-editor-box.is-fullscreen .word-document-paper {
+  max-width: 1100px !important;
+  min-height: 850px !important;
+  margin: 0 auto !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12) !important;
+  padding: 44px 56px !important;
+}
+.word-editor-box.is-fullscreen #hiddenDescription {
+  max-width: 1100px !important;
+  min-height: 850px !important;
+  margin: 0 auto !important;
+}
+
+/* Word Canvas Wrapper with Resizable Height */
+.word-canvas-wrapper {
+  padding: 18px;
+  background: #F1F3F5;
+  min-height: 440px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  resize: vertical;
+  overflow: auto;
+}
+
 /* Word Document Paper Inside Canvas */
+.word-document-paper {
+  background: #FFFFFF;
+  width: 100%;
+  min-height: 400px;
+  padding: 30px 38px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #1F2937;
+  outline: none;
+  box-sizing: border-box;
+  transition: max-width 0.2s ease;
+}
+.word-document-paper.paper-fluid {
+  max-width: 100% !important;
+}
+.word-document-paper.paper-a4 {
+  max-width: 860px !important;
+  margin: 0 auto;
+}
 .word-document-paper:focus {
   outline: none;
 }
@@ -159,8 +249,24 @@
   color: #2563EB;
   text-decoration: underline;
 }
+
+/* Resize Grip Handle Indicator */
+.resize-drag-handle {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  pointer-events: none;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
-<div class="admin-create-product-page" style="display: flex; flex-direction: column; gap: 24px; max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+
+<div class="admin-create-product-page" style="display: flex; flex-direction: column; gap: 24px; max-width: 1240px; margin: 0 auto; padding-bottom: 40px;">
 
   <!-- Header & Breadcrumbs Bar -->
   <div style="background: #FFFFFF; padding: 20px 24px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
@@ -204,10 +310,10 @@
   <form id="createProductForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+    <div style="display: flex; flex-direction: column; gap: 24px;">
 
-      <!-- ================= KOLOM KIRI (UTAMA): INFORMASI & DESKRIPSI ================= -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
+      <!-- ================= BARIS 1: INFORMASI DASAR (KIRI) & PENETAPAN HARGA (KANAN) ================= -->
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start;">
 
         <!-- Card 1: Informasi Dasar Produk -->
         <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
@@ -269,173 +375,6 @@
           </div>
         </div>
 
-        <!-- Card 2: Deskripsi Lengkap & Format Shopee (Word-Like Rich Editor) -->
-        <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
-          <div style="border-bottom: 1px solid #F3F4F6; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <div>
-              <h2 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                2. Deskripsi Produk &amp; Format Dokumen (Word Editor)
-              </h2>
-              <div style="font-size: 12px; color: #6B7280; margin-top: 2px;">Tulis deskripsi bebas &amp; rapi seperti di Microsoft Word: styling judul, tabel ukuran, poin fitur, dan banner.</div>
-            </div>
-          </div>
-
-          <!-- Word-Like Rich Text Editor Container -->
-          <div class="word-editor-box" style="border: 1px solid #D1D5DB; border-radius: 10px; overflow: hidden; background: #F8F9FA; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-
-            <!-- Ribbon Bar Toolbar (Word Style) -->
-            <div class="word-ribbon-bar" style="background: #FFFFFF; border-bottom: 1px solid #E5E7EB; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
-
-              <!-- 1. Undo / Redo -->
-              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <button type="button" onclick="formatDoc('undo')" class="ribbon-btn" title="Undo / Batalkan (Ctrl+Z)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
-                </button>
-                <button type="button" onclick="formatDoc('redo')" class="ribbon-btn" title="Redo / Ulangi (Ctrl+Y)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>
-                </button>
-              </div>
-
-              <!-- 2. Gaya Teks / Heading Selector -->
-              <div style="display: flex; align-items: center; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <select id="headingSelector" onchange="formatHeading(this.value)" style="height: 28px; font-size: 12px; border: 1px solid #D1D5DB; border-radius: 6px; padding: 2px 8px; background: #FAF9F6; font-weight: 600; color: #374151; cursor: pointer;">
-                  <option value="p">Normal (Paragraf)</option>
-                  <option value="h2">Judul Utama (H2)</option>
-                  <option value="h3">Subjudul Bagian (H3)</option>
-                  <option value="h4">Poin / Fitur (H4)</option>
-                </select>
-              </div>
-
-              <!-- 3. Format Font: Bold, Italic, Underline, Strikethrough -->
-              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <button type="button" onclick="formatDoc('bold')" class="ribbon-btn" title="Tebal (Ctrl+B)"><strong>B</strong></button>
-                <button type="button" onclick="formatDoc('italic')" class="ribbon-btn" title="Miring (Ctrl+I)"><em>I</em></button>
-                <button type="button" onclick="formatDoc('underline')" class="ribbon-btn" title="Garis Bawah (Ctrl+U)"><u>U</u></button>
-                <button type="button" onclick="formatDoc('strikeThrough')" class="ribbon-btn" title="Coret (Strikethrough)"><s>S</s></button>
-              </div>
-
-              <!-- 4. Warna Teks & Highlight / Stabilo -->
-              <div style="display: flex; align-items: center; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <label title="Warna Teks Huruf" class="ribbon-btn" style="cursor: pointer; position: relative;">
-                  <span style="font-weight: 800; border-bottom: 3px solid #A18A68; padding-bottom: 1px; font-size: 12px;">A</span>
-                  <input type="color" onchange="formatDoc('foreColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#111827">
-                </label>
-                <label title="Stabilo / Highlight Warna Latar" class="ribbon-btn" style="cursor: pointer; position: relative; background: #FEF9C3;">
-                  <span style="font-size: 12px;">🖍</span>
-                  <input type="color" onchange="formatDoc('hiliteColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#FEF08A">
-                </label>
-              </div>
-
-              <!-- 5. Perataan Paragraf (Alignment) -->
-              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <button type="button" onclick="formatDoc('justifyLeft')" class="ribbon-btn" title="Rata Kiri">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
-                </button>
-                <button type="button" onclick="formatDoc('justifyCenter')" class="ribbon-btn" title="Rata Tengah">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>
-                </button>
-                <button type="button" onclick="formatDoc('justifyRight')" class="ribbon-btn" title="Rata Kanan">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
-                </button>
-                <button type="button" onclick="formatDoc('justifyFull')" class="ribbon-btn" title="Rata Kanan Kiri (Justify)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
-                </button>
-              </div>
-
-              <!-- 6. Daftar & Indentasi -->
-              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <button type="button" onclick="formatDoc('insertUnorderedList')" class="ribbon-btn" title="Daftar Poin (Bullets)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="2"></circle><circle cx="4" cy="12" r="2"></circle><circle cx="4" cy="18" r="2"></circle></svg>
-                </button>
-                <button type="button" onclick="formatDoc('insertOrderedList')" class="ribbon-btn" title="Daftar Penomoran (1, 2, 3)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path></svg>
-                </button>
-                <button type="button" onclick="formatDoc('outdent')" class="ribbon-btn" title="Geser Kiri (Outdent)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 8 3 12 7 16"></polyline><line x1="21" y1="12" x2="3" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line></svg>
-                </button>
-                <button type="button" onclick="formatDoc('indent')" class="ribbon-btn" title="Geser Kanan (Indent)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 21 12 17 16"></polyline><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="13" y2="6"></line><line x1="3" y1="18" x2="13" y2="18"></line></svg>
-                </button>
-              </div>
-
-              <!-- 7. Sisipkan (Insert): Tabel, Gambar, Link, Garis -->
-              <div style="display: flex; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
-                <button type="button" onclick="insertWordTable()" class="ribbon-btn-text" title="Sisipkan Tabel Ukuran / Spesifikasi Kain">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
-                  Tabel
-                </button>
-                <button type="button" onclick="insertWordImage()" class="ribbon-btn-text" title="Sisipkan Gambar Banner Infografis">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                  Gambar
-                </button>
-                <button type="button" onclick="insertWordLink()" class="ribbon-btn" title="Sisipkan Link Tautan">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                </button>
-                <button type="button" onclick="formatDoc('insertHorizontalRule')" class="ribbon-btn" title="Garis Pembatas (HR)">―</button>
-              </div>
-
-              <!-- 8. Template Shopee & Fitur Khusus -->
-              <div style="display: flex; gap: 4px; margin-left: auto; align-items: center;">
-                <button type="button" onclick="applyWordShopeeTemplate()" class="ribbon-btn-special" title="Terapkan format lengkap template Shopee butik">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                  Template Shopee Siap Pakai
-                </button>
-                <button type="button" onclick="formatDoc('removeFormat')" class="ribbon-btn" title="Hapus Format (Clear Formatting)">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><line x1="12" y1="4" x2="12" y2="20"></line><line x1="2" y1="2" x2="22" y2="22"></line></svg>
-                </button>
-                <button type="button" onclick="toggleSourceView()" id="btnToggleSource" class="ribbon-btn-text" title="Beralih antara Tampilan Word dan Kode HTML">
-                  &lt;/&gt; HTML
-                </button>
-              </div>
-
-            </div>
-
-            <!-- Paper Canvas (Lembar Kerja Dokumen Seperti Word) -->
-            <div class="word-canvas-wrapper" style="padding: 20px; background: #F1F3F5; min-height: 420px; display: flex; justify-content: center;">
-              <div 
-                id="wordEditorCanvas" 
-                contenteditable="true" 
-                class="word-document-paper" 
-                data-placeholder="Tulis deskripsi produk bebas &amp; rapi seperti di Microsoft Word (judul, poin fitur, tabel ukuran, dll)..."
-                oninput="syncWordEditor()"
-                onblur="syncWordEditor()"
-                style="background: #FFFFFF; width: 100%; min-height: 380px; padding: 28px 34px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid #E5E7EB; border-radius: 4px; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.75; color: #1F2937; outline: none;"
-              >{!! old('description', '') !!}</div>
-
-              <!-- Textarea Sumber Kode HTML (tersembunyi secara default) -->
-              <textarea 
-                name="description" 
-                id="hiddenDescription" 
-                oninput="syncFromRawHtml(this.value)"
-                style="display: none; width: 100%; min-height: 380px; padding: 18px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.5; border: 1px solid #D1D5DB; border-radius: 4px; background: #1E293B; color: #F8FAFC;"
-              >{{ old('description') }}</textarea>
-            </div>
-
-            <!-- Status Bar Word -->
-            <div style="background: #FAF9F6; border-top: 1px solid #E5E7EB; padding: 6px 16px; font-size: 11.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
-              <div id="wordCountStatus">0 Kata &bull; 0 Karakter</div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
-                <span>Mode Dokumen Word &bull; Siap &bull; Auto-Sync Aktif</span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Deskripsi English (Auto AI) -->
-          <div>
-            <label style="display: block; font-size: 12.5px; font-weight: 600; color: #6B7280; margin-bottom: 6px;">Deskripsi English (Auto AI Translation / Optional)</label>
-            <textarea name="description_en" id="prodDescEn" rows="4" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6; line-height: 1.55; padding: 10px 14px;">{{ old('description_en') }}</textarea>
-            <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Versi bahasa Inggris untuk pelanggan global</div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ================= KOLOM KANAN (SIDEBAR): HARGA, MEDIA & STOK ================= -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
-
         <!-- Card 3: Penetapan Harga & Persediaan Stok -->
         <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
           <div style="border-bottom: 1px solid #F3F4F6; padding-bottom: 12px;">
@@ -467,32 +406,31 @@
             <div id="origPriceUsdPreview" style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Harga sebelum promo / coret</div>
           </div>
 
-          <!-- Stok Total Siap Kirim -->
-          <div>
-            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #111827; margin-bottom: 6px;">Stok Total Siap Kirim (pcs) *</label>
-            <input type="number" name="stock" id="prodStock" required min="0" value="{{ old('stock', 20) }}" class="chat-search-input" style="width: 100%; font-size: 14px; font-weight: 700; padding: 10px 14px;">
-            <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Kuantitas stok barang yang tersedia untuk dipesan</div>
-          </div>
-
-          <!-- Alokasi Ukuran / Size Stocks -->
-          <div style="background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;">
-            <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Alokasi Ukuran (Size Stocks):</label>
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-              <div>
-                <span style="font-size: 11px; font-weight: 700; color: #6B7280; display: block; text-align: center; margin-bottom: 2px;">S</span>
-                <input type="number" name="size_stocks[S]" value="{{ old('size_stocks.S', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 12.5px; padding: 6px 4px;">
-              </div>
-              <div>
-                <span style="font-size: 11px; font-weight: 700; color: #6B7280; display: block; text-align: center; margin-bottom: 2px;">M</span>
-                <input type="number" name="size_stocks[M]" value="{{ old('size_stocks.M', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 12.5px; padding: 6px 4px;">
-              </div>
-              <div>
-                <span style="font-size: 11px; font-weight: 700; color: #6B7280; display: block; text-align: center; margin-bottom: 2px;">L</span>
-                <input type="number" name="size_stocks[L]" value="{{ old('size_stocks.L', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 12.5px; padding: 6px 4px;">
-              </div>
-              <div>
-                <span style="font-size: 11px; font-weight: 700; color: #6B7280; display: block; text-align: center; margin-bottom: 2px;">XL</span>
-                <input type="number" name="size_stocks[XL]" value="{{ old('size_stocks.XL', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 12.5px; padding: 6px 4px;">
+          <!-- Stok Total & Alokasi Ukuran -->
+          <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; align-items: start;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 6px;">Stok Total (pcs) *</label>
+              <input type="number" name="stock" id="prodStock" required min="0" value="{{ old('stock', 20) }}" class="chat-search-input" style="width: 100%; font-size: 14px; font-weight: 700; padding: 8px 10px;">
+            </div>
+            <div style="background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 8px; padding: 8px 10px;">
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 4px;">Alokasi Ukuran:</label>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                <div>
+                  <span style="font-size: 10.5px; font-weight: 700; color: #6B7280; display: block; text-align: center;">S</span>
+                  <input type="number" name="size_stocks[S]" value="{{ old('size_stocks.S', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 11.5px; padding: 4px 2px;">
+                </div>
+                <div>
+                  <span style="font-size: 10.5px; font-weight: 700; color: #6B7280; display: block; text-align: center;">M</span>
+                  <input type="number" name="size_stocks[M]" value="{{ old('size_stocks.M', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 11.5px; padding: 4px 2px;">
+                </div>
+                <div>
+                  <span style="font-size: 10.5px; font-weight: 700; color: #6B7280; display: block; text-align: center;">L</span>
+                  <input type="number" name="size_stocks[L]" value="{{ old('size_stocks.L', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 11.5px; padding: 4px 2px;">
+                </div>
+                <div>
+                  <span style="font-size: 10.5px; font-weight: 700; color: #6B7280; display: block; text-align: center;">XL</span>
+                  <input type="number" name="size_stocks[XL]" value="{{ old('size_stocks.XL', 5) }}" min="0" class="chat-search-input" style="width: 100%; text-align: center; font-size: 11.5px; padding: 4px 2px;">
+                </div>
               </div>
             </div>
           </div>
@@ -503,6 +441,204 @@
             <label for="isFeatured" style="font-size: 12.5px; font-weight: 600; color: #374151; cursor: pointer;">Tampilkan di Koleksi Unggulan Butik (Featured)</label>
           </div>
         </div>
+
+      </div>
+
+      <!-- ================= BARIS 2: DESKRIPSI WORD EDITOR (100% LEBAR PENUH / FULL WIDTH) ================= -->
+      <div id="wordEditorCard" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Header Card 2 with Fullscreen Toggle -->
+        <div style="border-bottom: 1px solid #F3F4F6; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              2. Deskripsi Produk &amp; Format Dokumen (Word Editor)
+            </h2>
+            <div style="font-size: 12.5px; color: #6B7280; margin-top: 3px;">
+              Format dokumen leluasa &amp; rapi seperti di Microsoft Word: styling judul, tabel ukuran, poin fitur, dan banner. <strong>Area sekarang 100% lebar penuh dan dapat ditarik untuk diperbesar.</strong>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <!-- Tombol Mode Layar Penuh (Fullscreen) -->
+            <button type="button" onclick="toggleFullscreenEditor()" id="btnHeaderFullscreen" style="font-size: 12px; font-weight: 700; padding: 7px 14px; border: 1px solid #BFDBFE; border-radius: 6px; background: #EFF6FF; color: #1E40AF; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(30,64,175,0.08); transition: all 0.15s ease;" title="Buka Mode Layar Penuh (Word View) untuk mengetik di layar maksimal">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+              <span id="headerFullscreenText">⛶ Mode Layar Penuh (Word View)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Word-Like Rich Text Editor Container -->
+        <div id="wordEditorBox" class="word-editor-box">
+
+          <!-- Ribbon Bar Toolbar (Word Style) -->
+          <div class="word-ribbon-bar" style="background: #FFFFFF; border-bottom: 1px solid #E5E7EB; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+
+            <!-- 1. Undo / Redo -->
+            <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <button type="button" onclick="formatDoc('undo')" class="ribbon-btn" title="Undo / Batalkan (Ctrl+Z)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+              </button>
+              <button type="button" onclick="formatDoc('redo')" class="ribbon-btn" title="Redo / Ulangi (Ctrl+Y)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>
+              </button>
+            </div>
+
+            <!-- 2. Gaya Teks / Heading Selector -->
+            <div style="display: flex; align-items: center; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <select id="headingSelector" onchange="formatHeading(this.value)" style="height: 28px; font-size: 12px; border: 1px solid #D1D5DB; border-radius: 6px; padding: 2px 8px; background: #FAF9F6; font-weight: 600; color: #374151; cursor: pointer;">
+                <option value="p">Normal (Paragraf)</option>
+                <option value="h2">Judul Utama (H2)</option>
+                <option value="h3">Subjudul Bagian (H3)</option>
+                <option value="h4">Poin / Fitur (H4)</option>
+              </select>
+            </div>
+
+            <!-- 3. Format Font: Bold, Italic, Underline, Strikethrough -->
+            <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <button type="button" onclick="formatDoc('bold')" class="ribbon-btn" title="Tebal (Ctrl+B)"><strong>B</strong></button>
+              <button type="button" onclick="formatDoc('italic')" class="ribbon-btn" title="Miring (Ctrl+I)"><em>I</em></button>
+              <button type="button" onclick="formatDoc('underline')" class="ribbon-btn" title="Garis Bawah (Ctrl+U)"><u>U</u></button>
+              <button type="button" onclick="formatDoc('strikeThrough')" class="ribbon-btn" title="Coret (Strikethrough)"><s>S</s></button>
+            </div>
+
+            <!-- 4. Warna Teks & Highlight / Stabilo -->
+            <div style="display: flex; align-items: center; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <label title="Warna Teks Huruf" class="ribbon-btn" style="cursor: pointer; position: relative;">
+                <span style="font-weight: 800; border-bottom: 3px solid #A18A68; padding-bottom: 1px; font-size: 12px;">A</span>
+                <input type="color" onchange="formatDoc('foreColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#111827">
+              </label>
+              <label title="Stabilo / Highlight Warna Latar" class="ribbon-btn" style="cursor: pointer; position: relative; background: #FEF9C3;">
+                <span style="font-size: 12px;">🖍</span>
+                <input type="color" onchange="formatDoc('hiliteColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#FEF08A">
+              </label>
+            </div>
+
+            <!-- 5. Perataan Paragraf (Alignment) -->
+            <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <button type="button" onclick="formatDoc('justifyLeft')" class="ribbon-btn" title="Rata Kiri">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+              </button>
+              <button type="button" onclick="formatDoc('justifyCenter')" class="ribbon-btn" title="Rata Tengah">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>
+              </button>
+              <button type="button" onclick="formatDoc('justifyRight')" class="ribbon-btn" title="Rata Kanan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+              </button>
+              <button type="button" onclick="formatDoc('justifyFull')" class="ribbon-btn" title="Rata Kanan Kiri (Justify)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+              </button>
+            </div>
+
+            <!-- 6. Daftar & Indentasi -->
+            <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <button type="button" onclick="formatDoc('insertUnorderedList')" class="ribbon-btn" title="Daftar Poin (Bullets)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="2"></circle><circle cx="4" cy="12" r="2"></circle><circle cx="4" cy="18" r="2"></circle></svg>
+              </button>
+              <button type="button" onclick="formatDoc('insertOrderedList')" class="ribbon-btn" title="Daftar Penomoran (1, 2, 3)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path></svg>
+              </button>
+              <button type="button" onclick="formatDoc('outdent')" class="ribbon-btn" title="Geser Kiri (Outdent)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 8 3 12 7 16"></polyline><line x1="21" y1="12" x2="3" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line></svg>
+              </button>
+              <button type="button" onclick="formatDoc('indent')" class="ribbon-btn" title="Geser Kanan (Indent)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 21 12 17 16"></polyline><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="13" y2="6"></line><line x1="3" y1="18" x2="13" y2="18"></line></svg>
+              </button>
+            </div>
+
+            <!-- 7. Sisipkan (Insert): Tabel, Gambar, Link, Garis -->
+            <div style="display: flex; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <button type="button" onclick="insertWordTable()" class="ribbon-btn-text" title="Sisipkan Tabel Ukuran / Spesifikasi Kain">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                Tabel
+              </button>
+              <button type="button" onclick="insertWordImage()" class="ribbon-btn-text" title="Sisipkan Gambar Banner Infografis">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                Gambar
+              </button>
+              <button type="button" onclick="insertWordLink()" class="ribbon-btn" title="Sisipkan Link Tautan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              </button>
+              <button type="button" onclick="formatDoc('insertHorizontalRule')" class="ribbon-btn" title="Garis Pembatas (HR)">―</button>
+            </div>
+
+            <!-- 8. Opsi Lebar Kertas -->
+            <div style="display: flex; align-items: center; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+              <select onchange="setPaperWidth(this.value)" id="paperWidthSelect" style="height: 28px; font-size: 11.5px; border: 1px solid #D1D5DB; border-radius: 6px; padding: 2px 6px; background: #FFFFFF; font-weight: 600; color: #4B5563; cursor: pointer;" title="Ubah Lebar Tampilan Kertas">
+                <option value="fluid">↔ Lebar Penuh (100%)</option>
+                <option value="a4">📄 Format A4 (Tengah)</option>
+              </select>
+            </div>
+
+            <!-- 9. Template Shopee & Fitur Khusus -->
+            <div style="display: flex; gap: 4px; margin-left: auto; align-items: center;">
+              <button type="button" onclick="applyWordShopeeTemplate()" class="ribbon-btn-special" title="Terapkan format lengkap template Shopee butik">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                Template Shopee Siap Pakai
+              </button>
+              <button type="button" onclick="formatDoc('removeFormat')" class="ribbon-btn" title="Hapus Format (Clear Formatting)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><line x1="12" y1="4" x2="12" y2="20"></line><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+              </button>
+              <button type="button" onclick="toggleSourceView()" id="btnToggleSource" class="ribbon-btn-text" title="Beralih antara Tampilan Word dan Kode HTML">
+                &lt;/&gt; HTML
+              </button>
+              <button type="button" onclick="toggleFullscreenEditor()" id="btnRibbonFullscreen" class="ribbon-btn-text" style="color: #1E40AF; background: #EFF6FF; border-color: #BFDBFE;" title="Buka Mode Layar Penuh (Fullscreen)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                <span id="ribbonFullscreenText">⛶ Layar Penuh</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Paper Canvas (Lembar Kerja Dokumen Seperti Word) -->
+          <div class="word-canvas-wrapper" id="wordCanvasWrapper">
+            <div 
+              id="wordEditorCanvas" 
+              contenteditable="true" 
+              class="word-document-paper paper-fluid" 
+              data-placeholder="Tulis deskripsi produk bebas &amp; rapi seperti di Microsoft Word (judul, poin fitur, tabel ukuran, dll)..."
+              oninput="syncWordEditor()"
+              onblur="syncWordEditor()"
+            >{!! old('description', '') !!}</div>
+
+            <!-- Textarea Sumber Kode HTML (tersembunyi secara default) -->
+            <textarea 
+              name="description" 
+              id="hiddenDescription" 
+              oninput="syncFromRawHtml(this.value)"
+              style="display: none; width: 100%; min-height: 400px; padding: 20px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.55; border: 1px solid #D1D5DB; border-radius: 4px; background: #1E293B; color: #F8FAFC; box-sizing: border-box;"
+            >{{ old('description') }}</textarea>
+
+            <!-- Resize Drag Handle Visual -->
+            <div class="resize-drag-handle" title="Tarik untuk memperbesar tinggi editor">
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="#6B7280"><path d="M14 14H12V12H14V14ZM14 10H12V8H14V10ZM10 14H8V12H10V14ZM14 6H12V4H14V6ZM6 14H4V12H6V14ZM10 10H8V8H10V10Z"/></svg>
+            </div>
+          </div>
+
+          <!-- Status Bar Word -->
+          <div class="word-status-bar" style="background: #FAF9F6; border-top: 1px solid #E5E7EB; padding: 7px 18px; font-size: 11.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div id="wordCountStatus">0 Kata &bull; 0 Karakter</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 11px; color: #9CA3AF;">💡 Tips: Tarik sudut kanan bawah untuk memperpanjang, atau klik <strong>Layar Penuh</strong> untuk menulis maksimal</span>
+              <span style="display: inline-flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+                <span>Mode Dokumen Word &bull; Auto-Sync Aktif</span>
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Deskripsi English (Auto AI) -->
+        <div>
+          <label style="display: block; font-size: 12.5px; font-weight: 600; color: #6B7280; margin-bottom: 6px;">Deskripsi English (Auto AI Translation / Optional)</label>
+          <textarea name="description_en" id="prodDescEn" rows="4" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6; line-height: 1.55; padding: 10px 14px;">{{ old('description_en') }}</textarea>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">Versi bahasa Inggris untuk pelanggan global</div>
+        </div>
+      </div>
+
+      <!-- ================= BARIS 3: MEDIA FOTO & VIDEO (2 KOLOM SEIMBANG) ================= -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
 
         <!-- Card 4: Foto Produk (Upload ke Storage Server) -->
         <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 14px;">
@@ -848,6 +984,48 @@ function toggleSourceView() {
   }
 }
 
+// Fullscreen (Layar Penuh) Toggle
+function toggleFullscreenEditor() {
+  const box = document.getElementById('wordEditorBox');
+  const btnHeader = document.getElementById('headerFullscreenText');
+  const btnRibbon = document.getElementById('ribbonFullscreenText');
+  if (!box) return;
+
+  box.classList.toggle('is-fullscreen');
+  const isFull = box.classList.contains('is-fullscreen');
+
+  const headerLabel = isFull ? '✕ Keluar Layar Penuh (Esc)' : '⛶ Mode Layar Penuh (Word View)';
+  const ribbonLabel = isFull ? '✕ Keluar' : '⛶ Layar Penuh';
+
+  if (btnHeader) btnHeader.textContent = headerLabel;
+  if (btnRibbon) btnRibbon.textContent = ribbonLabel;
+
+  if (isFull) {
+    document.body.style.overflow = 'hidden';
+    const canvas = document.getElementById('wordEditorCanvas');
+    if (canvas && canvas.style.display !== 'none') canvas.focus();
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+// Paper Width Selector (Fluid 100% vs A4 Centered)
+function setPaperWidth(mode) {
+  const paper = document.getElementById('wordEditorCanvas');
+  const raw = document.getElementById('hiddenDescription');
+  if (!paper) return;
+
+  if (mode === 'fluid') {
+    paper.classList.remove('paper-a4');
+    paper.classList.add('paper-fluid');
+    if (raw) raw.style.maxWidth = '100%';
+  } else {
+    paper.classList.remove('paper-fluid');
+    paper.classList.add('paper-a4');
+    if (raw) raw.style.maxWidth = '860px';
+  }
+}
+
 function syncWordEditor() {
   const canvas = document.getElementById('wordEditorCanvas');
   const raw = document.getElementById('hiddenDescription');
@@ -944,6 +1122,16 @@ document.addEventListener('DOMContentLoaded', function() {
       syncWordEditor();
     });
   }
+
+  // Keyboard shortcut: Esc to exit fullscreen
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const box = document.getElementById('wordEditorBox');
+      if (box && box.classList.contains('is-fullscreen')) {
+        toggleFullscreenEditor();
+      }
+    }
+  });
 });
 </script>
 @endsection
