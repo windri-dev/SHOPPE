@@ -1055,7 +1055,6 @@ function closeEditProductModal() {
   }
   document.getElementById('editProductModalBackdrop').style.display = 'none';
 }
-}
 
 // Rich Description Formatting Helpers (Shopee Style)
 function insertDescTag(textareaId, openTag, closeTag) {
