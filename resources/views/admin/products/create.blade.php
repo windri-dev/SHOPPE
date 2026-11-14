@@ -4,6 +4,162 @@
 @section('page_title', 'Tambah Produk Baru')
 
 @section('content')
+<style>
+/* ================= WORD DOCUMENT EDITOR STYLES ================= */
+.ribbon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+.ribbon-btn:hover {
+  background: #E5E7EB;
+  border-color: #D1D5DB;
+  color: #111827;
+}
+.ribbon-btn:active, .ribbon-btn.active {
+  background: #E0E7FF;
+  border-color: #A5B4FC;
+  color: #4338CA;
+}
+.ribbon-btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid #D1D5DB;
+  border-radius: 5px;
+  background: #FFFFFF;
+  color: #374151;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ribbon-btn-text:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #111827;
+}
+.ribbon-btn-special {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid #EFE8DC;
+  border-radius: 5px;
+  background: #FAF7F2;
+  color: #8C7554;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ribbon-btn-special:hover {
+  background: #F4EFE6;
+  border-color: #D8C8B0;
+  color: #6D5638;
+}
+
+/* Word Document Paper Inside Canvas */
+.word-document-paper:focus {
+  outline: none;
+}
+.word-document-paper:empty:before {
+  content: attr(data-placeholder);
+  color: #9CA3AF;
+  pointer-events: none;
+  display: block;
+  font-style: italic;
+}
+.word-document-paper p {
+  margin: 0 0 12px 0;
+  line-height: 1.75;
+}
+.word-document-paper h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 20px 0 10px 0;
+  border-bottom: 1px solid #F3F4F6;
+  padding-bottom: 5px;
+}
+.word-document-paper h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 16px 0 8px 0;
+}
+.word-document-paper h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  margin: 12px 0 6px 0;
+}
+.word-document-paper ul, .word-document-paper ol {
+  margin: 0 0 14px 0;
+  padding-left: 24px;
+}
+.word-document-paper li {
+  margin-bottom: 5px;
+  line-height: 1.65;
+}
+.word-document-paper table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+  border: 1px solid #E5E7EB;
+}
+.word-document-paper table th {
+  background: #FAF7F2;
+  color: #111827;
+  font-weight: 700;
+  padding: 10px 14px;
+  border: 1px solid #E5E7EB;
+  text-align: left;
+}
+.word-document-paper table td {
+  padding: 9px 14px;
+  border: 1px solid #E5E7EB;
+  color: #374151;
+}
+.word-document-paper blockquote {
+  margin: 14px 0;
+  padding: 10px 16px;
+  border-left: 4px solid #A18A68;
+  background: #FAF7F2;
+  color: #4B5563;
+  font-style: italic;
+  border-radius: 0 6px 6px 0;
+}
+.word-document-paper hr {
+  border: none;
+  border-top: 1px solid #E5E7EB;
+  margin: 18px 0;
+}
+.word-document-paper img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+.word-document-paper a {
+  color: #2563EB;
+  text-decoration: underline;
+}
+</style>
 <div class="admin-create-product-page" style="display: flex; flex-direction: column; gap: 24px; max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
 
   <!-- Header & Breadcrumbs Bar -->
@@ -113,42 +269,161 @@
           </div>
         </div>
 
-        <!-- Card 2: Deskripsi Lengkap & Format Shopee -->
+        <!-- Card 2: Deskripsi Lengkap & Format Shopee (Word-Like Rich Editor) -->
         <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E5E7EB; padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 16px;">
           <div style="border-bottom: 1px solid #F3F4F6; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div>
               <h2 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                2. Deskripsi Lengkap &amp; Format Shopee Butik (Indonesia)
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                2. Deskripsi Produk &amp; Format Dokumen (Word Editor)
               </h2>
-              <div style="font-size: 12px; color: #6B7280; margin-top: 2px;">Mendukung teks terstruktur, poin-poin fitur, spesifikasi kain, dan banner infografis.</div>
+              <div style="font-size: 12px; color: #6B7280; margin-top: 2px;">Tulis deskripsi bebas &amp; rapi seperti di Microsoft Word: styling judul, tabel ukuran, poin fitur, dan banner.</div>
             </div>
           </div>
 
-          <!-- Formatting Toolbar Shopee -->
-          <div style="display: flex; gap: 6px; flex-wrap: wrap; background: #FAF9F6; border: 1px solid #D1D5DB; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 8px 12px; align-items: center;">
-            <button type="button" onclick="insertDescTag('prodDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 4px 10px; font-size: 12px; background: #fff;" title="Tebal (Bold)"><strong>B</strong></button>
-            <button type="button" onclick="insertDescTag('prodDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 4px 10px; font-size: 12px; background: #fff;" title="Subjudul (H4)">H4</button>
-            <button type="button" onclick="insertDescList('prodDesc')" class="table-action-btn" style="padding: 4px 10px; font-size: 12px; background: #fff;" title="Sisipkan Daftar Fitur Utama">• Fitur List</button>
-            <button type="button" onclick="insertDescImage('prodDesc')" class="table-action-btn" style="padding: 4px 10px; font-size: 12px; background: #fff; display: inline-flex; align-items: center; gap: 4px;" title="Sisipkan Banner/Gambar Infografis">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-              Gambar Banner
-            </button>
-            <button type="button" onclick="applyShopeeTemplate('prodDesc')" class="table-action-btn" style="padding: 4px 12px; font-size: 12px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" title="Terapkan format lengkap template Shopee">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-              Template Shopee Lengkap
-            </button>
-            <button type="button" onclick="toggleDescPreview('prodDesc', 'prodDescPreview')" class="table-action-btn" style="padding: 4px 12px; font-size: 12px; background: #fff; margin-left: auto; display: inline-flex; align-items: center; gap: 6px;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              Toggle Preview
-            </button>
+          <!-- Word-Like Rich Text Editor Container -->
+          <div class="word-editor-box" style="border: 1px solid #D1D5DB; border-radius: 10px; overflow: hidden; background: #F8F9FA; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+
+            <!-- Ribbon Bar Toolbar (Word Style) -->
+            <div class="word-ribbon-bar" style="background: #FFFFFF; border-bottom: 1px solid #E5E7EB; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+
+              <!-- 1. Undo / Redo -->
+              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <button type="button" onclick="formatDoc('undo')" class="ribbon-btn" title="Undo / Batalkan (Ctrl+Z)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+                </button>
+                <button type="button" onclick="formatDoc('redo')" class="ribbon-btn" title="Redo / Ulangi (Ctrl+Y)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path></svg>
+                </button>
+              </div>
+
+              <!-- 2. Gaya Teks / Heading Selector -->
+              <div style="display: flex; align-items: center; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <select id="headingSelector" onchange="formatHeading(this.value)" style="height: 28px; font-size: 12px; border: 1px solid #D1D5DB; border-radius: 6px; padding: 2px 8px; background: #FAF9F6; font-weight: 600; color: #374151; cursor: pointer;">
+                  <option value="p">Normal (Paragraf)</option>
+                  <option value="h2">Judul Utama (H2)</option>
+                  <option value="h3">Subjudul Bagian (H3)</option>
+                  <option value="h4">Poin / Fitur (H4)</option>
+                </select>
+              </div>
+
+              <!-- 3. Format Font: Bold, Italic, Underline, Strikethrough -->
+              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <button type="button" onclick="formatDoc('bold')" class="ribbon-btn" title="Tebal (Ctrl+B)"><strong>B</strong></button>
+                <button type="button" onclick="formatDoc('italic')" class="ribbon-btn" title="Miring (Ctrl+I)"><em>I</em></button>
+                <button type="button" onclick="formatDoc('underline')" class="ribbon-btn" title="Garis Bawah (Ctrl+U)"><u>U</u></button>
+                <button type="button" onclick="formatDoc('strikeThrough')" class="ribbon-btn" title="Coret (Strikethrough)"><s>S</s></button>
+              </div>
+
+              <!-- 4. Warna Teks & Highlight / Stabilo -->
+              <div style="display: flex; align-items: center; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <label title="Warna Teks Huruf" class="ribbon-btn" style="cursor: pointer; position: relative;">
+                  <span style="font-weight: 800; border-bottom: 3px solid #A18A68; padding-bottom: 1px; font-size: 12px;">A</span>
+                  <input type="color" onchange="formatDoc('foreColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#111827">
+                </label>
+                <label title="Stabilo / Highlight Warna Latar" class="ribbon-btn" style="cursor: pointer; position: relative; background: #FEF9C3;">
+                  <span style="font-size: 12px;">🖍</span>
+                  <input type="color" onchange="formatDoc('hiliteColor', this.value)" style="opacity: 0; width: 0; height: 0; padding: 0; border: none; position: absolute;" value="#FEF08A">
+                </label>
+              </div>
+
+              <!-- 5. Perataan Paragraf (Alignment) -->
+              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <button type="button" onclick="formatDoc('justifyLeft')" class="ribbon-btn" title="Rata Kiri">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+                </button>
+                <button type="button" onclick="formatDoc('justifyCenter')" class="ribbon-btn" title="Rata Tengah">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="18" y1="18" x2="6" y2="18"></line></svg>
+                </button>
+                <button type="button" onclick="formatDoc('justifyRight')" class="ribbon-btn" title="Rata Kanan">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="7" y2="18"></line></svg>
+                </button>
+                <button type="button" onclick="formatDoc('justifyFull')" class="ribbon-btn" title="Rata Kanan Kiri (Justify)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <!-- 6. Daftar & Indentasi -->
+              <div style="display: flex; gap: 2px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <button type="button" onclick="formatDoc('insertUnorderedList')" class="ribbon-btn" title="Daftar Poin (Bullets)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"></line><line x1="9" y1="12" x2="20" y2="12"></line><line x1="9" y1="18" x2="20" y2="18"></line><circle cx="4" cy="6" r="2"></circle><circle cx="4" cy="12" r="2"></circle><circle cx="4" cy="18" r="2"></circle></svg>
+                </button>
+                <button type="button" onclick="formatDoc('insertOrderedList')" class="ribbon-btn" title="Daftar Penomoran (1, 2, 3)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"></line><line x1="10" y1="12" x2="21" y2="12"></line><line x1="10" y1="18" x2="21" y2="18"></line><path d="M4 6h1v4"></path><path d="M4 10h2"></path></svg>
+                </button>
+                <button type="button" onclick="formatDoc('outdent')" class="ribbon-btn" title="Geser Kiri (Outdent)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 8 3 12 7 16"></polyline><line x1="21" y1="12" x2="3" y2="12"></line><line x1="21" y1="6" x2="11" y2="6"></line><line x1="21" y1="18" x2="11" y2="18"></line></svg>
+                </button>
+                <button type="button" onclick="formatDoc('indent')" class="ribbon-btn" title="Geser Kanan (Indent)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 21 12 17 16"></polyline><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="13" y2="6"></line><line x1="3" y1="18" x2="13" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <!-- 7. Sisipkan (Insert): Tabel, Gambar, Link, Garis -->
+              <div style="display: flex; gap: 4px; border-right: 1px solid #E5E7EB; padding-right: 6px;">
+                <button type="button" onclick="insertWordTable()" class="ribbon-btn-text" title="Sisipkan Tabel Ukuran / Spesifikasi Kain">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                  Tabel
+                </button>
+                <button type="button" onclick="insertWordImage()" class="ribbon-btn-text" title="Sisipkan Gambar Banner Infografis">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                  Gambar
+                </button>
+                <button type="button" onclick="insertWordLink()" class="ribbon-btn" title="Sisipkan Link Tautan">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </button>
+                <button type="button" onclick="formatDoc('insertHorizontalRule')" class="ribbon-btn" title="Garis Pembatas (HR)">―</button>
+              </div>
+
+              <!-- 8. Template Shopee & Fitur Khusus -->
+              <div style="display: flex; gap: 4px; margin-left: auto; align-items: center;">
+                <button type="button" onclick="applyWordShopeeTemplate()" class="ribbon-btn-special" title="Terapkan format lengkap template Shopee butik">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                  Template Shopee Siap Pakai
+                </button>
+                <button type="button" onclick="formatDoc('removeFormat')" class="ribbon-btn" title="Hapus Format (Clear Formatting)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><line x1="12" y1="4" x2="12" y2="20"></line><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                </button>
+                <button type="button" onclick="toggleSourceView()" id="btnToggleSource" class="ribbon-btn-text" title="Beralih antara Tampilan Word dan Kode HTML">
+                  &lt;/&gt; HTML
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Paper Canvas (Lembar Kerja Dokumen Seperti Word) -->
+            <div class="word-canvas-wrapper" style="padding: 20px; background: #F1F3F5; min-height: 420px; display: flex; justify-content: center;">
+              <div 
+                id="wordEditorCanvas" 
+                contenteditable="true" 
+                class="word-document-paper" 
+                data-placeholder="Tulis deskripsi produk bebas &amp; rapi seperti di Microsoft Word (judul, poin fitur, tabel ukuran, dll)..."
+                oninput="syncWordEditor()"
+                onblur="syncWordEditor()"
+                style="background: #FFFFFF; width: 100%; min-height: 380px; padding: 28px 34px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); border: 1px solid #E5E7EB; border-radius: 4px; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.75; color: #1F2937; outline: none;"
+              >{!! old('description', '') !!}</div>
+
+              <!-- Textarea Sumber Kode HTML (tersembunyi secara default) -->
+              <textarea 
+                name="description" 
+                id="hiddenDescription" 
+                oninput="syncFromRawHtml(this.value)"
+                style="display: none; width: 100%; min-height: 380px; padding: 18px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.5; border: 1px solid #D1D5DB; border-radius: 4px; background: #1E293B; color: #F8FAFC;"
+              >{{ old('description') }}</textarea>
+            </div>
+
+            <!-- Status Bar Word -->
+            <div style="background: #FAF9F6; border-top: 1px solid #E5E7EB; padding: 6px 16px; font-size: 11.5px; color: #6B7280; display: flex; justify-content: space-between; align-items: center;">
+              <div id="wordCountStatus">0 Kata &bull; 0 Karakter</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+                <span>Mode Dokumen Word &bull; Siap &bull; Auto-Sync Aktif</span>
+              </div>
+            </div>
+
           </div>
 
-          <div>
-            <textarea name="description" id="prodDesc" rows="9" placeholder="Tuliskan deskripsi lengkap, keunggulan bahan, cara perawatan, atau klik tombol [Template Shopee Lengkap] di atas..." class="chat-search-input" style="width: 100%; font-size: 13.5px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.6; font-family: inherit; padding: 12px 14px;">{{ old('description') }}</textarea>
-            <div id="prodDescPreview" style="display: none; padding: 16px; border: 1px solid #D1D5DB; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background: #FFFFFF; max-height: 280px; overflow-y: auto; font-size: 13.5px; line-height: 1.65;"></div>
-          </div>
-
+          <!-- Deskripsi English (Auto AI) -->
           <div>
             <label style="display: block; font-size: 12.5px; font-weight: 600; color: #6B7280; margin-bottom: 6px;">Deskripsi English (Auto AI Translation / Optional)</label>
             <textarea name="description_en" id="prodDescEn" rows="4" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6; line-height: 1.55; padding: 10px 14px;">{{ old('description_en') }}</textarea>
@@ -419,104 +694,205 @@ function clearSelectedVideo() {
   if (wrap) wrap.style.display = 'none';
 }
 
-// Rich Description Formatting Helpers
-function insertDescTag(textareaId, openTag, closeTag) {
-  const el = document.getElementById(textareaId);
-  if (!el) return;
-  const start = el.selectionStart;
-  const end = el.selectionEnd;
-  const val = el.value;
-  const selectedText = val.substring(start, end) || 'Teks Tebal';
-  el.value = val.substring(0, start) + openTag + selectedText + closeTag + val.substring(end);
-  el.focus();
-  el.setSelectionRange(start + openTag.length, start + openTag.length + selectedText.length);
+// ================= MICROSOFT WORD-LIKE RICH TEXT EDITOR SUITE =================
+function formatDoc(cmd, value = null) {
+  document.execCommand(cmd, false, value);
+  syncWordEditor();
+  const canvas = document.getElementById('wordEditorCanvas');
+  if (canvas) canvas.focus();
 }
 
-function insertDescList(textareaId) {
-  const el = document.getElementById(textareaId);
-  if (!el) return;
-  const snippet = "\nFitur Utama:\n• Material Berkualitas: Nyaman, lembut, dan sejuk di kulit\n• Desain Elegan: Cocok untuk acara formal maupun santai\n• Jahitan Rapi & Presisi: Awet dan tahan lama\n• Perawatan Mudah: Cepat kering dan tidak mudah kusut\n";
-  const start = el.selectionStart;
-  const val = el.value;
-  el.value = val.substring(0, start) + snippet + val.substring(start);
-  el.focus();
+function formatHeading(tag) {
+  if (tag === 'p') {
+    document.execCommand('formatBlock', false, '<p>');
+  } else {
+    document.execCommand('formatBlock', false, `<${tag}>`);
+  }
+  syncWordEditor();
 }
 
-function insertDescImage(textareaId) {
+function insertWordTable() {
+  const rows = parseInt(prompt('Jumlah Baris Tabel (termasuk baris judul/header):', '4') || '4', 10);
+  const cols = parseInt(prompt('Jumlah Kolom Tabel:', '4') || '4', 10);
+  if (isNaN(rows) || isNaN(cols) || rows < 1 || cols < 1) return;
+
+  let html = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 1px solid #E5E7EB;"><thead><tr style="background: #FAF7F2;">';
+  for (let c = 0; c < cols; c++) {
+    html += `<th style="padding: 10px 14px; border: 1px solid #E5E7EB; text-align: left; font-weight: 700; color: #111827;">Kolom ${c + 1}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+  for (let r = 1; r < rows; r++) {
+    html += `<tr style="${r % 2 === 0 ? 'background: #FAFAFA;' : ''}">`;
+    for (let c = 0; c < cols; c++) {
+      html += '<td style="padding: 9px 14px; border: 1px solid #E5E7EB; color: #374151;">Teks isi</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table><p><br></p>';
+  document.execCommand('insertHTML', false, html);
+  syncWordEditor();
+}
+
+function insertWordImage() {
   const url = prompt('Masukkan URL Gambar Infografis / Banner Produk:', 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=80');
   if (!url) return;
-  const alt = prompt('Keterangan Gambar (Opsional):', 'Infografis Keunggulan Produk') || 'Banner Produk';
-  const imgHtml = `\n<div class="desc-banner-img"><img src="${url}" alt="${alt}"></div>\n`;
-  const el = document.getElementById(textareaId);
-  if (!el) return;
-  const start = el.selectionStart;
-  const val = el.value;
-  el.value = val.substring(0, start) + imgHtml + val.substring(start);
-  el.focus();
+  const alt = prompt('Keterangan Gambar (Alt text / Deskripsi):', 'Infografis Detail Produk') || 'Banner Produk';
+  const html = `<div style="text-align: center; margin: 18px 0;"><img src="${url}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; display: inline-block;"><div style="font-size: 11.5px; color: #6B7280; margin-top: 5px;"><em>${alt}</em></div></div><p><br></p>`;
+  document.execCommand('insertHTML', false, html);
+  syncWordEditor();
 }
 
-function applyShopeeTemplate(textareaId) {
-  if (!confirm('Terapkan template format Shopee lengkap (Fitur Utama, Spesifikasi, & Banner)? Ini akan melengkapi atau mengganti teks yang ada.')) {
+function insertWordLink() {
+  const url = prompt('Masukkan URL Link Tautan:', 'https://');
+  if (url) {
+    formatDoc('createLink', url);
+  }
+}
+
+function applyWordShopeeTemplate() {
+  if (!confirm('Terapkan template format lengkap butik Shopee? Ini akan memasukkan susunan standar dengan fitur utama, tabel ukuran, dan spesifikasi.')) {
     return;
   }
-  const template = `Koleksi Eksklusif & Elegan — Pilihan Terbaik untuk Tampil Anggun Percaya Diri
+  const canvas = document.getElementById('wordEditorCanvas');
+  const template = `<h2>Koleksi Busana Eksklusif Butik — Anggun &amp; Berkelas</h2>
+<p>Dirancang istimewa untuk menghadirkan kenyamanan dan keanggunan sejati sepanjang hari. Menggunakan bahan pilihan berkarakter sejuk dan jatuh menawan, busana ini menjadi pilihan sempurna untuk melengkapi momen spesial Anda.</p>
 
-Dirancang khusus dengan potongan presisi tinggi yang memberikan kenyamanan maksimal sepanjang hari. Menggunakan material grade premium berkarakter sejuk dan jatuh rapi, menjadikannya pilihan sempurna untuk melengkapi gaya berkelas Anda.
+<h3>Keunggulan &amp; Fitur Utama:</h3>
+<ul>
+  <li><strong>Material Premium Grade A:</strong> Tekstur sejuk, halus di kulit, tidak menerawang, dan menyerap keringat.</li>
+  <li><strong>Jahitan Standar Butik:</strong> Presisi kerapian ganda untuk ketahanan maksimal pemakaian jangka panjang.</li>
+  <li><strong>Potongan Siluet Anggun:</strong> Menyesuaikan bentuk tubuh dengan proporsional untuk penampilan percaya diri.</li>
+  <li><strong>Warna Eksklusif &amp; Tahan Lama:</strong> Menggunakan teknik pewarnaan modern yang tidak mudah luntur.</li>
+</ul>
 
-Fitur Utama:
-• Material Premium Berkualitas: Tekstur lembut, bernapas sejuk, dan aman untuk kulit sensitif
-• Siluet Presisi & Fleksibel: Menyesuaikan bentuk tubuh dengan proporsional dan anggun
-• Jahitan Standar Butik: Kerapian ganda untuk ketahanan maksimal penggunaan jangka panjang
-• Warna Elegan Tahan Lama: Pigmen warna pekat dan tidak mudah pudar walau dicuci berulang
+<h3>Panduan Ukuran (Size Chart):</h3>
+<table style="width: 100%; border-collapse: collapse; margin: 16px 0; border: 1px solid #E5E7EB;">
+  <thead>
+    <tr style="background: #FAF7F2;">
+      <th style="padding: 10px 14px; border: 1px solid #E5E7EB; text-align: left; font-weight: 700; color: #111827;">Ukuran</th>
+      <th style="padding: 10px 14px; border: 1px solid #E5E7EB; text-align: left; font-weight: 700; color: #111827;">Lingkar Dada (LD)</th>
+      <th style="padding: 10px 14px; border: 1px solid #E5E7EB; text-align: left; font-weight: 700; color: #111827;">Panjang Baju (PB)</th>
+      <th style="padding: 10px 14px; border: 1px solid #E5E7EB; text-align: left; font-weight: 700; color: #111827;">Lebar Bahu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB; font-weight: 600;">S</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">92 - 94 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">135 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">37 cm</td>
+    </tr>
+    <tr style="background: #FAFAFA;">
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB; font-weight: 600;">M</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">96 - 98 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">137 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">38 cm</td>
+    </tr>
+    <tr>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB; font-weight: 600;">L</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">102 - 104 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">140 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">40 cm</td>
+    </tr>
+    <tr style="background: #FAFAFA;">
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB; font-weight: 600;">XL</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">108 - 110 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">140 cm</td>
+      <td style="padding: 9px 14px; border: 1px solid #E5E7EB;">42 cm</td>
+    </tr>
+  </tbody>
+</table>
 
-Spesifikasi Produk:
-• Material: Silk Blend Satin Premium / Linen Organik
-• Potongan: Tailored Relaxed Fit
-• Pilihan Ukuran: S, M, L, XL
-• Petunjuk Perawatan: Cuci lembut dengan air dingin, setrika suhu sedang
+<h3>Spesifikasi &amp; Petunjuk Perawatan:</h3>
+<ul>
+  <li><strong>Komposisi Bahan:</strong> Silk Blend Satin Premium / Katun Linen Organik</li>
+  <li><strong>Karakter Bahan:</strong> Ringan, jatuh berkelas, dan breathable</li>
+  <li><strong>Petunjuk Cuci:</strong> Dianjurkan cuci dengan tangan atau putaran pakaian halus</li>
+  <li><strong>Penyetrikaan:</strong> Gunakan setrika bersuhu rendah hingga sedang atau gunakan steamer pakaian</li>
+</ul>
 
-<div class="desc-banner-img">
-  <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80" alt="Keunggulan Material & Koleksi Eksklusif">
-</div>`;
-  const el = document.getElementById(textareaId);
-  if (!el) return;
-  el.value = template;
-  el.focus();
+<div style="text-align: center; margin: 20px 0;">
+  <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Koleksi Busana Eksklusif Butik" style="max-width: 100%; border-radius: 8px;">
+</div>
+<p><br></p>`;
+
+  canvas.innerHTML = template;
+  syncWordEditor();
 }
 
-function toggleDescPreview(textareaId, previewId) {
-  const ta = document.getElementById(textareaId);
-  const prev = document.getElementById(previewId);
-  if (!ta || !prev) return;
+function toggleSourceView() {
+  const canvas = document.getElementById('wordEditorCanvas');
+  const raw = document.getElementById('hiddenDescription');
+  const btn = document.getElementById('btnToggleSource');
+  if (!canvas || !raw) return;
 
-  if (prev.style.display === 'none') {
-    let content = ta.value.trim();
-    if (!content) {
-      prev.innerHTML = '<p style="color: #9CA3AF; margin: 0; font-style: italic;">Belum ada deskripsi yang ditulis...</p>';
-    } else {
-      const hasHtml = /<[a-z][\s\S]*>/i.test(content);
-      if (hasHtml) {
-        prev.innerHTML = content;
-      } else {
-        prev.innerHTML = content.replace(/\n/g, '<br>');
-      }
+  if (raw.style.display === 'none') {
+    raw.value = canvas.innerHTML;
+    canvas.style.display = 'none';
+    raw.style.display = 'block';
+    if (btn) {
+      btn.style.background = '#1E293B';
+      btn.style.color = '#FFFFFF';
+      btn.style.borderColor = '#0F172A';
     }
-    prev.style.display = 'block';
   } else {
-    prev.style.display = 'none';
+    canvas.innerHTML = raw.value;
+    raw.style.display = 'none';
+    canvas.style.display = 'block';
+    if (btn) {
+      btn.style.background = '#FFFFFF';
+      btn.style.color = '#374151';
+      btn.style.borderColor = '#D1D5DB';
+    }
+    syncWordEditor();
+  }
+}
+
+function syncWordEditor() {
+  const canvas = document.getElementById('wordEditorCanvas');
+  const raw = document.getElementById('hiddenDescription');
+  const status = document.getElementById('wordCountStatus');
+  if (!canvas || !raw) return;
+
+  if (canvas.style.display !== 'none') {
+    raw.value = canvas.innerHTML;
+  }
+
+  const text = (canvas.innerText || '').trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const chars = text.length;
+
+  if (status) {
+    status.innerHTML = `<strong>${words}</strong> Kata &bull; <strong>${chars}</strong> Karakter`;
+  }
+}
+
+function syncFromRawHtml(val) {
+  const canvas = document.getElementById('wordEditorCanvas');
+  if (canvas) {
+    canvas.innerHTML = val;
+  }
+  const text = (canvas ? canvas.innerText || '' : '').trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const chars = text.length;
+  const status = document.getElementById('wordCountStatus');
+  if (status) {
+    status.innerHTML = `<strong>${words}</strong> Kata &bull; <strong>${chars}</strong> Karakter`;
   }
 }
 
 // AI Auto Translate Helper
 async function triggerAiTranslate() {
   const nameInput = document.getElementById('prodName');
-  const descInput = document.getElementById('prodDesc');
+  const canvas = document.getElementById('wordEditorCanvas');
+  const rawDesc = document.getElementById('hiddenDescription');
   const nameEnInput = document.getElementById('prodNameEn');
   const descEnInput = document.getElementById('prodDescEn');
   const btn = document.getElementById('btnAutoTranslate');
 
   const nameVal = nameInput ? nameInput.value.trim() : '';
-  const descVal = descInput ? descInput.value.trim() : '';
+  syncWordEditor();
+  const descVal = rawDesc ? rawDesc.value.trim() : (canvas ? canvas.innerText.trim() : '');
 
   if (!nameVal) {
     alert('Harap isi Nama Produk dalam Bahasa Indonesia terlebih dahulu.');
@@ -560,6 +936,14 @@ async function triggerAiTranslate() {
 
 document.addEventListener('DOMContentLoaded', function() {
   updateLivePricePreview();
+  syncWordEditor();
+
+  const form = document.getElementById('createProductForm');
+  if (form) {
+    form.addEventListener('submit', function() {
+      syncWordEditor();
+    });
+  }
 });
 </script>
 @endsection
