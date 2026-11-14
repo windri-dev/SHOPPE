@@ -524,6 +524,20 @@ class StorefrontAndAdminTest extends TestCase
         $this->assertStringContainsString('Konfirmasi Transfer: Bank BCA', (string) $fresh->notes);
     }
 
+    public function test_admin_can_access_product_create_page(): void
+    {
+        $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();
+
+        $response = $this->actingAs($admin)->get(route('admin.products.create'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Tambah Koleksi Busana Baru');
+        $response->assertSee('Simpan Produk Baru');
+        $response->assertSee('Translate ke EN');
+        $response->assertSee('Foto Produk (Storage Server)');
+        $response->assertSee('Video Produk (Storage Server / MP4)');
+    }
+
     public function test_admin_can_create_new_product(): void
     {
         $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();

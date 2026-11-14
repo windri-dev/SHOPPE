@@ -18,15 +18,14 @@
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
       <!-- Button Tambah Produk Baru -->
-      <button
-        type="button"
-        onclick="openCreateProductModal()"
+      <a
+        href="{{ route('admin.products.create') }}"
         class="table-action-btn"
-        style="background: #111827; color: #FFFFFF; padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"
+        style="background: #111827; color: #FFFFFF; padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Tambah Produk Baru
-      </button>
+      </a>
 
       <a href="{{ route('admin.categories.index') }}" class="btn-outline" style="font-size: 12px; padding: 8px 14px; text-decoration: none; border: 1px solid #D1D5DB; border-radius: 6px; color: #374151; display: inline-flex; align-items: center; gap: 6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"></path></svg>
@@ -327,201 +326,7 @@
   </div>
 </div>
 
-<!-- ================= MODAL 1: TAMBAH PRODUK BARU ================= -->
-<div id="createProductModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-  <div style="background: #FFFFFF; width: 100%; max-width: 580px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; max-height: 90vh; display: flex; flex-direction: column;">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
-      <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Produk Baru</h3>
-      <button type="button" onclick="closeCreateProductModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
-    </div>
-
-    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" style="padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
-      @csrf
-
-      <!-- Auto-Translate AI Banner -->
-      <div style="background: #FDF8F0; border: 1px solid #F3E2C7; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-        <div style="font-size: 11.5px; color: #78350F; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="#D97706" style="flex-shrink: 0;"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
-          <div><strong>Dua Bahasa Otomatis (Bilingual ID &bull; EN):</strong> Cukup ketik Nama &amp; Deskripsi dalam Bahasa Indonesia. Sistem AI akan otomatis menerjemahkan ke Bahasa Inggris saat disimpan, atau klik tombol di samping untuk preview instan.</div>
-        </div>
-        <button type="button" id="btnAutoTranslateCreate" onclick="triggerAiTranslate('create')" style="background: #A18A68; color: #FFF; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
-          Translate ke EN
-        </button>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Produk (Indonesia) *</label>
-          <input type="text" name="name" id="createProdName" required placeholder="Contoh: Linen Crop Top Earth Tone" class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Nama Produk (English - Auto AI)</label>
-          <input type="text" name="name_en" id="createProdNameEn" placeholder="Otomatis diisi AI jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;">
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Kategori *</label>
-          <select name="category_id" required class="chat-search-input" style="width: 100%; font-size: 13px; background: #fff;">
-            @foreach($categories as $cat)
-              <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-            @endforeach
-          </select>
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">SKU (Opsional)</label>
-          <input type="text" name="sku" placeholder="Auto-generate jika kosong" class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Jual (Rp) *</label>
-          <div style="position: relative;">
-            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
-            <input type="text" name="price" id="createProdPrice" required placeholder="720.000" oninput="updateLivePricePreview('create')" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 600; padding-left: 32px;">
-          </div>
-          <div id="createPriceUsdPreview" style="font-size: 11px; color: #8C7554; margin-top: 3px; font-weight: 500;">≈ $ 45.00 USD (Otomatis AI)</div>
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Harga Coret / Normal (Rp)</label>
-          <div style="position: relative;">
-            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: #6B7280;">Rp</span>
-            <input type="text" name="original_price" id="createProdOriginalPrice" placeholder="960.000" oninput="updateLivePricePreview('create')" class="chat-search-input" style="width: 100%; font-size: 13px; padding-left: 32px;">
-          </div>
-          <div id="createOrigPriceUsdPreview" style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Opsional diskon</div>
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Stok Awal (pcs) *</label>
-          <input type="number" name="stock" required value="15" min="0" class="chat-search-input" style="width: 100%; font-size: 13px;">
-          <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Kuantitas stok siap kirim</div>
-        </div>
-      </div>
-
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
-        <input type="text" name="badge" placeholder="Contoh: Best Seller / -20%" class="chat-search-input" style="width: 100%; font-size: 13px;">
-      </div>
-
-      <!-- Section: Upload Foto ke Storage Server atau Tautkan Link -->
-      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            Foto Produk (Upload ke Storage Server)
-          </label>
-          <span style="font-size: 11px; color: #6B7280;">Mendukung PNG, JPG, WEBP maks 10MB</span>
-        </div>
-
-        <!-- 1. Area Dropzone File Upload -->
-        <div>
-          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('createProdImageFile').click()" id="createDropzoneBox">
-            <input type="file" name="image" id="createProdImageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif" style="display: none;" onchange="handleImageFileSelect(this, 'createImgPreviewWrap', 'createImgPreviewElement', 'createImgFileName')">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 6px; display: block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            <div style="font-size: 13px; font-weight: 600; color: #111827;">Pilih File Gambar dari Komputer / HP</div>
-            <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;">File otomatis disimpan ke storage server butik</div>
-          </div>
-
-          <!-- Preview File Terpilih -->
-          <div id="createImgPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
-            <img id="createImgPreviewElement" src="" alt="Preview Foto" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC;">
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="createImgFileName">-</div>
-              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">File valid &amp; siap diupload ke storage server</div>
-            </div>
-            <button type="button" onclick="clearSelectedImage('createProdImageFile', 'createImgPreviewWrap')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Hapus</button>
-          </div>
-        </div>
-
-        <!-- 2. Alternatif Tautkan URL Gambar -->
-        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
-          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Gambar Eksternal (Opsional):</label>
-          <input type="text" name="image_url" id="createProdImageUrl" placeholder="Contoh: images/product-1.png atau https://domain.com/foto.jpg" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
-        </div>
-      </div>
-
-      <!-- Section: Upload Video ke Storage Server atau Tautkan Link -->
-      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-            Video Produk (Upload ke Storage Server / MP4)
-          </label>
-          <span style="font-size: 11px; color: #6B7280;">Mendukung MP4, WEBM, MOV maks 50MB</span>
-        </div>
-
-        <!-- 1. Area Dropzone Video Upload -->
-        <div>
-          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('createProdVideoFile').click()" id="createVideoDropzoneBox">
-            <input type="file" name="video" id="createProdVideoFile" accept="video/mp4,video/quicktime,video/webm" style="display: none;" onchange="handleVideoFileSelect(this, 'createVideoPreviewWrap', 'createVideoPreviewElement', 'createVideoFileName')">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 6px; display: block;"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-            <div style="font-size: 13px; font-weight: 600; color: #111827;">Pilih File Video dari Komputer / HP</div>
-            <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;">File video otomatis disimpan ke storage server butik</div>
-          </div>
-
-          <!-- Preview File Terpilih -->
-          <div id="createVideoPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
-            <video id="createVideoPreviewElement" src="" controls playsinline style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC; background: #000;"></video>
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="createVideoFileName">-</div>
-              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">File video valid &amp; siap diupload ke storage server</div>
-            </div>
-            <button type="button" onclick="clearSelectedVideo('createProdVideoFile', 'createVideoPreviewWrap', 'createVideoPreviewElement')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Hapus</button>
-          </div>
-        </div>
-
-        <!-- 2. Alternatif Tautkan URL Video Eksternal -->
-        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
-          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Video Eksternal (YouTube / Vimeo / MP4):</label>
-          <input type="text" name="video_url" id="createProdVideoUrl" placeholder="Contoh: https://youtube.com/watch?v=... atau https://domain.com/video.mp4" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
-        </div>
-      </div>
-
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <label style="font-size: 12px; font-weight: 700; color: #111827;">Deskripsi Lengkap & Format Shopee (Indonesia)</label>
-          <span style="font-size: 11px; color: #6B7280;">Mendukung teks terstruktur, poin, & gambar infografis</span>
-        </div>
-
-        <!-- Formatting Toolbar -->
-        <div style="display: flex; gap: 5px; flex-wrap: wrap; background: #FAF9F6; border: 1px solid #D1D5DB; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 10px;">
-          <button type="button" onclick="insertDescTag('createProdDesc', '<strong>', '</strong>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Tebal"><strong>B</strong></button>
-          <button type="button" onclick="insertDescTag('createProdDesc', '<h4>', '</h4>')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Subjudul (H4)">H4</button>
-          <button type="button" onclick="insertDescList('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff;" title="Daftar Fitur">• Fitur List</button>
-          <button type="button" onclick="insertDescImage('createProdDesc')" class="table-action-btn" style="padding: 3px 8px; font-size: 11.5px; background: #fff; display: inline-flex; align-items: center; gap: 4px;" title="Sisipkan Banner/Gambar Infografis">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            Gambar Banner
-          </button>
-          <button type="button" onclick="applyShopeeTemplate('createProdDesc')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #FAF7F2; border-color: #EFE8DC; color: #8C7554; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Terapkan format Shopee lengkap (Fitur Utama, Spesifikasi, Infografis)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-            Template Shopee
-          </button>
-          <button type="button" onclick="toggleDescPreview('createProdDesc', 'createProdDescPreview')" class="table-action-btn" style="padding: 3px 10px; font-size: 11.5px; background: #fff; margin-left: auto; display: inline-flex; align-items: center; gap: 4px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            Preview
-          </button>
-        </div>
-
-        <textarea name="description" id="createProdDesc" rows="7" placeholder="Tuliskan deskripsi lengkap, fitur utama, spesifikasi produk, atau klik tombol [Template Shopee] di atas..." class="chat-search-input" style="width: 100%; font-size: 13px; border-top-left-radius: 0; border-top-right-radius: 0; line-height: 1.5; font-family: inherit;"></textarea>
-        <div id="createProdDescPreview" style="display: none; padding: 14px; border: 1px solid #D1D5DB; border-top: none; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; background: #FFFFFF; max-height: 240px; overflow-y: auto; font-size: 13px; line-height: 1.6;"></div>
-      </div>
-
-      <div>
-        <label style="display: block; font-size: 12px; font-weight: 600; color: #6B7280; margin-bottom: 4px;">Deskripsi English (Auto AI Translation / Optional)</label>
-        <textarea name="description_en" id="createProdDescEn" rows="3" placeholder="Otomatis diisi terjemahan AI jika dikosongkan..." class="chat-search-input" style="width: 100%; font-size: 13px; background: #FAF9F6;"></textarea>
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
-        <button type="button" onclick="closeCreateProductModal()" class="table-action-btn" style="background: #F3F4F6; color: #374151;">Batal</button>
-        <button type="submit" class="table-action-btn" style="background: #111827; color: #FFFFFF; padding: 8px 18px; font-weight: 600;">Simpan Produk</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- ================= MODAL 2: SESUAIKAN STOK BARANG ================= -->
+<!-- ================= MODAL: SESUAIKAN STOK BARANG ================= -->
 <div id="adjustStockModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
   <div style="background: #FFFFFF; width: 100%; max-width: 440px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
@@ -898,20 +703,6 @@ function markRemoveProductVideo() {
   }
   if (videoUrlInput) videoUrlInput.value = '';
   if (currentVideoWrap) currentVideoWrap.style.display = 'none';
-}
-
-// Modal Tambah Produk
-function openCreateProductModal() {
-  clearSelectedImage('createProdImageFile', 'createImgPreviewWrap');
-  clearSelectedVideo('createProdVideoFile', 'createVideoPreviewWrap', 'createVideoPreviewElement');
-  const createProdVideoUrl = document.getElementById('createProdVideoUrl');
-  if (createProdVideoUrl) createProdVideoUrl.value = '';
-
-  document.getElementById('createProductModalBackdrop').style.display = 'flex';
-  updateLivePricePreview('create');
-}
-function closeCreateProductModal() {
-  document.getElementById('createProductModalBackdrop').style.display = 'none';
 }
 
 // Modal Sesuaikan Stok

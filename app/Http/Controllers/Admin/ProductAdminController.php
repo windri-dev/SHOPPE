@@ -70,6 +70,17 @@ class ProductAdminController extends Controller
     }
 
     /**
+     * Menampilkan halaman formulir tambah produk baru.
+     */
+    public function create(): View
+    {
+        $categories = Category::orderBy('name')->get();
+        $exchangeRate = app(CurrencyService::class)->getUsdToIdrRate();
+
+        return view('admin.products.create', compact('categories', 'exchangeRate'));
+    }
+
+    /**
      * Menyimpan produk busana/pakaian baru ke database.
      */
     public function store(StoreProductRequest $request): RedirectResponse
@@ -186,7 +197,7 @@ class ProductAdminController extends Controller
             'sales_count' => 0,
         ]);
 
-        return back()->with('success', "Produk '{$product->name}' (SKU: {$product->sku}) berhasil ditambahkan dengan stok {$product->stock} pcs.");
+        return redirect()->route('admin.products.index')->with('success', "Produk '{$product->name}' (SKU: {$product->sku}) berhasil ditambahkan dengan stok {$product->stock} pcs.");
     }
 
     /**
