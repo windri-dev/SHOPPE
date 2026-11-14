@@ -67,7 +67,9 @@ class UpdateProductRequest extends FormRequest
             'image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:10240'],
             'images' => ['nullable', 'array'],
             'images.*' => ['file', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:10240'],
+            'video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo', 'max:51200'], // 50MB
             'video_url' => ['nullable', 'string', 'max:500'],
+            'remove_video' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
             'is_active' => ['nullable', 'boolean'],
         ];

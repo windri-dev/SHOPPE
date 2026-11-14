@@ -158,6 +158,14 @@ class ProductAdminController extends Controller
             ];
         }
 
+        // Upload video ke storage server atau simpan URL eksternal
+        $videoUrl = null;
+        if ($request->hasFile('video') && $request->file('video')->isValid()) {
+            $videoUrl = $request->file('video')->store('products/videos', 'public');
+        } elseif (! empty($validated['video_url'])) {
+            $videoUrl = trim($validated['video_url']);
+        }
+
         $product = Product::create([
             'category_id' => (int) $validated['category_id'],
             'name' => $validated['name'],
@@ -172,7 +180,7 @@ class ProductAdminController extends Controller
             'description' => $validated['description'] ?? 'Koleksi busana eksklusif PUTRIJALVA dengan material premium pilihan.',
             'description_en' => $descriptionEn,
             'images' => $images,
-            'video_url' => $validated['video_url'] ?? null,
+            'video_url' => $videoUrl,
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => true,
             'sales_count' => 0,
@@ -266,6 +274,28 @@ class ProductAdminController extends Controller
             $originalPrice = round($originalPrice / $rate, 2);
         }
 
+        // Upload video baru ke storage server, tautkan URL baru, atau hapus video jika diminta
+        $videoUrl = $product->video_url;
+        if ($request->hasFile('video') && $request->file('video')->isValid()) {
+            if ($product->video_url && ! str_starts_with($product->video_url, 'http://') && ! str_starts_with($product->video_url, 'https://')) {
+                $oldVideoPath = preg_replace('#^storage/#', '', $product->video_url);
+                if (Storage::disk('public')->exists($oldVideoPath)) {
+                    Storage::disk('public')->delete($oldVideoPath);
+                }
+            }
+            $videoUrl = $request->file('video')->store('products/videos', 'public');
+        } elseif ($request->filled('video_url')) {
+            $videoUrl = trim($request->input('video_url'));
+        } elseif ($request->boolean('remove_video') || ($request->has('video_url') && empty($validated['video_url']) && ! $request->hasFile('video'))) {
+            if ($product->video_url && ! str_starts_with($product->video_url, 'http://') && ! str_starts_with($product->video_url, 'https://')) {
+                $oldVideoPath = preg_replace('#^storage/#', '', $product->video_url);
+                if (Storage::disk('public')->exists($oldVideoPath)) {
+                    Storage::disk('public')->delete($oldVideoPath);
+                }
+            }
+            $videoUrl = null;
+        }
+
         $product->update([
             'name' => $validated['name'],
             'name_en' => $nameEn,
@@ -279,7 +309,7 @@ class ProductAdminController extends Controller
             'description' => $validated['description'] ?? $product->getRawDescription(),
             'description_en' => $descriptionEn,
             'images' => $images,
-            'video_url' => array_key_exists('video_url', $validated) ? $validated['video_url'] : $product->video_url,
+            'video_url' => $videoUrl,
             'is_featured' => $request->boolean('is_featured'),
             'is_active' => $request->has('is_active') ? $request->boolean('is_active') : $product->is_active,
         ]);

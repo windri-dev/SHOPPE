@@ -1321,4 +1321,74 @@ class StorefrontAndAdminTest extends TestCase
         $this->assertStringStartsWith('products/', $product->images[0]);
         Storage::disk('public')->assertExists($product->images[0]);
     }
+
+    public function test_admin_can_upload_product_video_file_to_storage_server_and_replace_or_remove_it(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::where('role', UserRole::STORE_ADMIN)->firstOrFail();
+        $category = Category::firstOrFail();
+        $videoFile = UploadedFile::fake()->create('fashion-show.mp4', 2048, 'video/mp4');
+
+        $response = $this->from(route('admin.products.index'))
+            ->actingAs($admin)
+            ->post(route('admin.products.store'), [
+                'name' => 'Dress Video Test',
+                'category_id' => $category->id,
+                'sku' => 'SKU-VID-01',
+                'price' => 500000,
+                'stock' => 10,
+                'video' => $videoFile,
+                'description' => 'Produk dengan video catwalk.',
+            ]);
+
+        $response->assertRedirect(route('admin.products.index'));
+
+        $product = Product::where('sku', 'SKU-VID-01')->firstOrFail();
+        $this->assertNotNull($product->video_url);
+        $this->assertStringStartsWith('products/videos/', $product->video_url);
+        Storage::disk('public')->assertExists($product->video_url);
+
+        $this->assertTrue($product->hasVideo());
+        $this->assertEquals('direct', $product->video_type);
+        $this->assertStringContainsString('storage/products/videos/', (string) $product->video_url_asset);
+
+        // Update product with replacement video
+        $newVideo = UploadedFile::fake()->create('fashion-new.mp4', 3072, 'video/mp4');
+        $updateResponse = $this->from(route('admin.products.index'))
+            ->actingAs($admin)
+            ->put(route('admin.products.update', $product->id), [
+                'name' => 'Dress Video Test Updated',
+                'category_id' => $category->id,
+                'sku' => 'SKU-VID-01',
+                'price' => 550000,
+                'stock' => 8,
+                'video' => $newVideo,
+                'description' => 'Produk dengan video catwalk baru.',
+            ]);
+
+        $updateResponse->assertRedirect(route('admin.products.index'));
+        $product->refresh();
+        $this->assertStringStartsWith('products/videos/', $product->video_url);
+        Storage::disk('public')->assertExists($product->video_url);
+
+        // Remove video
+        $removeResponse = $this->from(route('admin.products.index'))
+            ->actingAs($admin)
+            ->put(route('admin.products.update', $product->id), [
+                'name' => 'Dress Video Test Updated',
+                'category_id' => $category->id,
+                'sku' => 'SKU-VID-01',
+                'price' => 550000,
+                'stock' => 8,
+                'remove_video' => 1,
+                'video_url' => '',
+                'description' => 'Produk tanpa video.',
+            ]);
+
+        $removeResponse->assertRedirect(route('admin.products.index'));
+        $product->refresh();
+        $this->assertNull($product->video_url);
+        $this->assertFalse($product->hasVideo());
+    }
 }

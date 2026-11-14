@@ -278,6 +278,27 @@ class Product extends Model
         return 'direct';
     }
 
+    public function getVideoUrlAssetAttribute(): ?string
+    {
+        if (empty($this->video_url)) {
+            return null;
+        }
+
+        if (str_starts_with($this->video_url, 'http://') || str_starts_with($this->video_url, 'https://')) {
+            return $this->video_url;
+        }
+
+        if (str_starts_with($this->video_url, 'storage/')) {
+            return asset($this->video_url);
+        }
+
+        if (file_exists(public_path($this->video_url))) {
+            return asset($this->video_url);
+        }
+
+        return asset('storage/'.$this->video_url);
+    }
+
     public function getVideoEmbedUrlAttribute(): ?string
     {
         if (empty($this->video_url)) {
@@ -292,7 +313,7 @@ class Product extends Model
             return 'https://player.vimeo.com/video/'.$matches[1];
         }
 
-        return $this->video_url;
+        return $this->video_url_asset;
     }
 
     /**

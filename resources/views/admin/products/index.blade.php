@@ -239,6 +239,8 @@
                       'description' => $product->getRawDescription() ?? '',
                       'description_en' => $product->description_en ?? '',
                       'video_url' => $product->video_url ?? '',
+                      'video_asset' => $product->video_url_asset ?? '',
+                      'video_type' => $product->video_type ?? 'none',
                     ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
                   @endphp
                   <button
@@ -398,15 +400,9 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
-          <input type="text" name="badge" placeholder="Contoh: Best Seller / -20%" class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube)</label>
-          <input type="text" name="video_url" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
+        <input type="text" name="badge" placeholder="Contoh: Best Seller / -20%" class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
       <!-- Section: Upload Foto ke Storage Server atau Tautkan Link -->
@@ -443,6 +439,43 @@
         <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
           <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Gambar Eksternal (Opsional):</label>
           <input type="text" name="image_url" id="createProdImageUrl" placeholder="Contoh: images/product-1.png atau https://domain.com/foto.jpg" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
+        </div>
+      </div>
+
+      <!-- Section: Upload Video ke Storage Server atau Tautkan Link -->
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            Video Produk (Upload ke Storage Server / MP4)
+          </label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung MP4, WEBM, MOV maks 50MB</span>
+        </div>
+
+        <!-- 1. Area Dropzone Video Upload -->
+        <div>
+          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('createProdVideoFile').click()" id="createVideoDropzoneBox">
+            <input type="file" name="video" id="createProdVideoFile" accept="video/mp4,video/quicktime,video/webm" style="display: none;" onchange="handleVideoFileSelect(this, 'createVideoPreviewWrap', 'createVideoPreviewElement', 'createVideoFileName')">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 6px; display: block;"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            <div style="font-size: 13px; font-weight: 600; color: #111827;">Pilih File Video dari Komputer / HP</div>
+            <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;">File video otomatis disimpan ke storage server butik</div>
+          </div>
+
+          <!-- Preview File Terpilih -->
+          <div id="createVideoPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
+            <video id="createVideoPreviewElement" src="" controls playsinline style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC; background: #000;"></video>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="createVideoFileName">-</div>
+              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">File video valid &amp; siap diupload ke storage server</div>
+            </div>
+            <button type="button" onclick="clearSelectedVideo('createProdVideoFile', 'createVideoPreviewWrap', 'createVideoPreviewElement')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Hapus</button>
+          </div>
+        </div>
+
+        <!-- 2. Alternatif Tautkan URL Video Eksternal -->
+        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Video Eksternal (YouTube / Vimeo / MP4):</label>
+          <input type="text" name="video_url" id="createProdVideoUrl" placeholder="Contoh: https://youtube.com/watch?v=... atau https://domain.com/video.mp4" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
         </div>
       </div>
 
@@ -604,15 +637,9 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
-          <input type="text" name="badge" id="editProductBadge" placeholder="Contoh: Bestseller / -20% Off" class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
-        <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">URL Video Produk (Opsional - MP4 / YouTube)</label>
-          <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://domain.com/video.mp4 atau https://youtube.com/watch?v=..." class="chat-search-input" style="width: 100%; font-size: 13px;">
-        </div>
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Badge Promo (Opsional)</label>
+        <input type="text" name="badge" id="editProductBadge" placeholder="Contoh: Bestseller / -20% Off" class="chat-search-input" style="width: 100%; font-size: 13px;">
       </div>
 
       <!-- Section: Foto Produk & Upload ke Storage Server -->
@@ -660,6 +687,63 @@
         <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
           <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Gambar Eksternal:</label>
           <input type="text" name="image_url" id="editProductImageUrl" placeholder="Contoh: https://domain.com/foto.jpg" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
+        </div>
+      </div>
+
+      <!-- Section: Video Produk & Upload ke Storage Server -->
+      <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label style="font-size: 12.5px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            Video Produk (Storage Server / URL)
+          </label>
+          <span style="font-size: 11px; color: #6B7280;">Mendukung MP4, WEBM, MOV maks 50MB</span>
+        </div>
+
+        <!-- Video Aktif Saat Ini -->
+        <div id="editCurrentVideoWrap" style="display: none; align-items: center; gap: 12px; padding: 10px 14px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px;">
+          <div style="width: 80px; height: 50px; background: #000; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <video id="editCurrentVideoPlayer" src="" controls playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>
+            <div id="editCurrentVideoIframeWrap" style="display: none; width: 100%; height: 100%;">
+              <iframe id="editCurrentVideoIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 12.5px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+              <span>Video Aktif Saat Ini</span>
+              <span style="font-size: 10.5px; font-weight: 600; background: #ECFDF5; color: #027A48; padding: 1px 6px; border-radius: 99px;">Aktif</span>
+            </div>
+            <div style="font-size: 11px; color: #6B7280; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="editCurrentVideoLabel">Tersimpan di storage / URL</div>
+          </div>
+          <input type="hidden" name="remove_video" id="editRemoveVideoInput" value="0">
+          <button type="button" onclick="markRemoveProductVideo()" id="editRemoveVideoBtn" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Hapus Video</button>
+        </div>
+
+        <!-- 1. Ganti dengan Upload Video Baru -->
+        <div>
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Ganti Video: Upload File Baru ke Storage Server</label>
+          <div style="border: 2px dashed #D1D5DB; border-radius: 8px; padding: 14px; text-align: center; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;" onclick="document.getElementById('editProdVideoFile').click()" id="editVideoDropzoneBox">
+            <input type="file" name="video" id="editProdVideoFile" accept="video/mp4,video/quicktime,video/webm" style="display: none;" onchange="handleVideoFileSelect(this, 'editVideoPreviewWrap', 'editVideoPreviewElement', 'editVideoFileName')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2" style="margin: 0 auto 4px; display: block;"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            <div style="font-size: 12.5px; font-weight: 600; color: #111827;">Pilih File Video Baru dari Komputer / HP</div>
+            <div style="font-size: 11px; color: #9CA3AF; margin-top: 2px;">File otomatis menggantikan video lama di storage server</div>
+          </div>
+
+          <!-- Preview File Video Baru Terpilih -->
+          <div id="editVideoPreviewWrap" style="display: none; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px;">
+            <video id="editVideoPreviewElement" src="" controls playsinline style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC; background: #000;"></video>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #166534; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="editVideoFileName">-</div>
+              <div style="font-size: 11px; color: #15803D; margin-top: 2px;">Video baru akan disimpan ke storage server saat Anda klik Simpan</div>
+            </div>
+            <button type="button" onclick="clearSelectedVideo('editProdVideoFile', 'editVideoPreviewWrap', 'editVideoPreviewElement')" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Batal Ganti</button>
+          </div>
+        </div>
+
+        <!-- 2. Atau Ubah Link URL Video -->
+        <div style="border-top: 1px dashed #E5E7EB; padding-top: 8px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 600; color: #4B5563; margin-bottom: 4px;">Atau Tautkan Link / URL Video Eksternal:</label>
+          <input type="text" name="video_url" id="editProductVideoUrl" placeholder="Contoh: https://youtube.com/watch?v=... atau https://domain.com/video.mp4" class="chat-search-input" style="width: 100%; font-size: 12.5px;">
         </div>
       </div>
 
@@ -766,9 +850,63 @@ function clearSelectedImage(inputId, previewWrapId) {
   if (previewWrap) previewWrap.style.display = 'none';
 }
 
+function handleVideoFileSelect(input, previewWrapId, previewVideoId, fileNameId) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const previewWrap = document.getElementById(previewWrapId);
+    const previewVideo = document.getElementById(previewVideoId);
+    const fileNameEl = document.getElementById(fileNameId);
+    if (previewVideo) {
+      previewVideo.src = URL.createObjectURL(file);
+      previewVideo.load();
+    }
+    if (fileNameEl) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      fileNameEl.textContent = `${file.name} (${sizeMb} MB)`;
+    }
+    if (previewWrap) previewWrap.style.display = 'flex';
+  }
+}
+
+function clearSelectedVideo(inputId, previewWrapId, previewVideoId) {
+  const input = document.getElementById(inputId);
+  if (input) input.value = '';
+  const previewVideo = document.getElementById(previewVideoId);
+  if (previewVideo) {
+    previewVideo.pause();
+    previewVideo.removeAttribute('src');
+    previewVideo.load();
+  }
+  const previewWrap = document.getElementById(previewWrapId);
+  if (previewWrap) previewWrap.style.display = 'none';
+}
+
+function markRemoveProductVideo() {
+  const removeInput = document.getElementById('editRemoveVideoInput');
+  const currentVideoWrap = document.getElementById('editCurrentVideoWrap');
+  const videoPlayer = document.getElementById('editCurrentVideoPlayer');
+  const videoIframe = document.getElementById('editCurrentVideoIframe');
+  const videoUrlInput = document.getElementById('editProductVideoUrl');
+
+  if (removeInput) removeInput.value = '1';
+  if (videoPlayer) {
+    videoPlayer.pause();
+    videoPlayer.removeAttribute('src');
+  }
+  if (videoIframe) {
+    videoIframe.src = '';
+  }
+  if (videoUrlInput) videoUrlInput.value = '';
+  if (currentVideoWrap) currentVideoWrap.style.display = 'none';
+}
+
 // Modal Tambah Produk
 function openCreateProductModal() {
   clearSelectedImage('createProdImageFile', 'createImgPreviewWrap');
+  clearSelectedVideo('createProdVideoFile', 'createVideoPreviewWrap', 'createVideoPreviewElement');
+  const createProdVideoUrl = document.getElementById('createProdVideoUrl');
+  if (createProdVideoUrl) createProdVideoUrl.value = '';
+
   document.getElementById('createProductModalBackdrop').style.display = 'flex';
   updateLivePricePreview('create');
 }
@@ -805,14 +943,16 @@ function openEditProductModalFromData(btn) {
       p.description,
       p.description_en,
       p.video_url,
-      p.image_url
+      p.image_url,
+      p.video_asset,
+      p.video_type
     );
   } catch (err) {
     console.error('Error parsing product data:', err);
   }
 }
 
-function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl, imageUrl) {
+function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl, imageUrl, videoAsset, videoType) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
   document.getElementById('editProductNameEn').value = nameEn || '';
@@ -834,6 +974,54 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
     currentImgWrap.style.display = 'none';
   }
 
+  // Handle current video preview & reset video file input
+  clearSelectedVideo('editProdVideoFile', 'editVideoPreviewWrap', 'editVideoPreviewElement');
+  const removeVideoInput = document.getElementById('editRemoveVideoInput');
+  if (removeVideoInput) removeVideoInput.value = '0';
+
+  const editVideoUrlInput = document.getElementById('editProductVideoUrl');
+  if (editVideoUrlInput) editVideoUrlInput.value = videoUrl || '';
+
+  const currentVideoWrap = document.getElementById('editCurrentVideoWrap');
+  const currentVideoPlayer = document.getElementById('editCurrentVideoPlayer');
+  const currentVideoIframeWrap = document.getElementById('editCurrentVideoIframeWrap');
+  const currentVideoIframe = document.getElementById('editCurrentVideoIframe');
+  const currentVideoLabel = document.getElementById('editCurrentVideoLabel');
+
+  if (videoUrl && currentVideoWrap) {
+    currentVideoWrap.style.display = 'flex';
+    if (currentVideoLabel) {
+      currentVideoLabel.textContent = videoUrl;
+    }
+    if (videoType === 'youtube' || videoType === 'vimeo') {
+      if (currentVideoPlayer) currentVideoPlayer.style.display = 'none';
+      if (currentVideoIframeWrap) currentVideoIframeWrap.style.display = 'block';
+      let embedSrc = videoUrl;
+      if (videoType === 'youtube') {
+        const match = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w\-]+)/i);
+        if (match) embedSrc = 'https://www.youtube.com/embed/' + match[1];
+      } else if (videoType === 'vimeo') {
+        const match = videoUrl.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/[^\/]*\/videos\/|album\/(?:\d+\/)?video\/|video\/|)(\d+)/i);
+        if (match) embedSrc = 'https://player.vimeo.com/video/' + match[1];
+      }
+      if (currentVideoIframe) currentVideoIframe.src = embedSrc;
+    } else {
+      if (currentVideoIframeWrap) currentVideoIframeWrap.style.display = 'none';
+      if (currentVideoPlayer) {
+        currentVideoPlayer.style.display = 'block';
+        currentVideoPlayer.src = videoAsset || videoUrl;
+        currentVideoPlayer.load();
+      }
+    }
+  } else if (currentVideoWrap) {
+    currentVideoWrap.style.display = 'none';
+    if (currentVideoPlayer) {
+      currentVideoPlayer.pause();
+      currentVideoPlayer.removeAttribute('src');
+    }
+    if (currentVideoIframe) currentVideoIframe.src = '';
+  }
+
   // Tampilkan harga dalam Rupiah (Rp)
   const numPrice = parseFloat(price);
   const idrPrice = (!isNaN(numPrice) && numPrice < 1000) ? Math.round(numPrice * GLOBAL_EXCHANGE_RATE) : price;
@@ -848,7 +1036,6 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
 
   document.getElementById('editProductStock').value = stock;
   document.getElementById('editProductBadge').value = badge || '';
-  document.getElementById('editProductVideoUrl').value = videoUrl || '';
   document.getElementById('editProductDesc').value = desc || '';
   document.getElementById('editProductDescEn').value = descEn || '';
   const prev = document.getElementById('editProductDescPreview');
@@ -858,7 +1045,16 @@ function openEditProductModal(id, name, nameEn, sku, categoryId, price, original
   updateLivePricePreview('edit');
 }
 function closeEditProductModal() {
+  const currentVideoPlayer = document.getElementById('editCurrentVideoPlayer');
+  if (currentVideoPlayer && !currentVideoPlayer.paused) {
+    currentVideoPlayer.pause();
+  }
+  const currentVideoIframe = document.getElementById('editCurrentVideoIframe');
+  if (currentVideoIframe) {
+    currentVideoIframe.src = '';
+  }
   document.getElementById('editProductModalBackdrop').style.display = 'none';
+}
 }
 
 // Rich Description Formatting Helpers (Shopee Style)

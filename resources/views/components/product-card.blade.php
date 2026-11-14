@@ -12,7 +12,7 @@
   data-description="{{ $product->description }}"
   data-category="{{ $product->category->slug ?? 'apparel' }}"
   data-stock="{{ $product->isInStock() ? 'true' : 'false' }}"
-  data-video="{{ $product->video_url ?? '' }}"
+  data-video="{{ $product->video_url_asset ?? '' }}"
   data-video-type="{{ $product->video_type }}"
   data-video-embed="{{ $product->video_embed_url ?? '' }}"
 >

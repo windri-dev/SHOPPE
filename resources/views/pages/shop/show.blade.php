@@ -64,7 +64,7 @@
                 preload="metadata"
                 poster="{{ asset($product->primary_image) }}"
               >
-                <source src="{{ $product->video_url }}" type="video/mp4">
+                <source src="{{ $product->video_url_asset }}" type="video/mp4">
                 Browser Anda tidak mendukung pemutaran video langsung.
               </video>
             @endif
