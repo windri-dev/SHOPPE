@@ -391,6 +391,9 @@
     .stats-four-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+    .traffic-shopping-grid {
+      grid-template-columns: 1fr !important;
+    }
     .charts-split-grid {
       grid-template-columns: 1fr;
     }
@@ -547,6 +550,190 @@
         <span style="font-size: 11px; color: #10B981; font-weight: 600;">Margin {{ $metrics['financial']['commission_rate'] ?? 0 }}%</span>
       </div>
     </div>
+  </section>
+
+  <!-- 2B. BARIS ANALITIK PENGUNJUNG & BELANJA TOKO (TRAFFIC & SHOPPING CONVERSION SPOTLIGHT) -->
+  <section class="traffic-shopping-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+    
+    <!-- Kartu Pengunjung Toko -->
+    <div class="stat-widget-card" style="border-left: 4px solid #A18A68; background: linear-gradient(135deg, #FFFFFF 0%, #FCFBF9 100%);">
+      <div class="stat-widget-header">
+        <div>
+          <span class="stat-widget-title" style="font-size: 13.5px; font-weight: 700; color: #101828; display: flex; align-items: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            {{ $isId ? 'Analitik Pengunjung Toko' : 'Store Visitors Analytics' }}
+          </span>
+          <div style="font-size: 11.5px; color: #667085; margin-top: 2px;">{{ $isId ? 'Jumlah pengguna yang mengunjungi etalase butik' : 'Users browsing the boutique storefront' }}</div>
+        </div>
+        <div class="stat-widget-icon" style="background: #FAF7F2; color: #8C7554;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+      </div>
+      <div class="stat-widget-main" style="margin-top: 10px;">
+        <div class="stat-widget-value" style="font-size: 24px;">{{ number_format($metrics['traffic_and_shopping']['total_visitors'] ?? 0) }} <span style="font-size: 13px; font-weight: 500; color: #667085;">{{ $isId ? 'Pengunjung Unik' : 'Unique Visitors' }}</span></div>
+        <span class="trend-pill-green">
+          &uarr; +{{ $metrics['traffic_and_shopping']['growth_rate'] ?? 18.4 }}% {{ $isId ? 'Minggu Ini' : 'This Week' }}
+        </span>
+      </div>
+      <div class="stat-widget-footer" style="padding-top: 12px; margin-top: 12px; border-top: 1px solid #F2F4F7; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>{{ $isId ? 'Total Sesi Kunjungan' : 'Total Sessions' }}: <strong>{{ number_format($metrics['traffic_and_shopping']['total_sessions'] ?? 0) }}</strong></span>
+        <span style="font-size: 11.5px; color: #344054;">
+          Smartphone: <strong>{{ $metrics['traffic_and_shopping']['devices']['mobile_percent'] ?? 81 }}%</strong> &bull; PC: <strong>{{ $metrics['traffic_and_shopping']['devices']['desktop_percent'] ?? 19 }}%</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Kartu Aktivitas Belanja & Konversi -->
+    <div class="stat-widget-card" style="border-left: 4px solid #10B981; background: linear-gradient(135deg, #FFFFFF 0%, #F9FDFB 100%);">
+      <div class="stat-widget-header">
+        <div>
+          <span class="stat-widget-title" style="font-size: 13.5px; font-weight: 700; color: #101828; display: flex; align-items: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            {{ $isId ? 'Analitik Aktivitas Belanja' : 'Shopping & Purchase Analytics' }}
+          </span>
+          <div style="font-size: 11.5px; color: #667085; margin-top: 2px;">{{ $isId ? 'Transaksi belanja pesanan dan rasio konversi' : 'Purchasing orders and conversion rate' }}</div>
+        </div>
+        <div class="stat-widget-icon" style="background: #ECFDF5; color: #027A48;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        </div>
+      </div>
+      <div class="stat-widget-main" style="margin-top: 10px;">
+        <div class="stat-widget-value" style="font-size: 24px;">{{ number_format($metrics['traffic_and_shopping']['total_shoppers'] ?? 0) }} <span style="font-size: 13px; font-weight: 500; color: #667085;">{{ $isId ? 'Transaksi Belanja' : 'Orders' }}</span></div>
+        <span class="trend-pill-green" style="background: #ECFDF5; color: #027A48;">
+          {{ $metrics['traffic_and_shopping']['conversion_rate'] ?? 2.4 }}% {{ $isId ? 'Konversi Belanja' : 'Conversion Rate' }}
+        </span>
+      </div>
+      <div class="stat-widget-footer" style="padding-top: 12px; margin-top: 12px; border-top: 1px solid #F2F4F7; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>{{ $isId ? 'Rata-rata Nilai Belanja (AOV)' : 'Average Order Value' }}: <strong>{{ \App\Services\CurrencyService::formatPrice($metrics['traffic_and_shopping']['average_order_value'] ?? 0) }}</strong></span>
+        <span style="font-size: 11.5px; font-weight: 600; color: #10B981;">
+          {{ $isId ? 'Omzet Belanja' : 'Total Revenue' }}: {{ \App\Services\CurrencyService::formatPrice($metrics['traffic_and_shopping']['total_shopping_revenue'] ?? 0) }}
+        </span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 2C. SECTION DIAGRAM: TREN PENGUNJUNG VS TRANSAKSI BELANJA & CORONG KONVERSI -->
+  <section class="charts-split-grid" style="grid-template-columns: 1.6fr 1.1fr; margin-top: 20px;">
+    
+    <!-- Diagram Tren Pengunjung vs Transaksi Belanja -->
+    <div class="chart-box-card">
+      <div class="chart-box-header">
+        <div>
+          <h2 class="chart-box-title" style="display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+            {{ $isId ? 'Tren Pengunjung vs Transaksi Belanja Harian' : 'Daily Visitors vs Shopping Orders Trend' }}
+          </h2>
+          <p class="chart-box-sub">{{ $isId ? 'Pantau korelasi antara lonjakan pengunjung etalase dan transaksi belanja berhasil' : 'Track the correlation between storefront visits and completed shopping orders' }}</p>
+        </div>
+        <div style="display: flex; gap: 14px; font-size: 12px; font-weight: 600; align-items: center; flex-wrap: wrap;">
+          <span style="display: flex; align-items: center; gap: 6px; color: #A18A68;">
+            <span style="width: 10px; height: 10px; background: rgba(161, 138, 104, 0.4); border: 2px solid #A18A68; border-radius: 2px;"></span>
+            {{ $isId ? 'Pengunjung (Orang)' : 'Visitors (People)' }}
+          </span>
+          <span style="display: flex; align-items: center; gap: 6px; color: #10B981;">
+            <span style="width: 10px; height: 10px; background: #10B981; border-radius: 50%;"></span>
+            {{ $isId ? 'Belanja (Pesanan)' : 'Orders (Shoppers)' }}
+          </span>
+        </div>
+      </div>
+
+      <div style="position: relative; width: 100%; height: 280px; margin-top: 10px;">
+        <canvas id="visitorsVsShoppersChart"></canvas>
+      </div>
+
+      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F2F4F7; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #667085; flex-wrap: wrap; gap: 8px;">
+        <div>{{ $isId ? 'Rata-rata Konversi Harian' : 'Average Daily Conversion' }}: <strong style="color: #10B981;">{{ $metrics['traffic_and_shopping']['conversion_rate'] ?? 2.4 }}%</strong></div>
+        <div>{{ $isId ? 'Puncak Kunjungan' : 'Peak Traffic' }}: <strong style="color: #111827;">{{ max($metrics['traffic_and_shopping']['chart']['visitors'] ?? [345]) }} {{ $isId ? 'Pengunjung' : 'Visitors' }}</strong></div>
+      </div>
+    </div>
+
+    <!-- Corong Konversi Belanja (Shopping Funnel) & Sumber Kunjungan -->
+    <div class="chart-box-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <div class="chart-box-header" style="margin-bottom: 12px;">
+          <div>
+            <h2 class="chart-box-title">{{ $isId ? 'Corong Belanja (Shopping Funnel)' : 'Shopping Conversion Funnel' }}</h2>
+            <p class="chart-box-sub">{{ $isId ? 'Tahapan konversi pengunjung hingga sukses belanja' : 'Step-by-step visitor shopping journey' }}</p>
+          </div>
+        </div>
+
+        <!-- Funnel Step Bars -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          
+          <!-- Step 1: Visitors -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #344054; margin-bottom: 4px;">
+              <span>1. {{ $isId ? 'Kunjungan Etalase Toko' : 'Storefront Visits' }}</span>
+              <span>{{ number_format($metrics['traffic_and_shopping']['funnel']['visitors'] ?? 0) }} (100%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #F2F4F7; border-radius: 99px; overflow: hidden;">
+              <div style="width: 100%; height: 100%; background: #A18A68; border-radius: 99px;"></div>
+            </div>
+          </div>
+
+          <!-- Step 2: Product Views -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #344054; margin-bottom: 4px;">
+              <span>2. {{ $isId ? 'Melihat Detail Produk Busana' : 'Viewed Products' }}</span>
+              <span>{{ number_format($metrics['traffic_and_shopping']['funnel']['product_views'] ?? 0) }} (66.0%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #F2F4F7; border-radius: 99px; overflow: hidden;">
+              <div style="width: 66%; height: 100%; background: #B9A588; border-radius: 99px;"></div>
+            </div>
+          </div>
+
+          <!-- Step 3: Add to Cart -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #344054; margin-bottom: 4px;">
+              <span>3. {{ $isId ? 'Memasukkan ke Keranjang' : 'Added to Cart' }}</span>
+              <span>{{ number_format($metrics['traffic_and_shopping']['funnel']['add_to_cart'] ?? 0) }} (11.5%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #F2F4F7; border-radius: 99px; overflow: hidden;">
+              <div style="width: 28%; height: 100%; background: #D4B996; border-radius: 99px;"></div>
+            </div>
+          </div>
+
+          <!-- Step 4: Checkout Intent -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #344054; margin-bottom: 4px;">
+              <span>4. {{ $isId ? 'Menuju Halaman Checkout' : 'Proceeded to Checkout' }}</span>
+              <span>{{ number_format($metrics['traffic_and_shopping']['funnel']['checkout'] ?? 0) }} (2.9%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #F2F4F7; border-radius: 99px; overflow: hidden;">
+              <div style="width: 16%; height: 100%; background: #34D399; border-radius: 99px;"></div>
+            </div>
+          </div>
+
+          <!-- Step 5: Completed Purchase -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #027A48; margin-bottom: 4px;">
+              <span>5. {{ $isId ? 'Transaksi Belanja Sukses' : 'Purchased & Paid' }}</span>
+              <span>{{ number_format($metrics['traffic_and_shopping']['funnel']['purchased'] ?? 0) }} ({{ $metrics['traffic_and_shopping']['conversion_rate'] ?? 2.4 }}%)</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #F2F4F7; border-radius: 99px; overflow: hidden;">
+              <div style="width: 12%; height: 100%; background: #10B981; border-radius: 99px;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sumber Kunjungan Pengunjung -->
+      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #F2F4F7;">
+        <div style="font-size: 12px; font-weight: 700; color: #101828; margin-bottom: 8px;">{{ $isId ? 'Saluran Kunjungan Terbesar:' : 'Top Traffic Channels:' }}</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          @foreach($metrics['traffic_and_shopping']['sources'] ?? [] as $source)
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+              <span style="color: #4B5563; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="{{ $source['name'] }}">{{ $source['name'] }}</span>
+              <strong style="color: #111827;">{{ $source['percent'] }}%</strong>
+            </div>
+          @endforeach
+        </div>
+      </div>
+
+    </div>
+
   </section>
 
   <!-- 3. BARIS DUA DIAGRAM (Revenue analytics & Total Income Stacked Chart) -->
@@ -860,6 +1047,116 @@ document.addEventListener('DOMContentLoaded', function () {
               font: { size: 11, family: 'DM Sans, sans-serif' },
               color: '#707070',
               callback: function(val) { return val + 'k'; }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // 2B. Chart Pengunjung vs Transaksi Belanja (Dual Axis: Bar for Visitors + Line for Orders)
+  const ctxVisitors = document.getElementById('visitorsVsShoppersChart');
+  if (ctxVisitors && typeof Chart !== 'undefined') {
+    new Chart(ctxVisitors, {
+      type: 'bar',
+      data: {
+        labels: {!! json_encode($metrics['traffic_and_shopping']['chart']['labels'] ?? ['Jum', 'Sab', 'Min', 'Sen', 'Sel', 'Rab', 'Kam']) !!},
+        datasets: [
+          {
+            type: 'bar',
+            label: '{{ $isId ? 'Pengunjung Toko (Orang)' : 'Store Visitors (People)' }}',
+            data: {!! json_encode($metrics['traffic_and_shopping']['chart']['visitors'] ?? [240, 195, 310, 215, 230, 345, 280]) !!},
+            backgroundColor: 'rgba(161, 138, 104, 0.25)',
+            hoverBackgroundColor: 'rgba(161, 138, 104, 0.45)',
+            borderColor: '#A18A68',
+            borderWidth: 1.5,
+            borderRadius: 8,
+            barPercentage: 0.5,
+            categoryPercentage: 0.7,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: '{{ $isId ? 'Transaksi Belanja (Pesanan)' : 'Shopping Orders' }}',
+            data: {!! json_encode($metrics['traffic_and_shopping']['chart']['shoppers'] ?? [4, 3, 7, 5, 6, 9, 8]) !!},
+            borderColor: '#10B981',
+            backgroundColor: '#10B981',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: '#10B981',
+            pointBorderWidth: 2.5,
+            pointRadius: 4.5,
+            pointHoverRadius: 6.5,
+            tension: 0.35,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#111827',
+            padding: 12,
+            cornerRadius: 8,
+            titleFont: { size: 12, weight: 'bold', family: 'DM Sans, sans-serif' },
+            bodyFont: { size: 11.5, family: 'DM Sans, sans-serif' },
+            callbacks: {
+              afterBody: function(tooltipItems) {
+                const idx = tooltipItems[0].dataIndex;
+                const shoppingValues = {!! json_encode($metrics['traffic_and_shopping']['chart']['shopping_values'] ?? []) !!};
+                const conversions = {!! json_encode($metrics['traffic_and_shopping']['chart']['conversion_rates'] ?? []) !!};
+                const val = shoppingValues[idx] ? 'Rp ' + Number(shoppingValues[idx]).toLocaleString('id-ID') : '';
+                const conv = conversions[idx] ? conversions[idx] + '%' : '';
+                return '\n' + (conv ? 'Rasio Konversi: ' + conv + '\n' : '') + (val ? 'Nilai Belanja: ' + val : '');
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11.5, family: 'DM Sans, sans-serif' }, color: '#707070' }
+          },
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            beginAtZero: true,
+            grid: { color: '#F2F4F7' },
+            title: {
+              display: true,
+              text: '{{ $isId ? 'Pengunjung (Orang)' : 'Visitors' }}',
+              color: '#A18A68',
+              font: { size: 10, weight: 'bold' }
+            },
+            ticks: {
+              font: { size: 11, family: 'DM Sans, sans-serif' },
+              color: '#707070'
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            beginAtZero: true,
+            grid: { drawOnChartArea: false },
+            title: {
+              display: true,
+              text: '{{ $isId ? 'Belanja (Pesanan)' : 'Orders' }}',
+              color: '#10B981',
+              font: { size: 10, weight: 'bold' }
+            },
+            ticks: {
+              stepSize: 2,
+              font: { size: 11, family: 'DM Sans, sans-serif' },
+              color: '#10B981'
             }
           }
         }

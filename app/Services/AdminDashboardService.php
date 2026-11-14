@@ -126,6 +126,13 @@ class AdminDashboardService
         $lowStockProducts = Product::where('stock', '<=', 5)->get();
         $recentInquiries = Inquiry::with('messages')->latest()->take(5)->get();
 
+        // 5. Analitik Trafik Pengunjung & Performa Belanja (Traffic & Shopping Analytics)
+        $trafficAndShopping = StorefrontTrafficService::getAnalytics(
+            $totalOrders,
+            $totalRevenue,
+            $completedOrdersCount
+        );
+
         return [
             // KPI Ringkasan
             'total_revenue' => $totalRevenue,
@@ -133,6 +140,9 @@ class AdminDashboardService
             'completed_orders_count' => $completedOrdersCount,
             'active_products' => $activeProducts,
             'pending_inquiries' => $pendingInquiries,
+
+            // Analitik Pengunjung & Belanja
+            'traffic_and_shopping' => $trafficAndShopping,
 
             // Analisis Komisi Finansial (Input vs Output)
             'financial' => [
