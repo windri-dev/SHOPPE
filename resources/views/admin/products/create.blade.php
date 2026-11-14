@@ -30,10 +30,6 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         Kembali ke Katalog
       </a>
-      <button type="submit" form="createProductForm" class="table-action-btn" style="background: #111827; color: #FFFFFF; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(17,24,39,0.15);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        Simpan Produk Baru
-      </button>
     </div>
   </div>
 
