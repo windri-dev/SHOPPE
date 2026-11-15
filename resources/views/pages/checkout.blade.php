@@ -231,23 +231,66 @@
           <input type="hidden" name="shipping_cost" id="checkoutShippingCost" value="0">
         </div>
 
-        <div class="checkout-payment-methods">
-          <div class="payment-method-item">
-            <label class="payment-method-header">
-              <input type="radio" name="payment_method" value="bank_transfer" class="payment-method-radio" checked>
-              <span class="payment-method-name">{{ __('Direct bank transfer') }}</span>
+        <!-- Payment Method Selection -->
+        <div class="checkout-payment-methods" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+          <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin-bottom: 12px;">
+            {{ __('Pilihan Metode Pembayaran:') }}
+          </label>
+          <div style="display: flex; flex-direction: column; gap: 10px;" id="paymentOptionsWrapper">
+            <!-- 1. Bank Transfer Manual -->
+            <label class="payment-method-label" style="display: block; border: 1.5px solid #111827; border-radius: 8px; padding: 12px 14px; background: #FAF9F6; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #111827;">
+                  <input type="radio" name="payment_method" value="bank_transfer" class="payment-method-radio" checked style="accent-color: #111827;">
+                  <span>{{ __('Transfer Bank Manual (BCA / Mandiri)') }}</span>
+                </span>
+                <span style="font-size: 10.5px; background: #EFF6FF; color: #1D4ED8; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Manual</span>
+              </div>
+              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
+                {{ __('Transfer ke rekening butik a.n. PT PUTRIJALVA INDONESIA. Konfirmasi transfer diverifikasi finance 15-30 menit.') }}
+              </p>
             </label>
-          </div>
-          <div class="payment-method-item">
-            <label class="payment-method-header">
-              <input type="radio" name="payment_method" value="qris" class="payment-method-radio">
-              <span class="payment-method-name">QRIS Instant Payment</span>
+
+            <!-- 2. QRIS Instant -->
+            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
+                  <input type="radio" name="payment_method" value="qris" class="payment-method-radio" style="accent-color: #111827;">
+                  <span>{{ __('QRIS Instant Payment (Otomatis & Cepat)') }}</span>
+                </span>
+                <span style="font-size: 10.5px; background: #ECFDF5; color: #059669; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Instan</span>
+              </div>
+              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
+                {{ __('Scan QRIS via m-Banking (BCA, Mandiri, BRI, BNI) atau e-Wallet (GoPay, OVO, ShopeePay, DANA). Terverifikasi detik itu juga.') }}
+              </p>
             </label>
-          </div>
-          <div class="payment-method-item">
-            <label class="payment-method-header">
-              <input type="radio" name="payment_method" value="credit_card" class="payment-method-radio">
-              <span class="payment-method-name">Credit Card / Debit Online</span>
+
+            <!-- 3. Credit / Debit Card -->
+            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
+                  <input type="radio" name="payment_method" value="credit_card" class="payment-method-radio" style="accent-color: #111827;">
+                  <span>{{ __('Kartu Kredit / Debit Online (Visa / Mastercard)') }}</span>
+                </span>
+                <span style="font-size: 10.5px; background: #F3F4F6; color: #4B5563; font-weight: 700; padding: 2px 7px; border-radius: 4px;">3D Secure</span>
+              </div>
+              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
+                {{ __('Pembayaran kartu aman standar internasional dengan verifikasi kode OTP 3D Secure bank Anda.') }}
+              </p>
+            </label>
+
+            <!-- 4. Cash on Delivery (COD) -->
+            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
+                  <input type="radio" name="payment_method" value="cod" class="payment-method-radio" style="accent-color: #111827;">
+                  <span>{{ __('Bayar di Tempat / COD (Cash on Delivery)') }}</span>
+                </span>
+                <span style="font-size: 10.5px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Bayar di Tempat</span>
+              </div>
+              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
+                {{ __('Bayar tunai secara langsung kepada kurir ekspedisi saat paket busana telah sampai di alamat tujuan.') }}
+              </p>
             </label>
           </div>
         </div>
@@ -293,6 +336,28 @@
           } else if (typeof window.cartManager.updateTotals === 'function') {
             window.cartManager.updateTotals();
           }
+        }
+      });
+    });
+
+    // Payment Method Option Selection
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const paymentLabels = document.querySelectorAll('.payment-method-label');
+
+    paymentRadios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        paymentLabels.forEach(function (lbl) {
+          lbl.style.borderColor = '#E5E7EB';
+          lbl.style.background = '#FFFFFF';
+          const nameSpan = lbl.querySelector('span[style*="font-weight: 600"]');
+          if (nameSpan) nameSpan.style.color = '#374151';
+        });
+        const currentLabel = this.closest('.payment-method-label');
+        if (currentLabel) {
+          currentLabel.style.borderColor = '#111827';
+          currentLabel.style.background = '#FAF9F6';
+          const nameSpan = currentLabel.querySelector('span[style*="font-weight: 600"]');
+          if (nameSpan) nameSpan.style.color = '#111827';
         }
       });
     });

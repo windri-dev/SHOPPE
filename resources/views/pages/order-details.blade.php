@@ -76,9 +76,43 @@
           </div>
         </div>
       @else
+        @php
+          $idrAmount = (float)$order->grand_total >= 1000 
+            ? (int) round((float)$order->grand_total) 
+            : (int) round(app(\App\Services\CurrencyService::class)->convert((float)$order->grand_total, 'IDR'));
+        @endphp
+
+        @if($order->payment_method === 'cod')
+          <!-- COD Specific Status Box -->
+          <div style="background: #F0FDF4; border: 1.5px solid #10B981; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: flex-start; gap: 14px;">
+              <div style="background: #10B981; color: #fff; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+              </div>
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="background: #059669; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Metode COD</span>
+                  <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #065F46;">Bayar di Tempat (Cash on Delivery)</h4>
+                </div>
+                <p style="margin: 0 0 8px 0; font-size: 13.5px; color: #166534; line-height: 1.5;">
+                  Pesanan Anda telah kami terima dan tim perajin butik PUTRIJALVA sedang menyiapkan busana Anda. Mohon siapkan uang tunai pas sebesar <strong>Rp {{ number_format($idrAmount, 0, ',', '.') }}</strong> ({{ $order->formatted_grand_total }}) saat kurir ekspedisi mengantarkan paket ke alamat Anda.
+                </p>
+                <div style="font-size: 12px; color: #047857; display: flex; align-items: center; gap: 6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                  <span>Estimasi pengiriman: 1-3 hari kerja. Kurir akan menghubungi via telepon/WhatsApp sebelum tiba.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        @endif
+
         <!-- Unpaid State: Primary PGA Payment Gateway & Secondary Manual Transfer -->
         <p style="font-size: 13.5px; color: #4B5563; margin: 0 0 16px 0;">
-          Pesanan ini siap dibayar. Pilih metode pembayaran instan otomatis melalui Payment Gateway (QRIS, Virtual Account, E-Wallet) atau transfer bank manual:
+          @if($order->payment_method === 'cod')
+            {{ __('Ingin membayar non-tunai sebelum kurir tiba? Anda tetap dapat melunasi pesanan secara instan via QRIS / Payment Gateway atau transfer bank manual:') }}
+          @else
+            {{ __('Pesanan ini siap dibayar. Pilih metode pembayaran instan otomatis melalui Payment Gateway (QRIS, Virtual Account, E-Wallet) atau transfer bank manual:') }}
+          @endif
         </p>
 
         <!-- Primary Option: Instant PGA (Midtrans / QRIS / VA) -->
@@ -94,8 +128,8 @@
               </p>
             </div>
             <div style="text-align: right;">
-              <span style="font-size: 11px; color: #6B7280; display: block;">Estimasi Konversi IDR (1 USD ≈ Rp 16.000)</span>
-              <span style="font-size: 16px; font-weight: 800; color: #A18A68;">Rp {{ number_format(round((float)$order->grand_total * 16000), 0, ',', '.') }}</span>
+              <span style="font-size: 11px; color: #6B7280; display: block;">Total Tagihan Rupiah</span>
+              <span style="font-size: 16px; font-weight: 800; color: #A18A68;">Rp {{ number_format($idrAmount, 0, ',', '.') }}</span>
             </div>
           </div>
 
@@ -220,8 +254,9 @@
               </div>
 
               <div>
-                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nominal yang Ditransfer ($)</label>
-                <input type="number" step="0.01" name="transfer_amount" required value="{{ $order->grand_total }}" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nominal yang Ditransfer (Rp)</label>
+                <input type="number" step="1" name="transfer_amount" required value="{{ $idrAmount }}" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
+                <span style="font-size: 11px; color: #6B7280; margin-top: 3px; display: block;">Pastikan nominal transfer sesuai total tagihan pesanan.</span>
               </div>
 
               <div style="grid-column: 1 / -1;">

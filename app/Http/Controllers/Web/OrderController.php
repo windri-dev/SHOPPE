@@ -8,6 +8,7 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\ConfirmPaymentRequest;
 use App\Models\Order;
+use App\Services\CurrencyService;
 use App\Services\Payment\PaymentGatewayManager;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -96,7 +97,13 @@ class OrderController extends Controller
             return back()->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan Anda saat ini sedang disiapkan oleh tim perajin PUTRIJALVA.');
         }
 
-        $note = "Konfirmasi Transfer: Bank {$validated['bank_name']} a.n. {$validated['sender_name']} (Rp ".number_format((float) $validated['transfer_amount'], 0, ',', '.').')';
+        $transferAmount = (float) $validated['transfer_amount'];
+        // Jika nominal diinput dalam USD kecil (< 1000) sedangkan tagihan dalam USD, konversi ke IDR untuk catatan
+        if ($transferAmount < 1000 && (float) $order->grand_total < 1000) {
+            $transferAmount = app(CurrencyService::class)->convert($transferAmount, 'IDR');
+        }
+
+        $note = "Konfirmasi Transfer: Bank {$validated['bank_name']} a.n. {$validated['sender_name']} (Rp ".number_format($transferAmount, 0, ',', '.').')';
         if (! empty($validated['transfer_notes'])) {
             $note .= " - {$validated['transfer_notes']}";
         }

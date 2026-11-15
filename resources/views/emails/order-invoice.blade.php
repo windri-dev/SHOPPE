@@ -266,6 +266,13 @@
               <li><strong>BNI:</strong> 081-992-114 a.n. PT PUTRIJALVA INDONESIA</li>
             </ul>
           </div>
+        @elseif($order->payment_method === 'cod')
+          <div class="bank-card" style="border-left: 4px solid #10B981; background: #F0FDF4;">
+            <h4 style="margin: 0 0 8px; font-size: 13.5px; color: #065F46; text-transform: uppercase; letter-spacing: 0.05em;">Instruksi Pembayaran COD (Bayar di Tempat):</h4>
+            <p style="margin: 0; font-size: 13px; color: #166534;">
+              Pesanan Anda akan segera dikirim. Mohon siapkan uang tunai pas sebesar <strong>{{ $order->formatted_grand_total }}</strong> untuk diserahkan kepada kurir saat paket tiba di alamat Anda.
+            </p>
+          </div>
         @endif
 
         <!-- Call to Action -->

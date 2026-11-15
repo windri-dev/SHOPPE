@@ -6,6 +6,7 @@ namespace App\Services\Payment\Drivers;
 
 use App\Contracts\PaymentGatewayInterface;
 use App\Models\Order;
+use App\Services\CurrencyService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -41,7 +42,11 @@ class MidtransDriver implements PaymentGatewayInterface
      */
     public function convertToIdr(float $amountUsd): int
     {
-        $rate = 16000;
+        if ($amountUsd >= 1000) {
+            return (int) round($amountUsd);
+        }
+
+        $rate = app(CurrencyService::class)->getUsdToIdrRate() ?: 16000;
 
         return (int) round($amountUsd * $rate);
     }

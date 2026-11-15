@@ -248,4 +248,74 @@ class PaymentGatewayIntegrationTest extends TestCase
 
         $this->assertFalse($driver->verifyWebhookSignature($requestForged));
     }
+
+    public function test_checkout_processes_all_supported_payment_methods(): void
+    {
+        $product = Product::factory()->create(['price' => 25.00, 'stock' => 10]);
+
+        foreach (['bank_transfer', 'qris', 'credit_card', 'cod'] as $method) {
+            $response = $this->actingAs($this->user)->postJson(route('checkout.process'), [
+                'first_name' => 'Dewi',
+                'last_name' => 'Sartika',
+                'email' => 'dewi@putrijalva.com',
+                'phone' => '081234567890',
+                'country' => 'Indonesia',
+                'province' => 'DKI Jakarta',
+                'city' => 'Jakarta Selatan',
+                'district' => 'Kebayoran Baru',
+                'postcode' => '12110',
+                'street_address' => 'Jl. Senopati No. 45',
+                'payment_method' => $method,
+                'items' => [
+                    [
+                        'id' => $product->id,
+                        'quantity' => 1,
+                        'size' => 'M',
+                    ],
+                ],
+            ]);
+
+            $response->assertStatus(200)
+                ->assertJson(['success' => true]);
+
+            $orderNumber = $response->json('order_number');
+            $this->assertDatabaseHas('orders', [
+                'order_number' => $orderNumber,
+                'payment_method' => $method,
+            ]);
+        }
+    }
+
+    public function test_confirm_manual_transfer_records_idr_amount_properly(): void
+    {
+        $response = $this->actingAs($this->user)->post(route('order.confirm_payment', $this->order->order_number), [
+            'action_type' => 'manual_transfer',
+            'bank_name' => 'BCA',
+            'sender_name' => 'Jane Luxury',
+            'transfer_amount' => 800000,
+            'transfer_notes' => 'Ref-9921',
+        ]);
+
+        $response->assertSessionHas('success');
+        $this->order->refresh();
+        $this->assertSame('waiting_verification', $this->order->payment_status);
+        $this->assertStringContainsString('Rp 800.000', $this->order->notes);
+        $this->assertStringContainsString('Bank BCA a.n. Jane Luxury', $this->order->notes);
+    }
+
+    public function test_midtrans_convert_to_idr_handles_usd_and_idr(): void
+    {
+        $driver = new MidtransDriver([
+            'server_key' => 'test',
+            'client_key' => 'test',
+            'is_production' => false,
+        ]);
+
+        // USD 50 should convert to IDR (e.g. 50 * 16000 = 800000)
+        $idrConverted = $driver->convertToIdr(50.0);
+        $this->assertGreaterThanOrEqual(750000, $idrConverted);
+
+        // Already IDR amount (e.g. 750000) should not multiply by 16000
+        $this->assertSame(750000, $driver->convertToIdr(750000.0));
+    }
 }
