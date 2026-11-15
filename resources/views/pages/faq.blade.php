@@ -57,7 +57,7 @@
     <div>
       <h2 style="font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 6px;">Masih memiliki pertanyaan khusus?</h2>
       <p style="font-size: 13.5px; color: #6B7280; margin: 0;">
-        Tim Jewellery Concierge kami siap melayani konsultasi ukuran, pelacakan pesanan, hingga kado spesial setiap hari.
+        Tim Fashion Concierge PUTRIJALVA siap melayani konsultasi ukuran, rekomendasi gaya busana, hingga pelacakan pesanan setiap hari.
       </p>
     </div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
