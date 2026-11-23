@@ -59,6 +59,7 @@ class SettingAdminController extends Controller
     {
         $validated = $request->validate([
             'bank_name' => ['required', 'string', 'max:100'],
+            'bank_code' => ['nullable', 'string', 'max:50'],
             'account_number' => ['required', 'string', 'max:50'],
             'account_holder' => ['required', 'string', 'max:150'],
             'branch' => ['nullable', 'string', 'max:150'],
@@ -69,7 +70,7 @@ class SettingAdminController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', true);
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
-        $validated['bank_code'] = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $validated['bank_name']));
+        $validated['bank_code'] = $request->input('bank_code') ?: strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $validated['bank_name']));
 
         BankAccount::create($validated);
 
@@ -81,6 +82,7 @@ class SettingAdminController extends Controller
     {
         $validated = $request->validate([
             'bank_name' => ['required', 'string', 'max:100'],
+            'bank_code' => ['nullable', 'string', 'max:50'],
             'account_number' => ['required', 'string', 'max:50'],
             'account_holder' => ['required', 'string', 'max:150'],
             'branch' => ['nullable', 'string', 'max:150'],
@@ -91,7 +93,7 @@ class SettingAdminController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
-        $validated['bank_code'] = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $validated['bank_name']));
+        $validated['bank_code'] = $request->input('bank_code') ?: $bank->getAttribute('bank_code') ?: strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $validated['bank_name']));
 
         $bank->update($validated);
 

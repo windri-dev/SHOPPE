@@ -63,10 +63,15 @@
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: {{ $bank->bank_color }};"></span>
-                  <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: {{ $bank->bank_color }};">
-                    {{ $bank->bank_name }}
-                  </h3>
+                  {!! $bank->bank_icon_svg !!}
+                  <div>
+                    <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: {{ $bank->bank_color }};">
+                      {{ $bank->bank_name }}
+                    </h3>
+                    @if($bank->bank_code)
+                      <span style="font-size: 10px; color: #94A3B8; text-transform: uppercase; font-family: monospace;">KODE: {{ $bank->bank_code }}</span>
+                    @endif
+                  </div>
                 </div>
                 <!-- Status Badge -->
                 @if($bank->is_active)
@@ -122,7 +127,7 @@
                 <!-- Edit Button -->
                 <button
                   type="button"
-                  onclick="openEditBankModal('{{ $bank->id }}', '{{ addslashes($bank->bank_name) }}', '{{ $bank->account_number }}', '{{ addslashes($bank->account_holder) }}', '{{ addslashes($bank->branch ?? '') }}', '{{ addslashes($bank->instructions ?? '') }}', '{{ $bank->sort_order }}', {{ $bank->is_active ? 'true' : 'false' }})"
+                  onclick="openEditBankModal('{{ $bank->id }}', '{{ addslashes($bank->bank_name) }}', '{{ $bank->account_number }}', '{{ addslashes($bank->account_holder) }}', '{{ addslashes($bank->branch ?? '') }}', '{{ addslashes($bank->instructions ?? '') }}', '{{ $bank->sort_order }}', {{ $bank->is_active ? 'true' : 'false' }}, '{{ $bank->bank_code }}')"
                   class="table-action-btn"
                   style="font-size: 11.5px; padding: 4px 10px; cursor: pointer; background: #F3F4F6;"
                 >
@@ -248,9 +253,40 @@
 
     <form action="{{ route('admin.settings.banks.store') }}" method="POST" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
       @csrf
+      <!-- Preset Bank Dropdown -->
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #1E293B; margin-bottom: 6px;">
+          Pilih Bank Terdaftar (Nama & Ikon Tersedia Otomatis) *
+        </label>
+        <select id="presetBankSelect" onchange="applyAddBankPreset(this.value)" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 600; background: #FFFFFF; cursor: pointer;">
+          <option value="">-- Klik untuk Pilih Bank Resmi --</option>
+          <option value="bca">BCA (Bank Central Asia)</option>
+          <option value="mandiri">Bank Mandiri</option>
+          <option value="bni">Bank BNI (Bank Negara Indonesia)</option>
+          <option value="bri">Bank BRI (Bank Rakyat Indonesia)</option>
+          <option value="bsi">Bank Syariah Indonesia (BSI)</option>
+          <option value="cimb">CIMB Niaga</option>
+          <option value="permata">Bank Permata</option>
+          <option value="danamon">Bank Danamon</option>
+          <option value="jago">Bank Jago</option>
+          <option value="seabank">SeaBank Indonesia</option>
+          <option value="btn">Bank BTN</option>
+          <option value="jenius">Jenius (BTPN)</option>
+          <option value="custom">Bank Lainnya (Ketik Manual)...</option>
+        </select>
+        <div id="addPresetBankPreview" style="display: none; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 12px; background: #FFFFFF; border: 1px dashed #CBD5E1; border-radius: 6px;">
+          <span id="addPresetBankIcon"></span>
+          <div>
+            <span id="addPresetBankName" style="font-weight: 700; font-size: 13px; display: block;"></span>
+            <span style="font-size: 11px; color: #64748B;">Nama & ikon bank otomatis terisi dan siap digunakan.</span>
+          </div>
+        </div>
+      </div>
+
       <div>
         <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Bank *</label>
-        <input type="text" name="bank_name" required placeholder="Contoh: BCA / Bank Mandiri / BNI / BRI" class="chat-search-input" style="width: 100%; font-size: 13px;">
+        <input type="text" name="bank_name" id="addBankName" required placeholder="Contoh: BCA / Bank Mandiri / BNI / BRI" class="chat-search-input" style="width: 100%; font-size: 13px;">
+        <input type="hidden" name="bank_code" id="addBankCode" value="">
       </div>
 
       <div>
@@ -299,9 +335,32 @@
     <form id="editBankForm" method="POST" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
       @csrf
       @method('PUT')
+      <!-- Preset Bank Dropdown (Optional Override) -->
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #1E293B; margin-bottom: 6px;">
+          Ganti ke Bank Terdaftar (Nama & Ikon Otomatis)
+        </label>
+        <select id="editPresetBankSelect" onchange="applyEditBankPreset(this.value)" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 600; background: #FFFFFF; cursor: pointer;">
+          <option value="">-- Tetap Gunakan Bank Saat Ini --</option>
+          <option value="bca">BCA (Bank Central Asia)</option>
+          <option value="mandiri">Bank Mandiri</option>
+          <option value="bni">Bank BNI (Bank Negara Indonesia)</option>
+          <option value="bri">Bank BRI (Bank Rakyat Indonesia)</option>
+          <option value="bsi">Bank Syariah Indonesia (BSI)</option>
+          <option value="cimb">CIMB Niaga</option>
+          <option value="permata">Bank Permata</option>
+          <option value="danamon">Bank Danamon</option>
+          <option value="jago">Bank Jago</option>
+          <option value="seabank">SeaBank Indonesia</option>
+          <option value="btn">Bank BTN</option>
+          <option value="jenius">Jenius (BTPN)</option>
+        </select>
+      </div>
+
       <div>
         <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Bank *</label>
         <input type="text" name="bank_name" id="editBankName" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+        <input type="hidden" name="bank_code" id="editBankCode" value="">
       </div>
 
       <div>
@@ -340,21 +399,76 @@
 </div>
 
 <script>
+const bankPresetsData = {
+  bca: { name: 'BCA (Bank Central Asia)', code: 'bca', color: '#003399', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#003399"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="9" text-anchor="middle">BCA</text></svg>' },
+  mandiri: { name: 'Bank Mandiri', code: 'mandiri', color: '#003066', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#003066"/><path d="M4 14C8 10 16 10 20 14" stroke="#FDB913" stroke-width="2.5" stroke-linecap="round"/><text x="12" y="11" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="800" font-size="6.5" text-anchor="middle">MANDIRI</text></svg>' },
+  bni: { name: 'Bank BNI (Bank Negara Indonesia)', code: 'bni', color: '#FA5400', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#FA5400"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="9" text-anchor="middle">BNI</text></svg>' },
+  bri: { name: 'Bank BRI (Bank Rakyat Indonesia)', code: 'bri', color: '#00529C', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#00529C"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="9" text-anchor="middle">BRI</text></svg>' },
+  bsi: { name: 'Bank Syariah Indonesia (BSI)', code: 'bsi', color: '#00A39D', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#00A39D"/><circle cx="12" cy="7" r="2" fill="#EAAA00"/><text x="12" y="18" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="8" text-anchor="middle">BSI</text></svg>' },
+  cimb: { name: 'CIMB Niaga', code: 'cimb', color: '#ED1C24', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#ED1C24"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="8" text-anchor="middle">CIMB</text></svg>' },
+  permata: { name: 'Bank Permata', code: 'permata', color: '#84BD00', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#84BD00"/><polygon points="12,5 18,12 12,19 6,12" fill="#FFFFFF"/></svg>' },
+  danamon: { name: 'Bank Danamon', code: 'danamon', color: '#F15A24', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#F15A24"/><line x1="6" y1="12" x2="18" y2="12" stroke="#FFD100" stroke-width="3"/><line x1="6" y1="8" x2="18" y2="8" stroke="#FFFFFF" stroke-width="2"/><line x1="6" y1="16" x2="18" y2="16" stroke="#FFFFFF" stroke-width="2"/></svg>' },
+  jago: { name: 'Bank Jago', code: 'jago', color: '#FF7F00', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#FF7F00"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="7.5" text-anchor="middle">JAGO</text></svg>' },
+  seabank: { name: 'SeaBank Indonesia', code: 'seabank', color: '#FF5722', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#FF5722"/><text x="12" y="15" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="800" font-size="7" text-anchor="middle">Sea</text></svg>' },
+  btn: { name: 'Bank BTN', code: 'btn', color: '#1C3F94', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#1C3F94"/><text x="12" y="16" fill="#FFFFFF" font-family="Arial,sans-serif" font-weight="900" font-size="8.5" text-anchor="middle">BTN</text></svg>' },
+  jenius: { name: 'Jenius (BTPN)', code: 'jenius', color: '#00A4E4', icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#00A4E4"/><circle cx="12" cy="12" r="6" stroke="#FFFFFF" stroke-width="2.5"/></svg>' }
+};
+
+function applyAddBankPreset(key) {
+  const p = bankPresetsData[key];
+  const nameInput = document.getElementById('addBankName');
+  const codeInput = document.getElementById('addBankCode');
+  const previewDiv = document.getElementById('addPresetBankPreview');
+  const iconSpan = document.getElementById('addPresetBankIcon');
+  const nameSpan = document.getElementById('addPresetBankName');
+
+  if (p) {
+    if (nameInput) nameInput.value = p.name;
+    if (codeInput) codeInput.value = p.code;
+    if (previewDiv) previewDiv.style.display = 'flex';
+    if (iconSpan) iconSpan.innerHTML = p.icon;
+    if (nameSpan) {
+      nameSpan.textContent = p.name;
+      nameSpan.style.color = p.color;
+    }
+  } else {
+    if (previewDiv) previewDiv.style.display = 'none';
+    if (key === 'custom') {
+      if (nameInput) nameInput.value = '';
+      if (codeInput) codeInput.value = 'other';
+    }
+  }
+}
+
+function applyEditBankPreset(key) {
+  const p = bankPresetsData[key];
+  const nameInput = document.getElementById('editBankName');
+  const codeInput = document.getElementById('editBankCode');
+  if (p) {
+    if (nameInput) nameInput.value = p.name;
+    if (codeInput) codeInput.value = p.code;
+  }
+}
+
 function openAddBankModal() {
+  document.getElementById('presetBankSelect').value = '';
+  document.getElementById('addPresetBankPreview').style.display = 'none';
   document.getElementById('addBankModalBackdrop').style.display = 'flex';
 }
 function closeAddBankModal() {
   document.getElementById('addBankModalBackdrop').style.display = 'none';
 }
 
-function openEditBankModal(id, bankName, accountNumber, accountHolder, branch, instructions, sortOrder, isActive) {
+function openEditBankModal(id, bankName, accountNumber, accountHolder, branch, instructions, sortOrder, isActive, bankCode) {
   document.getElementById('editBankForm').action = '/admin/settings/banks/' + id;
   document.getElementById('editBankName').value = bankName;
+  document.getElementById('editBankCode').value = bankCode || '';
   document.getElementById('editAccountNumber').value = accountNumber;
   document.getElementById('editAccountHolder').value = accountHolder;
   document.getElementById('editBranch').value = branch;
   document.getElementById('editInstructions').value = instructions;
   document.getElementById('editBankActive').checked = isActive;
+  document.getElementById('editPresetBankSelect').value = '';
   document.getElementById('editBankModalBackdrop').style.display = 'flex';
 }
 function closeEditBankModal() {

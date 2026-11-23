@@ -200,32 +200,29 @@
 
         <!-- Shipping Method Selection -->
         <div style="margin: 20px 0; padding-top: 18px; border-top: 1px solid #E5E7EB;">
-          <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin-bottom: 10px;">
-            {{ __('Pilihan Layanan Pengiriman:') }}
-          </label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin: 0;">
+              {{ __('Pilihan Layanan Pengiriman:') }}
+            </label>
+            <span id="shippingZoneBadge" style="font-size: 11px; font-weight: 600; background: #F3F4F6; color: #4B5563; padding: 2px 8px; border-radius: 9999px;">
+              Memuat tarif...
+            </span>
+          </div>
           <div style="display: flex; flex-direction: column; gap: 8px;" id="shippingOptionsWrapper">
-            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1.5px solid #111827; border-radius: 6px; cursor: pointer; background: #FAF9F6; transition: all 0.2s ease;" class="shipping-option-label">
+            <!-- Initial SSR fallback, dynamically re-rendered by fetchShippingRates() -->
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1.5px solid #111827; border-radius: 6px; cursor: pointer; background: #FAF9F6; transition: all 0.2s ease;" class="shipping-option-label">
               <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #111827;">
                 <input type="radio" name="shipping_service" value="reguler" data-cost="0" checked style="accent-color: #111827;">
-                <span>{{ __('Reguler (JNE / SiCepat / Anteraja)') }}</span>
+                <span>{{ __('Reguler (JNE REG / SiCepat REG / J&T EZ)') }}</span>
               </span>
               <span style="font-size: 12px; font-weight: 700; color: #059669;">{{ __('GRATIS') }}</span>
             </label>
-
-            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 6px; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;" class="shipping-option-label">
+            <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1px solid #E5E7EB; border-radius: 6px; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;" class="shipping-option-label">
               <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #374151;">
                 <input type="radio" name="shipping_service" value="express" data-cost="2" style="accent-color: #111827;">
                 <span>{{ __('Express Next Day (JNE YES / SiCepat BEST)') }}</span>
               </span>
               <span style="font-size: 12.5px; font-weight: 600; color: #111827;">{{ \App\Services\CurrencyService::formatPrice(2) }}</span>
-            </label>
-
-            <label style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 6px; cursor: pointer; background: #FFFFFF; transition: all 0.2s ease;" class="shipping-option-label">
-              <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #374151;">
-                <input type="radio" name="shipping_service" value="sameday" data-cost="3.5" style="accent-color: #111827;">
-                <span>{{ __('Sameday & Instant (Grab / Gojek - Jabodetabek)') }}</span>
-              </span>
-              <span style="font-size: 12.5px; font-weight: 600; color: #111827;">{{ \App\Services\CurrencyService::formatPrice(3.5) }}</span>
             </label>
           </div>
           <input type="hidden" name="shipping_cost" id="checkoutShippingCost" value="0">
@@ -237,12 +234,16 @@
             {{ __('Pilihan Metode Pembayaran:') }}
           </label>
           <div style="display: flex; flex-direction: column; gap: 10px;" id="paymentOptionsWrapper">
+            @php
+              $activeBanksList = \App\Models\BankAccount::active()->ordered()->get();
+              $activeBankNames = $activeBanksList->pluck('bank_name')->implode(', ');
+            @endphp
             <!-- 1. Bank Transfer Manual -->
             <label class="payment-method-label" style="display: block; border: 1.5px solid #111827; border-radius: 8px; padding: 12px 14px; background: #FAF9F6; cursor: pointer; transition: all 0.2s ease;">
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #111827;">
                   <input type="radio" name="payment_method" value="bank_transfer" class="payment-method-radio" checked style="accent-color: #111827;">
-                  <span>{{ __('Transfer Bank Manual (BCA / Mandiri)') }}</span>
+                  <span>{{ __('Transfer Bank Manual') }} ({{ $activeBankNames ?: 'BCA, Mandiri, BNI' }})</span>
                 </span>
                 <span style="font-size: 10.5px; background: #EFF6FF; color: #1D4ED8; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Manual</span>
               </div>
@@ -309,36 +310,148 @@
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Shipping Courier Option Selection & Dynamic Grand Total
-    const shippingRadios = document.querySelectorAll('input[name="shipping_service"]');
+    // Dynamic Shipping Courier Rate Calculation API
     const shippingHidden = document.getElementById('checkoutShippingCost');
-    const shippingLabels = document.querySelectorAll('.shipping-option-label');
+    const shippingZoneBadge = document.getElementById('shippingZoneBadge');
+    const shippingWrapper = document.getElementById('shippingOptionsWrapper');
 
-    shippingRadios.forEach(function (radio) {
-      radio.addEventListener('change', function () {
-        const cost = parseFloat(this.getAttribute('data-cost')) || 0;
-        if (shippingHidden) shippingHidden.value = String(cost);
+    function fetchShippingRates() {
+      const provInput = document.getElementById('chkProvince');
+      const cityInput = document.getElementById('chkCity');
+      const prov = provInput ? provInput.value.trim() : '';
+      const city = cityInput ? cityInput.value.trim() : '';
+      const subtotalUsd = (window.cartManager && typeof window.cartManager.getCartSubtotal === 'function') ? window.cartManager.getCartSubtotal() : 0;
+      const itemCount = (window.cartManager && typeof window.cartManager.getCartCount === 'function') ? window.cartManager.getCartCount() : 1;
+      const weightKg = Math.max(0.5, (itemCount * 0.25));
 
-        shippingLabels.forEach(function (lbl) {
-          lbl.style.borderColor = '#E5E7EB';
-          lbl.style.background = '#FFFFFF';
-        });
-        const currentLabel = this.closest('.shipping-option-label');
-        if (currentLabel) {
-          currentLabel.style.borderColor = '#111827';
-          currentLabel.style.background = '#FAF9F6';
+      if (shippingZoneBadge) shippingZoneBadge.textContent = 'Menghitung tarif kurir...';
+
+      fetch('{{ route('shipping.calculate') }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({
+          service: 'reguler',
+          province: prov,
+          city: city,
+          subtotal: subtotalUsd,
+          weight_kg: weightKg
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success || !res.data) return;
+        const data = res.data;
+        const services = data.available_services || [];
+
+        if (shippingZoneBadge) {
+          const zoneLabels = {
+            'jabodetabek': 'Zona: Jabodetabek (Same-Day & Instant)',
+            'jawa': 'Zona: Pulau Jawa (Reguler & Next Day)',
+            'sumatera': 'Zona: Sumatera (Antar Pulau)',
+            'bali_nusra': 'Zona: Bali & Nusa Tenggara',
+            'kalimantan': 'Zona: Kalimantan',
+            'sulawesi': 'Zona: Sulawesi',
+            'maluku_papua': 'Zona: Maluku & Papua'
+          };
+          shippingZoneBadge.textContent = zoneLabels[data.zone] || 'Zona: Domestik';
         }
 
-        if (window.cartManager) {
-          window.cartManager.currentShippingCost = cost;
-          if (typeof window.cartManager.renderCheckoutPage === 'function') {
-            window.cartManager.renderCheckoutPage();
-          } else if (typeof window.cartManager.updateTotals === 'function') {
-            window.cartManager.updateTotals();
-          }
+        if (shippingWrapper && services.length > 0) {
+          shippingWrapper.innerHTML = '';
+          services.forEach((srv, idx) => {
+            const isChecked = idx === 0;
+            const card = document.createElement('label');
+            card.className = 'shipping-option-label';
+            card.style.cssText = `display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1.5px solid ${isChecked ? '#111827' : '#E5E7EB'}; border-radius: 8px; cursor: pointer; background: ${isChecked ? '#FAF9F6' : '#FFFFFF'}; transition: all 0.2s ease;`;
+
+            card.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="radio" name="shipping_service" value="${srv.service}" data-cost="${srv.cost_usd}" ${isChecked ? 'checked' : ''} style="accent-color: #111827;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 13px; font-weight: 700; color: #111827;">${srv.name}</span>
+                    ${srv.badge ? `<span style="font-size: 10px; font-weight: 700; background: ${srv.is_free ? '#ECFDF5' : '#EFF6FF'}; color: ${srv.is_free ? '#059669' : '#1D4ED8'}; padding: 1px 6px; border-radius: 4px;">${srv.badge}</span>` : ''}
+                  </div>
+                  <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;">
+                    Estimasi tiba: <strong>${srv.eta}</strong> &bull; Ekspedisi: ${srv.courier}
+                  </div>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 13px; font-weight: 700; color: ${srv.is_free ? '#059669' : '#111827'};">
+                  ${srv.cost_formatted}
+                </span>
+              </div>
+            `;
+            shippingWrapper.appendChild(card);
+
+            if (isChecked && shippingHidden) {
+              shippingHidden.value = String(srv.cost_usd);
+              if (window.cartManager) {
+                window.cartManager.currentShippingCost = srv.cost_usd;
+                if (typeof window.cartManager.updateTotals === 'function') {
+                  window.cartManager.updateTotals();
+                }
+              }
+            }
+          });
+
+          // Bind change events to new radio options
+          const newRadios = shippingWrapper.querySelectorAll('input[name="shipping_service"]');
+          newRadios.forEach(r => {
+            r.addEventListener('change', function () {
+              const cost = parseFloat(this.getAttribute('data-cost')) || 0;
+              if (shippingHidden) shippingHidden.value = String(cost);
+
+              shippingWrapper.querySelectorAll('.shipping-option-label').forEach(lbl => {
+                lbl.style.borderColor = '#E5E7EB';
+                lbl.style.background = '#FFFFFF';
+              });
+              const parent = this.closest('.shipping-option-label');
+              if (parent) {
+                parent.style.borderColor = '#111827';
+                parent.style.background = '#FAF9F6';
+              }
+
+              if (window.cartManager) {
+                window.cartManager.currentShippingCost = cost;
+                if (typeof window.cartManager.updateTotals === 'function') {
+                  window.cartManager.updateTotals();
+                }
+              }
+            });
+          });
         }
+      })
+      .catch(err => {
+        console.warn('Shipping rate fetch error:', err);
+        if (shippingZoneBadge) shippingZoneBadge.textContent = 'Standar Domestik';
       });
-    });
+    }
+
+    // Debounced trigger when city or province changes
+    let shippingTimer = null;
+    function triggerShippingRecalc() {
+      clearTimeout(shippingTimer);
+      shippingTimer = setTimeout(fetchShippingRates, 350);
+    }
+
+    const cityEl = document.getElementById('chkCity');
+    const provEl = document.getElementById('chkProvince');
+    if (cityEl) {
+      cityEl.addEventListener('input', triggerShippingRecalc);
+      cityEl.addEventListener('change', triggerShippingRecalc);
+    }
+    if (provEl) {
+      provEl.addEventListener('input', triggerShippingRecalc);
+      provEl.addEventListener('change', triggerShippingRecalc);
+    }
+
+    // Initial fetch on page load
+    setTimeout(fetchShippingRates, 150);
 
     // Payment Method Option Selection
     const paymentRadios = document.querySelectorAll('input[name="payment_method"]');

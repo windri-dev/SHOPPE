@@ -329,9 +329,12 @@
             @endphp
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
               @forelse($activeBanks as $bankItem)
-                <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-weight: 700; font-size: 13.5px; color: {{ $bankItem->bank_color }};">{{ $bankItem->bank_name }}</span>
+                <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      {!! $bankItem->bank_icon_svg !!}
+                      <span style="font-weight: 700; font-size: 13.5px; color: {{ $bankItem->bank_color }};">{{ $bankItem->bank_name }}</span>
+                    </div>
                     <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
                   </div>
                   <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">

@@ -86,19 +86,25 @@ class CheckoutController extends Controller
     public function calculateShipping(Request $request, ShippingCalculationService $shippingService): JsonResponse
     {
         $validated = $request->validate([
-            'service' => 'required|string|in:reguler,express,sameday,instant',
+            'service' => 'nullable|string|max:50',
             'province' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
             'subtotal' => 'nullable|numeric|min:0',
             'weight_kg' => 'nullable|numeric|min:0.1',
         ]);
 
+        $service = $validated['service'] ?? 'reguler';
+        $province = $validated['province'] ?? null;
+        $city = $validated['city'] ?? null;
+        $subtotalUsd = (float) ($validated['subtotal'] ?? 0.0);
+        $weightKg = (float) ($validated['weight_kg'] ?? 1.0);
+
         $result = $shippingService->calculate(
-            service: $validated['service'],
-            province: $validated['province'] ?? null,
-            city: $validated['city'] ?? null,
-            subtotalUsd: (float) ($validated['subtotal'] ?? 0.0),
-            weightKg: (float) ($validated['weight_kg'] ?? 1.0)
+            service: $service,
+            province: $province,
+            city: $city,
+            subtotalUsd: $subtotalUsd,
+            weightKg: $weightKg
         );
 
         return response()->json([
