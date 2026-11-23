@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # 1. Install System Dependencies & PHP Extensions
 RUN apk add --no-cache \
@@ -28,7 +28,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # 4. Prepare Environment & Permissions
-RUN cp .env.example .env \
+RUN git config --global --add safe.directory /var/www/html \
+    && cp .env.example .env \
     && composer install --no-dev --optimize-autoloader --no-interaction \
     && npm install \
     && npm run build \
