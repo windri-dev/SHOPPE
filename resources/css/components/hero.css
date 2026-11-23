@@ -58,8 +58,8 @@
 .hero-content {
   position: relative;
   z-index: 3;
-  padding-left: 64px;
-  max-width: 540px;
+  padding-left: 88px;
+  max-width: 560px;
   color: var(--color-white);
   animation: heroContentFade 0.8s ease forwards;
 }
