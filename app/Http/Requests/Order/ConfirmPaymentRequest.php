@@ -27,6 +27,7 @@ class ConfirmPaymentRequest extends FormRequest
             'sender_name' => [Rule::requiredIf($isManualTransfer), 'nullable', 'string', 'max:100'],
             'transfer_amount' => [Rule::requiredIf($isManualTransfer), 'nullable', 'numeric', 'min:1'],
             'transfer_notes' => ['nullable', 'string', 'max:255'],
+            'payment_proof' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 }

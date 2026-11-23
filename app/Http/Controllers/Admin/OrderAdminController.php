@@ -69,6 +69,12 @@ class OrderAdminController extends Controller
         $oldStatus = $order->status->value;
         $order->update(['status' => $status]);
 
+        if ($status === OrderStatus::CANCELLED && $oldStatus !== OrderStatus::CANCELLED->value) {
+            $this->restockOrderItems($order);
+        } elseif ($oldStatus === OrderStatus::CANCELLED->value && $status !== OrderStatus::CANCELLED) {
+            $this->deductOrderItems($order);
+        }
+
         Log::channel('transactions')->info("Order [{$order->order_number}] status updated from [{$oldStatus}] to [{$status->value}] by admin [".(auth()->user()?->email ?? 'unknown').']', [
             'order_id' => $order->id,
             'order_number' => $order->order_number,
@@ -122,6 +128,9 @@ class OrderAdminController extends Controller
             }
         } elseif ($validated['payment_status'] === 'refunded') {
             $updates['status'] = OrderStatus::CANCELLED;
+            if ($order->status !== OrderStatus::CANCELLED) {
+                $this->restockOrderItems($order);
+            }
         }
 
         $currentStatus = $updates['status'] ?? $order->status;
@@ -158,5 +167,37 @@ class OrderAdminController extends Controller
         }
 
         return back()->with('success', "Status pembayaran & pengiriman pesanan {$order->order_number} berhasil diperbarui.");
+    }
+
+    protected function restockOrderItems(Order $order): void
+    {
+        $order->loadMissing('items.product');
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            if ($product) {
+                if (! empty($item->size)) {
+                    $product->incrementSizeStock((string) $item->size, (int) $item->quantity);
+                } else {
+                    $product->increment('stock', (int) $item->quantity);
+                }
+                Log::channel('transactions')->info("Restocked {$item->quantity} pcs of [{$product->name}] (Size: {$item->size}) from cancelled order [{$order->order_number}]");
+            }
+        }
+    }
+
+    protected function deductOrderItems(Order $order): void
+    {
+        $order->loadMissing('items.product');
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            if ($product) {
+                if (! empty($item->size)) {
+                    $product->decrementSizeStock((string) $item->size, (int) $item->quantity);
+                } else {
+                    $product->decrement('stock', (int) $item->quantity);
+                }
+                Log::channel('transactions')->info("Deducted {$item->quantity} pcs of [{$product->name}] (Size: {$item->size}) for reactivated order [{$order->order_number}]");
+            }
+        }
     }
 }

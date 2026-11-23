@@ -103,18 +103,32 @@ class OrderController extends Controller
             $transferAmount = app(CurrencyService::class)->convert($transferAmount, 'IDR');
         }
 
+        $proofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $proofPath = $request->file('payment_proof')->store('proofs', 'public');
+        }
+
         $note = "Konfirmasi Transfer: Bank {$validated['bank_name']} a.n. {$validated['sender_name']} (Rp ".number_format($transferAmount, 0, ',', '.').')';
         if (! empty($validated['transfer_notes'])) {
             $note .= " - {$validated['transfer_notes']}";
         }
+        if ($proofPath) {
+            $note .= ' [Lampiran bukti struk transfer diunggah]';
+        }
 
         $existingNotes = $order->notes ? $order->notes."\n" : '';
 
-        $order->update([
+        $updateData = [
             'payment_status' => 'waiting_verification',
             'notes' => $existingNotes.$note,
-        ]);
+        ];
 
-        return back()->with('success', 'Bukti konfirmasi transfer Anda telah kami terima. Tim Finance PUTRIJALVA akan memverifikasi mutasi rekening dalam 15-30 menit.');
+        if ($proofPath) {
+            $updateData['payment_proof'] = $proofPath;
+        }
+
+        $order->update($updateData);
+
+        return back()->with('success', 'Bukti konfirmasi transfer dan struk Anda telah kami terima. Tim Finance PUTRIJALVA akan memverifikasi mutasi rekening Anda segera.');
     }
 }

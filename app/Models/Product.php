@@ -396,4 +396,16 @@ class Product extends Model
 
         return true;
     }
+
+    public function incrementSizeStock(string $size, int $qty = 1): void
+    {
+        $normalized = strtoupper(trim($size));
+        $matrix = $this->size_stocks;
+        $current = (int) ($matrix[$normalized] ?? 0);
+
+        $matrix[$normalized] = $current + max(1, $qty);
+        $this->size_stocks = $matrix;
+        $this->stock = array_sum($matrix);
+        $this->save();
+    }
 }

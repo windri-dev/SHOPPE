@@ -586,18 +586,21 @@
     </div>
   @else
     <!-- Guest Auth: Segmented Tabs & Clean Complete Forms -->
+    @php
+      $showRegister = ($isRegister ?? false) || request()->routeIs('register') || request('tab') === 'register' || $errors->has('name') || $errors->has('password_confirmation');
+    @endphp
     <div class="account-wrapper" style="max-width: 560px;">
       <div class="account-tabs" role="tablist">
-        <button type="button" class="account-tab-btn {{ $errors->has('name') || $errors->has('password_confirmation') ? '' : 'active' }}" data-tab="loginPanel" role="tab" aria-selected="{{ $errors->has('name') || $errors->has('password_confirmation') ? 'false' : 'true' }}">
+        <button type="button" class="account-tab-btn {{ $showRegister ? '' : 'active' }}" data-tab="loginPanel" role="tab" aria-selected="{{ $showRegister ? 'false' : 'true' }}">
           Sign In
         </button>
-        <button type="button" class="account-tab-btn {{ $errors->has('name') || $errors->has('password_confirmation') ? 'active' : '' }}" data-tab="registerPanel" role="tab" aria-selected="{{ $errors->has('name') || $errors->has('password_confirmation') ? 'true' : 'false' }}">
+        <button type="button" class="account-tab-btn {{ $showRegister ? 'active' : '' }}" data-tab="registerPanel" role="tab" aria-selected="{{ $showRegister ? 'true' : 'false' }}">
           Register
         </button>
       </div>
 
       <!-- Sign In Panel -->
-      <div class="account-form-panel {{ $errors->has('name') || $errors->has('password_confirmation') ? '' : 'active' }}" id="loginPanel" role="tabpanel">
+      <div class="account-form-panel {{ $showRegister ? '' : 'active' }}" id="loginPanel" role="tabpanel">
         <!-- Google Single Sign-On Button -->
         <div style="margin-bottom: 20px;">
           <a
@@ -640,7 +643,7 @@
       </div>
 
       <!-- Register Panel (Complete with Contact & Default Shipping Location for Checkout) -->
-      <div class="account-form-panel {{ $errors->has('name') || $errors->has('password_confirmation') ? 'active' : '' }}" id="registerPanel" role="tabpanel">
+      <div class="account-form-panel {{ $showRegister ? 'active' : '' }}" id="registerPanel" role="tabpanel">
         <!-- Google Single Sign-On Button for Register -->
         <div style="margin-bottom: 20px;">
           <a

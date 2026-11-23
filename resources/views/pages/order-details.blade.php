@@ -20,9 +20,126 @@
       </svg>
     </span>
     <span class="order-confirmation-text">
-      We've received your order <strong>{{ $order->order_number }}</strong> — thank you for shopping with PUTRIJALVA.
+      {{ __('Kami telah menerima pesanan') }} <strong>{{ $order->order_number }}</strong> — {{ __('terima kasih telah berbelanja di butik busana PUTRIJALVA.') }}
     </span>
   </div>
+
+  <!-- Shopee-Style Order Status Stepper / Timeline -->
+  @php
+    $currentStatusValue = $order->status->value ?? (string) $order->status;
+    $isCancelled = $currentStatusValue === 'cancelled';
+
+    $activeStep = 1;
+    if ($order->isPaid() || $order->isWaitingVerification()) {
+        $activeStep = 2;
+    }
+    if ($currentStatusValue === 'processing') {
+        $activeStep = 3;
+    } elseif ($currentStatusValue === 'shipped') {
+        $activeStep = 4;
+    } elseif ($currentStatusValue === 'delivered') {
+        $activeStep = 5;
+    }
+  @endphp
+
+  @if($isCancelled)
+    <div style="background: #FEF2F2; border: 1.5px solid #FCA5A5; border-radius: 12px; padding: 18px 24px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px;">
+      <div style="background: #EF4444; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <div>
+        <h4 style="margin: 0 0 4px; font-size: 15px; font-weight: 700; color: #991B1B;">Pesanan Dibatalkan</h4>
+        <p style="margin: 0; font-size: 13px; color: #7F1D1D; line-height: 1.5;">
+          Pesanan ini telah dibatalkan. Kuota stok pakaian telah otomatis dikembalikan ke katalog etalase butik.
+        </p>
+      </div>
+    </div>
+  @else
+    <div class="order-timeline-card" style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 22px 24px; margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; flex-wrap: wrap; gap: 8px;">
+        <h3 style="font-size: 15px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+          Status &amp; Lacak Perjalanan Pesanan
+        </h3>
+        <span style="font-size: 12.5px; font-weight: 600; color: #6B7280;">
+          Status Terkini: <strong style="color: #A18A68;">{{ $order->status->label() }}</strong>
+        </span>
+      </div>
+
+      <!-- 5-Step Horizontal Stepper -->
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; position: relative;">
+        <!-- Connecting Line Background -->
+        <div style="position: absolute; top: 19px; left: 8%; right: 8%; height: 3px; background: #E5E7EB; z-index: 1;">
+          <div style="height: 100%; background: #A18A68; width: {{ max(0, min(100, ($activeStep - 1) * 25)) }}%; transition: width 0.4s ease;"></div>
+        </div>
+
+        @php
+          $steps = [
+            1 => ['title' => 'Pesanan Dibuat', 'desc' => $order->created_at?->format('d M H:i') ?? 'Dibuat', 'icon' => 'file-text'],
+            2 => ['title' => $order->isWaitingVerification() ? 'Verifikasi Bayar' : 'Pembayaran', 'desc' => $order->paid_at ? $order->paid_at->format('d M H:i') : ($order->isWaitingVerification() ? 'Dicek Finance' : ($order->isPaid() ? 'Lunas' : 'Belum Bayar')), 'icon' => 'credit-card'],
+            3 => ['title' => 'Sedang Dikemas', 'desc' => $activeStep >= 3 ? 'Perajin Butik' : 'Menunggu', 'icon' => 'package'],
+            4 => ['title' => 'Sedang Dikirim', 'desc' => $order->tracking_number ? $order->courier_name : 'Menunggu Kurir', 'icon' => 'truck'],
+            5 => ['title' => 'Pesanan Selesai', 'desc' => $activeStep >= 5 ? 'Paket Diterima' : 'Tujuan', 'icon' => 'check-circle'],
+          ];
+        @endphp
+
+        @foreach($steps as $sNum => $stepData)
+          @php
+            $isPast = $sNum < $activeStep;
+            $isCurrent = $sNum === $activeStep;
+            $isFuture = $sNum > $activeStep;
+          @endphp
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 18%; position: relative; z-index: 2;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; transition: all 0.2s; background: {{ $isPast || $isCurrent ? '#A18A68' : '#F3F4F6' }}; color: {{ $isPast || $isCurrent ? '#FFFFFF' : '#9CA3AF' }}; border: 2.5px solid {{ $isCurrent ? '#111827' : ($isPast ? '#A18A68' : '#E5E7EB') }}; box-shadow: {{ $isCurrent ? '0 0 0 3px rgba(161, 138, 104, 0.2)' : 'none' }};">
+              @if($isPast)
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              @elseif($stepData['icon'] === 'file-text')
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              @elseif($stepData['icon'] === 'credit-card')
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              @elseif($stepData['icon'] === 'package')
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              @elseif($stepData['icon'] === 'truck')
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+              @else
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              @endif
+            </div>
+            <div style="margin-top: 8px; font-size: 12.5px; font-weight: {{ $isCurrent ? '700' : '600' }}; color: {{ $isCurrent ? '#111827' : ($isPast ? '#374151' : '#9CA3AF') }};">
+              {{ $stepData['title'] }}
+            </div>
+            <div style="font-size: 11px; color: #6B7280; margin-top: 2px;">
+              {{ $stepData['desc'] }}
+            </div>
+          </div>
+        @endforeach
+      </div>
+
+      <!-- Resi & Lacak Paket Highlight Box if Shipped -->
+      @if($order->tracking_number)
+        <div style="margin-top: 22px; background: #F0FDF4; border: 1.5px solid #10B981; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="background: #10B981; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            </div>
+            <div>
+              <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #047857; letter-spacing: 0.05em;">{{ $order->courier_name }}</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+                <span style="font-size: 14.5px; font-weight: 700; font-family: monospace; color: #111827;">{{ $order->tracking_number }}</span>
+                <button type="button" onclick="copyToClipboard('{{ $order->tracking_number }}', 'Nomor resi berhasil disalin!')" style="background: #E5E7EB; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #374151;">Salin Resi</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener noreferrer" style="background: #059669; color: #FFFFFF; font-size: 13px; font-weight: 700; padding: 9px 18px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Lacak Paket Live</span> &nearr;
+            </a>
+          </div>
+        </div>
+      @endif
+    </div>
+  @endif
 
   <!-- Interactive Payment Status & Instruction Box -->
   <div style="margin-bottom: 32px; border-radius: 12px; overflow: hidden; border: 1px solid {{ $order->payment_status === 'paid' ? '#A7F3D0' : ($order->payment_status === 'waiting_verification' ? '#BFDBFE' : '#FDE68A') }}; background: {{ $order->payment_status === 'paid' ? '#F0FDF4' : ($order->payment_status === 'waiting_verification' ? '#EFF6FF' : '#FFFDF7') }};">
@@ -209,28 +326,62 @@
           <div id="manualPaymentFormSection" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #D1D5DB;">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
               <!-- BCA -->
-              <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <span style="font-weight: 700; font-size: 13px; color: #003399;">Bank Central Asia (BCA)</span>
-                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 1px 5px; border-radius: 4px; font-weight: 600;">Manual</span>
+              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13.5px; color: #003399;">Bank Central Asia (BCA)</span>
+                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
                 </div>
-                <div style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">123-456-7890</div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. PT PUTRIJALVA INDONESIA</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
+                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">123-456-7890</span>
+                  <button type="button" onclick="copyToClipboard('1234567890', 'Nomor rekening BCA berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+                </div>
+                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
               </div>
 
               <!-- Mandiri -->
-              <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <span style="font-weight: 700; font-size: 13px; color: #003066;">Bank Mandiri</span>
-                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 1px 5px; border-radius: 4px; font-weight: 600;">Manual</span>
+              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13.5px; color: #003066;">Bank Mandiri</span>
+                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
                 </div>
-                <div style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">102-00-1234567-8</div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. PT PUTRIJALVA INDONESIA</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
+                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">102-00-1234567-8</span>
+                  <button type="button" onclick="copyToClipboard('1020012345678', 'Nomor rekening Mandiri berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+                </div>
+                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
+              </div>
+
+              <!-- BNI -->
+              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; font-size: 13.5px; color: #FA5400;">Bank BNI</span>
+                  <span style="font-size: 10px; background: #FFF7ED; color: #C2410C; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
+                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">987-654-3210</span>
+                  <button type="button" onclick="copyToClipboard('9876543210', 'Nomor rekening BNI berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+                </div>
+                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
               </div>
             </div>
 
-            <!-- Manual Form -->
-            <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+            @if($order->payment_proof)
+              <div style="margin-bottom: 16px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="{{ $order->payment_proof_url }}" alt="Bukti Transfer" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #86EFAC;">
+                  <div>
+                    <div style="font-size: 12.5px; font-weight: 700; color: #166534;">Bukti Struk Transfer Telah Terlampir</div>
+                    <div style="font-size: 11px; color: #15803D;">Status: Sedang diverifikasi oleh tim finance butik.</div>
+                  </div>
+                </div>
+                <a href="{{ $order->payment_proof_url }}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; font-weight: 700; color: #047857; text-decoration: underline;">
+                  Lihat Foto Penuh &nearr;
+                </a>
+              </div>
+            @endif
+
+            <!-- Manual Form with File Upload -->
+            <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" enctype="multipart/form-data" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
               @csrf
               <input type="hidden" name="action_type" value="manual_transfer">
 
@@ -241,7 +392,7 @@
               @endphp
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Bank Asal Pengirim</label>
-                <select name="bank_name" required style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
+                <select name="bank_name" required style="width: 100%; padding: 9px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px; background: #fff;">
                   @foreach(['BCA', 'Mandiri', 'BNI', 'BRI', 'CIMB Niaga', 'BSI', 'SeaBank', 'Bank Lainnya'] as $bankOpt)
                     <option value="{{ $bankOpt }}" {{ $defaultBank === $bankOpt ? 'selected' : '' }}>{{ $bankOpt }}</option>
                   @endforeach
@@ -250,22 +401,41 @@
 
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nama Pemilik Rekening</label>
-                <input type="text" name="sender_name" required value="{{ $defaultHolder }}" placeholder="Nama pemilik rekening" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
+                <input type="text" name="sender_name" required value="{{ $defaultHolder }}" placeholder="Nama pemilik rekening" style="width: 100%; padding: 9px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px; background: #fff;">
               </div>
 
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Nominal yang Ditransfer (Rp)</label>
-                <input type="number" step="1" name="transfer_amount" required value="{{ $idrAmount }}" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
-                <span style="font-size: 11px; color: #6B7280; margin-top: 3px; display: block;">Pastikan nominal transfer sesuai total tagihan pesanan.</span>
+                <input type="number" step="1" name="transfer_amount" required value="{{ $idrAmount }}" style="width: 100%; padding: 9px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px; background: #fff;">
+                <span style="font-size: 11px; color: #6B7280; margin-top: 3px; display: block;">Pastikan nominal sesuai total tagihan pesanan.</span>
+              </div>
+
+              <!-- Upload File Bukti Struk -->
+              <div style="grid-column: 1 / -1; background: #FFFFFF; border: 1.5px dashed #CBD5E1; border-radius: 8px; padding: 14px 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #1E293B; margin-bottom: 4px;">
+                  Unggah Foto / Screenshot Bukti Struk Transfer (Maks. 5 MB)
+                </label>
+                <input
+                  type="file"
+                  name="payment_proof"
+                  id="paymentProofFile"
+                  accept="image/png,image/jpeg,image/webp"
+                  onchange="previewProofImage(event)"
+                  style="width: 100%; font-size: 12.5px; color: #475569;"
+                >
+                <div id="proofPreviewBox" style="display: none; margin-top: 10px; align-items: center; gap: 10px;">
+                  <img id="proofPreviewImg" src="" alt="Pratinjau Struk" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #CBD5E1;">
+                  <span style="font-size: 12px; color: #047857; font-weight: 600;">File siap diunggah saat formulir dikirim.</span>
+                </div>
               </div>
 
               <div style="grid-column: 1 / -1;">
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Catatan Transfer (Opsional)</label>
-                <input type="text" name="transfer_notes" placeholder="Nomor referensi mutasi atau jam transfer..." style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px;">
+                <input type="text" name="transfer_notes" placeholder="Nomor referensi mutasi atau jam transfer..." style="width: 100%; padding: 9px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px; background: #fff;">
               </div>
 
               <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-top: 4px;">
-                <button type="submit" class="btn btn-primary" style="padding: 9px 20px; font-size: 13px; font-weight: 600;">
+                <button type="submit" class="btn btn-primary" style="padding: 11px 24px; font-size: 13.5px; font-weight: 700; background: #A18A68; border-color: #A18A68; color: #fff; cursor: pointer; box-shadow: 0 2px 6px rgba(161, 138, 104, 0.3);">
                   {{ __('Kirim Bukti Konfirmasi Transfer') }}
                 </button>
               </div>
@@ -506,6 +676,72 @@
       }, 4000);
     }
   });
+
+  // Salin ke Clipboard dengan Toast Notifikasi
+  function copyToClipboard(text, successMsg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast(successMsg || 'Berhasil disalin ke clipboard!');
+      }).catch(function() {
+        fallbackCopy(text, successMsg);
+      });
+    } else {
+      fallbackCopy(text, successMsg);
+    }
+  }
+
+  function fallbackCopy(text, successMsg) {
+    const tempInput = document.createElement('textarea');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    showToast(successMsg || 'Berhasil disalin ke clipboard!');
+  }
+
+  function showToast(message) {
+    let toast = document.getElementById('pj-custom-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'pj-custom-toast';
+      toast.style.position = 'fixed';
+      toast.style.bottom = '24px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = '#111827';
+      toast.style.color = '#FFFFFF';
+      toast.style.padding = '10px 20px';
+      toast.style.borderRadius = '9999px';
+      toast.style.fontSize = '13px';
+      toast.style.fontWeight = '600';
+      toast.style.zIndex = '9999';
+      toast.style.boxShadow = '0 10px 15px -3px rgba(0,0,0,0.3)';
+      toast.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(10px)';
+    }, 2500);
+  }
+
+  function previewProofImage(event) {
+    const input = event.target;
+    const box = document.getElementById('proofPreviewBox');
+    const img = document.getElementById('proofPreviewImg');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        img.src = e.target.result;
+        box.style.display = 'flex';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 </script>
 @endpush
 @endsection

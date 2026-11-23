@@ -234,9 +234,23 @@
                   @endif
 
                   <!-- Fast Modal Trigger / Detail -->
+                  @if($order->payment_proof)
+                    <a
+                      href="{{ $order->payment_proof_url }}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="table-action-btn"
+                      style="background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; padding: 5px 8px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"
+                      title="Lihat Foto Bukti Transfer Struk"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                      Bukti Struk
+                    </a>
+                  @endif
+
                   <button
                     type="button"
-                    onclick="openPaymentModal('{{ $order->id }}', '{{ $order->order_number }}', '{{ $order->payment_status }}', '{{ $order->tracking_number }}', '{{ addslashes($order->notes ?? '') }}')"
+                    onclick="openPaymentModal('{{ $order->id }}', '{{ $order->order_number }}', '{{ $order->payment_status }}', '{{ $order->tracking_number }}', '{{ addslashes($order->notes ?? '') }}', '{{ $order->payment_proof_url }}')"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 10px; font-size: 11px;"
                     title="Kelola Pembayaran &amp; Resi Kurir"
@@ -279,6 +293,18 @@
 
     <form id="paymentModalForm" method="POST" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
       @csrf
+      <!-- Proof of Transfer Preview -->
+      <div id="modalProofWrap" style="display: none; padding: 12px; background: #FAF9F6; border: 1.5px dashed #D1D5DB; border-radius: 8px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #1D4ED8; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Foto Bukti Transfer Pelanggan:
+        </div>
+        <a id="modalProofLink" href="#" target="_blank" rel="noopener noreferrer" title="Klik untuk perbesar di tab baru">
+          <img id="modalProofImg" src="" alt="Bukti Transfer" style="max-height: 180px; max-width: 100%; border-radius: 6px; border: 1px solid #D1D5DB; box-shadow: 0 2px 6px rgba(0,0,0,0.1); object-fit: contain;">
+        </a>
+        <div style="font-size: 10.5px; color: #6B7280; margin-top: 4px;">(Klik gambar untuk melihat resolusi penuh di tab baru)</div>
+      </div>
+
       <div>
         <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Status Pembayaran</label>
         <select name="payment_status" id="modalPaymentStatus" class="chat-search-input" style="width: 100%; font-size: 13px;">
@@ -309,12 +335,22 @@
 </div>
 
 <script>
-function openPaymentModal(orderId, orderNumber, paymentStatus, trackingNumber, notes) {
+function openPaymentModal(orderId, orderNumber, paymentStatus, trackingNumber, notes, proofUrl) {
   document.getElementById('paymentModalTitle').textContent = 'Kelola Pembayaran & Resi: ' + orderNumber;
   document.getElementById('paymentModalForm').action = '/admin/orders/' + orderId + '/payment';
   document.getElementById('modalPaymentStatus').value = paymentStatus || 'unpaid';
   document.getElementById('modalTrackingNumber').value = trackingNumber || '';
   document.getElementById('modalNotes').value = notes || '';
+
+  const proofWrap = document.getElementById('modalProofWrap');
+  if (proofUrl && proofUrl.length > 5) {
+    document.getElementById('modalProofImg').src = proofUrl;
+    document.getElementById('modalProofLink').href = proofUrl;
+    proofWrap.style.display = 'block';
+  } else {
+    proofWrap.style.display = 'none';
+  }
+
   document.getElementById('paymentModalBackdrop').style.display = 'flex';
 }
 

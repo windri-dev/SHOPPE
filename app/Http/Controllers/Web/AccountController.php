@@ -40,6 +40,19 @@ class AccountController extends Controller
         return view('pages.account', compact('user', 'orders'));
     }
 
+    public function showRegister(): View|RedirectResponse
+    {
+        if (Auth::check()) {
+            return redirect()->route('account.index');
+        }
+
+        $user = null;
+        $orders = collect();
+        $isRegister = true;
+
+        return view('pages.account', compact('user', 'orders', 'isRegister'));
+    }
+
     public function login(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->only('email', 'password');

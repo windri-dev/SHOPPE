@@ -69,9 +69,11 @@ Route::post('/contact', [ContactController::class, 'submit'])->name('contact.sub
 Route::post('/livechat/message', [ContactController::class, 'livechatSubmit'])->name('livechat.send');
 Route::get('/livechat/thread/{ticketNumber}', [ContactController::class, 'livechatThread'])->name('livechat.thread');
 
-// Default Login route alias
+// Default Login & Register route aliases
 Route::get('/login', [AccountController::class, 'index'])->name('login');
 Route::post('/login', [AccountController::class, 'login']);
+Route::get('/register', [AccountController::class, 'showRegister'])->name('register');
+Route::post('/register', [AccountController::class, 'register']);
 
 // Google OAuth Single Sign-On (SSO)
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');

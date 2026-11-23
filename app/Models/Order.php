@@ -122,4 +122,49 @@ class Order extends Model
             default => 'Belum Dibayar',
         };
     }
+
+    public function getPaymentProofUrlAttribute(): ?string
+    {
+        if (! $this->payment_proof) {
+            return null;
+        }
+
+        if (str_starts_with($this->payment_proof, 'http://') || str_starts_with($this->payment_proof, 'https://')) {
+            return $this->payment_proof;
+        }
+
+        if (file_exists(public_path($this->payment_proof))) {
+            return asset($this->payment_proof);
+        }
+
+        return asset('storage/'.$this->payment_proof);
+    }
+
+    public function getCourierNameAttribute(): string
+    {
+        $tracking = strtoupper((string) $this->tracking_number);
+        if (str_starts_with($tracking, 'JNE')) {
+            return 'JNE Express';
+        }
+        if (str_starts_with($tracking, 'SICEPAT')) {
+            return 'SiCepat Ekspres';
+        }
+        if (str_starts_with($tracking, 'JNT') || str_starts_with($tracking, 'JP')) {
+            return 'J&T Express';
+        }
+        if (str_starts_with($tracking, 'SPX')) {
+            return 'Shopee Xpress (SPX)';
+        }
+
+        return 'Standard Courier';
+    }
+
+    public function getTrackingUrlAttribute(): string
+    {
+        if (! $this->tracking_number) {
+            return '#';
+        }
+
+        return 'https://cekresi.com/?noresi='.urlencode($this->tracking_number);
+    }
 }
