@@ -245,7 +245,7 @@
 
 <!-- MODAL TAMBAH REKENING BANK -->
 <div id="addBankModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-  <div style="background: #FFFFFF; width: 100%; max-width: 500px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden;">
+  <div style="background: #FFFFFF; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
       <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Tambah Rekening Bank Baru</h3>
       <button type="button" onclick="closeAddBankModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6B7280;">&times;</button>
@@ -326,7 +326,7 @@
 
 <!-- MODAL EDIT REKENING BANK -->
 <div id="editBankModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-  <div style="background: #FFFFFF; width: 100%; max-width: 500px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden;">
+  <div style="background: #FFFFFF; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
       <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Data Rekening Bank</h3>
       <button type="button" onclick="closeEditBankModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6B7280;">&times;</button>
