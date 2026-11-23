@@ -304,6 +304,109 @@
           </div>
         </div>
 
+        <!-- MODAL SIMULATOR GATEWAY PEMBAYARAN (SANDBOX/DEMO) -->
+        <div id="pgaSimulatorModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);">
+          <div style="background: #FFFFFF; width: 100%; max-width: 500px; border-radius: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden;">
+            <!-- Modal Header -->
+            <div style="background: #111827; color: #FFFFFF; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background: #F59E0B; color: #111827; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">Sandbox Test</span>
+                <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #fff;">Simulasi Pembayaran Gateway</h3>
+              </div>
+              <button type="button" onclick="closePgaSimulatorModal()" style="background: none; border: none; color: #9CA3AF; font-size: 22px; cursor: pointer; line-height: 1;">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span style="font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase;">Tagihan Pesanan #{{ $order->order_number }}</span>
+                  <div style="font-size: 18px; font-weight: 800; color: #111827;">Rp {{ number_format($idrAmount, 0, ',', '.') }}</div>
+                </div>
+                <span style="font-size: 11px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 3px 8px; border-radius: 6px;">Menunggu Pembayaran</span>
+              </div>
+
+              <p style="font-size: 12.5px; color: #4B5563; margin: 0 0 14px 0;">
+                Pilih salah satu metode dummy di bawah untuk mensimulasikan penyelesaian transaksi instan (Lunas):
+              </p>
+
+              <!-- Channel Options -->
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- 1. QRIS Simulator -->
+                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; background: #FEF2F2; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10px; color: #DC2626; border: 1px solid #FECACA;">
+                      QRIS
+                    </div>
+                    <div>
+                      <div style="font-size: 13.5px; font-weight: 700; color: #111827;">QRIS (GoPay / OVO / Dana / BCA)</div>
+                      <div style="font-size: 11.5px; color: #6B7280;">Simulasi scan QR code instan</div>
+                    </div>
+                  </div>
+                  <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <input type="hidden" name="action_type" value="instant_simulate">
+                    <input type="hidden" name="channel" value="qris">
+                    <button type="submit" class="btn btn-primary" style="padding: 7px 14px; font-size: 12px; font-weight: 700; background: #111827; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                      Bayar QRIS
+                    </button>
+                  </form>
+                </div>
+
+                <!-- 2. Virtual Account Simulator -->
+                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; background: #EFF6FF; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10px; color: #1D4ED8; border: 1px solid #BFDBFE;">
+                      VA
+                    </div>
+                    <div>
+                      <div style="font-size: 13.5px; font-weight: 700; color: #111827;">Virtual Account Multi-Bank</div>
+                      <div style="font-size: 11.5px; color: #6B7280;">BCA, Mandiri, BNI, BRI VA (16-Digit)</div>
+                    </div>
+                  </div>
+                  <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <input type="hidden" name="action_type" value="instant_simulate">
+                    <input type="hidden" name="channel" value="virtual_account">
+                    <button type="submit" class="btn btn-primary" style="padding: 7px 14px; font-size: 12px; font-weight: 700; background: #003399; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                      Bayar VA
+                    </button>
+                  </form>
+                </div>
+
+                <!-- 3. Credit Card Simulator -->
+                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; background: #F0FDF4; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10px; color: #047857; border: 1px solid #BBF7D0;">
+                      CC
+                    </div>
+                    <div>
+                      <div style="font-size: 13.5px; font-weight: 700; color: #111827;">Kartu Kredit / Debit Online</div>
+                      <div style="font-size: 11.5px; color: #6B7280;">Visa / Mastercard Sandbox 3D Secure</div>
+                    </div>
+                  </div>
+                  <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <input type="hidden" name="action_type" value="instant_simulate">
+                    <input type="hidden" name="channel" value="credit_card">
+                    <button type="submit" class="btn btn-primary" style="padding: 7px 14px; font-size: 12px; font-weight: 700; background: #047857; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                      Bayar CC
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div style="background: #F9FAFB; padding: 12px 20px; border-top: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; color: #6B7280;">Khusus simulasi verifikasi sistem staging</span>
+              <button type="button" onclick="closePgaSimulatorModal()" style="background: none; border: 1px solid #D1D5DB; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #374151; cursor: pointer;">
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Secondary Option: Manual Bank Transfer -->
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; background: #FAFAFA; padding: 14px 18px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -622,10 +725,24 @@
     const snapToken = @json($paymentSession['token'] ?? null);
     const redirectUrl = @json($paymentSession['redirect_url'] ?? null);
     const isPaid = @json($order->isPaid());
-    const checkStatusUrl = @json(route('order.check_status', $order->order_number));
+    const isMock = !snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SIM-');
+
+    window.openPgaSimulatorModal = function() {
+      const modal = document.getElementById('pgaSimulatorModal');
+      if (modal) modal.style.display = 'flex';
+    };
+    window.closePgaSimulatorModal = function() {
+      const modal = document.getElementById('pgaSimulatorModal');
+      if (modal) modal.style.display = 'none';
+    };
 
     if (payBtn) {
       payBtn.addEventListener('click', function () {
+        if (isMock) {
+          openPgaSimulatorModal();
+          return;
+        }
+
         if (window.snap && snapToken) {
           window.snap.pay(snapToken, {
             onSuccess: function (result) {
@@ -644,7 +761,7 @@
         } else if (redirectUrl) {
           window.location.href = redirectUrl;
         } else {
-          alert('Sesi pembayaran belum siap. Silakan refresh halaman.');
+          openPgaSimulatorModal();
         }
       });
     }

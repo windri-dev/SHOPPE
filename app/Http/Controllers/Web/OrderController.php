@@ -88,13 +88,24 @@ class OrderController extends Controller
         $actionType = $validated['action_type'] ?? 'manual_transfer';
 
         if ($actionType === 'instant_simulate') {
+            $channel = $request->input('channel', 'pga_simulator');
+            $channelLabel = match ($channel) {
+                'qris' => 'QRIS Instant (Simulasi Sandbox)',
+                'virtual_account' => 'Virtual Account Bank (Simulasi Sandbox)',
+                'credit_card' => 'Kartu Kredit / Debit (Simulasi Sandbox)',
+                default => 'Simulasi Sandbox Gateway',
+            };
+
+            $existingNotes = $order->notes ? $order->notes."\n" : '';
             $order->update([
                 'payment_status' => 'paid',
                 'paid_at' => Carbon::now(),
                 'status' => OrderStatus::PROCESSING,
+                'payment_method' => $channel,
+                'notes' => $existingNotes."[Pembayaran Lunas via {$channelLabel}]",
             ]);
 
-            return back()->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan Anda saat ini sedang disiapkan oleh tim perajin PUTRIJALVA.');
+            return back()->with('success', 'Pembayaran transaksi berhasil diselesaikan via '.$channelLabel.'! Pesanan Anda saat ini berstatus Lunas dan sedang dikemas oleh butik PUTRIJALVA.');
         }
 
         $transferAmount = (float) $validated['transfer_amount'];
