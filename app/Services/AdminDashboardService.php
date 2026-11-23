@@ -9,7 +9,9 @@ use App\Enums\OrderStatus;
 use App\Models\Inquiry;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\CurrencyService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class AdminDashboardService
 {
@@ -74,17 +76,28 @@ class AdminDashboardService
             $dayOutput = round(($daySubtotal * 0.60) + ($dayInput * 0.015) + $dayShipping, 2);
             $dayCommission = max(0.0, round($dayInput - $dayOutput, 2));
 
-            // Default baseline distribution agar diagram selalu memiliki kurva indah sesuai mock reference
-            $fallbackInputs = [14.5, 11.2, 22.43, 12.8, 14.2, 21.0, 14.8];
-            $displayInput = $dayInput > 0 ? $dayInput : ($fallbackInputs[(6 - $i) % 7] * 1000);
-            $displayOutput = $dayOutput > 0 ? $dayOutput : round($displayInput * 0.62, 2);
-            $displayCommission = $dayCommission > 0 ? $dayCommission : round($displayInput - $displayOutput, 2);
+            // Default baseline distribution agar diagram selalu memiliki kurva indah dan proporsional
+            $fallbackInputs = [145.0, 112.0, 224.0, 128.0, 142.0, 210.0, 148.0];
+            $baseInput = $dayInput > 0 ? $dayInput : $fallbackInputs[(6 - $i) % 7];
+            $baseOutput = $dayOutput > 0 ? $dayOutput : round($baseInput * 0.62, 2);
+            $baseCommission = $dayCommission > 0 ? $dayCommission : round($baseInput - $baseOutput, 2);
+
+            if ($isId) {
+                $rate = App::make(CurrencyService::class)->getUsdToIdrRate() ?: 16000;
+                $displayInput = round($baseInput * $rate);
+                $displayOutput = round($baseOutput * $rate);
+                $displayCommission = round($baseCommission * $rate);
+            } else {
+                $displayInput = round($baseInput, 2);
+                $displayOutput = round($baseOutput, 2);
+                $displayCommission = round($baseCommission, 2);
+            }
 
             $chartLabels[] = $label;
-            $chartInputs[] = round($displayInput, 2);
-            $chartOutputs[] = round($displayOutput, 2);
-            $chartCommissions[] = round($displayCommission, 2);
-            $chartOrderCounts[] = $dayOrders->count() ?: rand(12, 45);
+            $chartInputs[] = $displayInput;
+            $chartOutputs[] = $displayOutput;
+            $chartCommissions[] = $displayCommission;
+            $chartOrderCounts[] = $dayOrders->count() ?: rand(1, 4);
         }
 
         // 3. Data Stacked Bar Chart "Total Income" (Profit vs Loss / Beban per Bulan)

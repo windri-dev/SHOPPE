@@ -964,7 +964,7 @@ document.addEventListener('DOMContentLoaded', function () {
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: function(ctx) { return '{{ $isId ? 'Rp ' : '$' }}' + Number(ctx.raw).toLocaleString(); }
+              label: function(ctx) { return '{{ $isId ? 'Rp ' : '$' }}' + Number(ctx.raw).toLocaleString('{{ $isId ? 'id-ID' : 'en-US' }}'); }
             }
           }
         },
@@ -982,7 +982,14 @@ document.addEventListener('DOMContentLoaded', function () {
             ticks: {
               font: { size: 12, family: 'DM Sans, sans-serif' },
               color: '#707070',
-              callback: function(val) { return Number(val) >= 1000 ? (val / 1000) + 'k' : val; }
+              callback: function(val) {
+                if ({{ $isId ? 'true' : 'false' }}) {
+                  if (val >= 1000000) return (val / 1000000).toFixed(1) + ' jt';
+                  if (val >= 1000) return (val / 1000).toFixed(0) + ' rb';
+                  return val;
+                }
+                return Number(val) >= 1000 ? (val / 1000) + 'k' : val;
+              }
             }
           }
         }
