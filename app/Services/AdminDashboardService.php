@@ -11,10 +11,12 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Services\CurrencyService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\App;
 
 class AdminDashboardService
 {
+    public function __construct(
+        protected CurrencyService $currencyService
+    ) {}
     /**
      * Mengambil ringkasan metrik KPI, analisis komisi input-output,
      * serta data grafik penjualan untuk Dashboard Admin.
@@ -83,7 +85,7 @@ class AdminDashboardService
             $baseCommission = $dayCommission > 0 ? $dayCommission : round($baseInput - $baseOutput, 2);
 
             if ($isId) {
-                $rate = App::make(CurrencyService::class)->getUsdToIdrRate() ?: 16000;
+                $rate = $this->currencyService->getUsdToIdrRate() ?: 16000;
                 $displayInput = round($baseInput * $rate);
                 $displayOutput = round($baseOutput * $rate);
                 $displayCommission = round($baseCommission * $rate);
