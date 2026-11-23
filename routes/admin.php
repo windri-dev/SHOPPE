@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LivechatAdminController;
 use App\Http\Controllers\Admin\OrderAdminController;
 use App\Http\Controllers\Admin\ProductAdminController;
+use App\Http\Controllers\Admin\SettingAdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -67,4 +68,12 @@ Route::middleware(['role:admin,store_admin,store_staff'])->group(function () {
     Route::post('/ai-knowledge', [LivechatAdminController::class, 'storeKnowledge'])->name('ai_knowledge.store');
     Route::put('/ai-knowledge/{entry}', [LivechatAdminController::class, 'updateKnowledge'])->name('ai_knowledge.update');
     Route::delete('/ai-knowledge/{entry}', [LivechatAdminController::class, 'destroyKnowledge'])->name('ai_knowledge.destroy');
+
+    // 8. Pengaturan Toko: Rekening Bank Pembayaran & Akun Sosial Media
+    Route::get('/settings', [SettingAdminController::class, 'index'])->name('settings.index');
+    Route::post('/settings/social', [SettingAdminController::class, 'updateSocial'])->name('settings.social');
+    Route::post('/settings/banks', [SettingAdminController::class, 'storeBank'])->name('settings.banks.store');
+    Route::put('/settings/banks/{bank}', [SettingAdminController::class, 'updateBank'])->name('settings.banks.update');
+    Route::post('/settings/banks/{bank}/toggle', [SettingAdminController::class, 'toggleBank'])->name('settings.banks.toggle');
+    Route::delete('/settings/banks/{bank}', [SettingAdminController::class, 'destroyBank'])->name('settings.banks.destroy');
 });

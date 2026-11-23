@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             InquirySeeder::class,
             BlogPostSeeder::class,
             AiKnowledgeSeeder::class,
+            StoreSettingSeeder::class,
         ]);
     }
 }

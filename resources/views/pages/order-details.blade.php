@@ -324,45 +324,38 @@
 
           <!-- Collapsible Manual Transfer Section -->
           <div id="manualPaymentFormSection" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #D1D5DB;">
+            @php
+              $activeBanks = \App\Models\BankAccount::active()->ordered()->get();
+            @endphp
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 16px;">
-              <!-- BCA -->
-              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <span style="font-weight: 700; font-size: 13.5px; color: #003399;">Bank Central Asia (BCA)</span>
-                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
+              @forelse($activeBanks as $bankItem)
+                <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; font-size: 13.5px; color: {{ $bankItem->bank_color }};">{{ $bankItem->bank_name }}</span>
+                    <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
+                    <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">{{ $bankItem->account_number }}</span>
+                    <button type="button" onclick="copyToClipboard('{{ $bankItem->clean_account_number }}', 'Nomor rekening {{ $bankItem->bank_name }} berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+                  </div>
+                  <div style="font-size: 11px; color: #6B7280;">a.n. <strong>{{ $bankItem->account_holder }}</strong></div>
+                  @if($bankItem->branch)
+                    <div style="font-size: 10.5px; color: #94A3B8; margin-top: 2px;">Cabang: {{ $bankItem->branch }}</div>
+                  @endif
                 </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
-                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">123-456-7890</span>
-                  <button type="button" onclick="copyToClipboard('1234567890', 'Nomor rekening BCA berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+              @empty
+                <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-weight: 700; font-size: 13.5px; color: #003399;">Bank Central Asia (BCA)</span>
+                    <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
+                    <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">123-456-7890</span>
+                    <button type="button" onclick="copyToClipboard('1234567890', 'Nomor rekening BCA berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
+                  </div>
+                  <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
                 </div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
-              </div>
-
-              <!-- Mandiri -->
-              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <span style="font-weight: 700; font-size: 13.5px; color: #003066;">Bank Mandiri</span>
-                  <span style="font-size: 10px; background: #EFF6FF; color: #1D4ED8; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
-                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">102-00-1234567-8</span>
-                  <button type="button" onclick="copyToClipboard('1020012345678', 'Nomor rekening Mandiri berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
-                </div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
-              </div>
-
-              <!-- BNI -->
-              <div style="background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 8px; padding: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <span style="font-weight: 700; font-size: 13.5px; color: #FA5400;">Bank BNI</span>
-                  <span style="font-size: 10px; background: #FFF7ED; color: #C2410C; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Manual Transfer</span>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px;">
-                  <span style="font-family: monospace; font-size: 15px; font-weight: 700; color: #111827;">987-654-3210</span>
-                  <button type="button" onclick="copyToClipboard('9876543210', 'Nomor rekening BNI berhasil disalin!')" style="background: #E2E8F0; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; color: #1E293B;">Salin</button>
-                </div>
-                <div style="font-size: 11px; color: #6B7280;">a.n. <strong>PT PUTRIJALVA INDONESIA</strong></div>
-              </div>
+              @endforelse
             </div>
 
             @if($order->payment_proof)
@@ -393,9 +386,16 @@
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Bank Asal Pengirim</label>
                 <select name="bank_name" required style="width: 100%; padding: 9px 12px; font-size: 13px; border: 1px solid #D1D5DB; border-radius: 6px; background: #fff;">
-                  @foreach(['BCA', 'Mandiri', 'BNI', 'BRI', 'CIMB Niaga', 'BSI', 'SeaBank', 'Bank Lainnya'] as $bankOpt)
-                    <option value="{{ $bankOpt }}" {{ $defaultBank === $bankOpt ? 'selected' : '' }}>{{ $bankOpt }}</option>
-                  @endforeach
+                  @if($activeBanks->isNotEmpty())
+                    @foreach($activeBanks as $bOpt)
+                      <option value="{{ $bOpt->bank_name }}" {{ $defaultBank === $bOpt->bank_name ? 'selected' : '' }}>{{ $bOpt->bank_name }}</option>
+                    @endforeach
+                    <option value="Bank Lainnya">Bank Lainnya</option>
+                  @else
+                    @foreach(['BCA', 'Mandiri', 'BNI', 'BRI', 'CIMB Niaga', 'BSI', 'SeaBank', 'Bank Lainnya'] as $bankOpt)
+                      <option value="{{ $bankOpt }}" {{ $defaultBank === $bankOpt ? 'selected' : '' }}>{{ $bankOpt }}</option>
+                    @endforeach
+                  @endif
                 </select>
               </div>
 
