@@ -771,7 +771,7 @@
       <div style="position: relative; width: 100%; height: 260px;">
         <!-- Floating Highlight Pill Badge in Luxury Gold #A18A68 -->
         <div style="position: absolute; top: 12px; left: 35%; transform: translateX(-50%); background: #A18A68; color: #FFFFFF; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; box-shadow: 0 4px 10px rgba(161, 138, 104, 0.35); pointer-events: none; z-index: 10; display: flex; align-items: center; justify-content: center;">
-          {{ \App\Services\CurrencyService::formatPrice($metrics['sales_chart']['highest_day_input'] ?? 0) }}
+          {{ $isId ? 'Rp ' . number_format((float) ($metrics['sales_chart']['highest_day_input'] ?? 0), 0, ',', '.') : '$' . number_format((float) ($metrics['sales_chart']['highest_day_input'] ?? 0), 2) }}
           <span style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #A18A68;"></span>
         </div>
         <canvas id="revenueAnalyticsChart"></canvas>
