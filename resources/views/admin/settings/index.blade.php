@@ -50,7 +50,7 @@
             {{ $isId ? 'Hanya rekening dengan status "Aktif" yang akan ditampilkan kepada pelanggan di halaman pembayaran.' : 'Only active accounts will be presented to customers on checkout and payment pages.' }}
           </p>
         </div>
-        <button type="button" onclick="openAddBankModal()" class="btn-dash-primary" style="padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+        <button type="button" onclick="openAddBankModal()" class="btn-dash-primary" style="background: #111827; color: #FFFFFF; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span>{{ $isId ? 'Tambah Rekening Baru' : 'Add Bank Account' }}</span>
         </button>
@@ -228,7 +228,7 @@
         </div>
 
         <div style="display: flex; justify-content: flex-end; border-top: 1px solid #E5E7EB; padding-top: 16px; margin-top: 8px;">
-          <button type="submit" class="btn-dash-primary" style="padding: 10px 24px; font-size: 13.5px; font-weight: 700; cursor: pointer;">
+          <button type="submit" class="btn-dash-primary" style="background: #111827; color: #FFFFFF; border: none; border-radius: 8px; padding: 11px 26px; font-size: 13.5px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
             {{ $isId ? 'Simpan Pengaturan Sosial Media' : 'Save Social Settings' }}
           </button>
         </div>
@@ -282,7 +282,7 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
         <button type="button" onclick="closeAddBankModal()" class="table-action-btn" style="background: #F3F4F6; color: #374151;">Batal</button>
-        <button type="submit" class="btn-dash-primary" style="padding: 8px 18px; font-size: 13px; font-weight: 600;">Simpan Rekening</button>
+        <button type="submit" class="btn-dash-primary" style="background: #111827; color: #FFFFFF; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 700; cursor: pointer;">Simpan Rekening</button>
       </div>
     </form>
   </div>
@@ -333,7 +333,7 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; border-top: 1px solid #E5E7EB; padding-top: 14px;">
         <button type="button" onclick="closeEditBankModal()" class="table-action-btn" style="background: #F3F4F6; color: #374151;">Batal</button>
-        <button type="submit" class="btn-dash-primary" style="padding: 8px 18px; font-size: 13px; font-weight: 600;">Simpan Perubahan</button>
+        <button type="submit" class="btn-dash-primary" style="background: #111827; color: #FFFFFF; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 700; cursor: pointer;">Simpan Perubahan</button>
       </div>
     </form>
   </div>
