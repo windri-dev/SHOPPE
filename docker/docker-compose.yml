@@ -1,0 +1,22 @@
+services:
+  shoppe-staging:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: shoppe-staging-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8005:80"
+    environment:
+      - APP_NAME=PUTRIJALVA
+      - APP_ENV=staging
+      - APP_DEBUG=true
+      - APP_URL=https://shoppe-staging.wn-cdn.net
+      - DB_CONNECTION=sqlite
+    volumes:
+      - shoppe_storage:/var/www/html/storage
+      - shoppe_db:/var/www/html/database
+
+volumes:
+  shoppe_storage:
+  shoppe_db:
