@@ -15,6 +15,72 @@ class ProductSeeder extends Seeder
         $categories = Category::all()->keyBy('slug');
 
         $products = [
+            // ================= CROP TOPS =================
+            [
+                'sku' => 'SKU-CRP-001',
+                'name' => 'Aurelia Ruched Silk Crop Top',
+                'slug' => 'aurelia-ruched-silk-crop-top',
+                'category_id' => $categories['crop-tops']->id,
+                'price' => 65.00,
+                'original_price' => 85.00,
+                'stock' => 24,
+                'is_featured' => true,
+                'is_active' => true,
+                'badge' => 'Best Seller',
+                'sales_count' => 195,
+                'description' => 'Atasan crop top sutra kontemporer dengan aksen ruched draperi di bagian dada dan pinggang. Dilengkapi tali spageti yang dapat diatur serta siluet pas badan yang anggun dan nyaman sepanjang hari.',
+                'images' => ['images/product-1.png', 'images/product-2.png'],
+                'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            ],
+            [
+                'sku' => 'SKU-CRP-002',
+                'name' => 'Bianca Cold-Shoulder Ribbed Crop Top',
+                'slug' => 'bianca-cold-shoulder-ribbed-crop-top',
+                'category_id' => $categories['crop-tops']->id,
+                'price' => 42.00,
+                'original_price' => 55.00,
+                'stock' => 18,
+                'is_featured' => true,
+                'is_active' => true,
+                'badge' => 'Trending',
+                'sales_count' => 140,
+                'description' => 'Baju crop top lengan panjang mock-neck modern dengan aksen cold-shoulder cut-out yang memikat. Dibuat dari rajutan ribbed jersey lentur yang sejuk dan pas memeluk lekuk tubuh.',
+                'images' => ['images/product-2.png', 'images/product-3.png'],
+                'video_url' => null,
+            ],
+            [
+                'sku' => 'SKU-CRP-003',
+                'name' => 'Chloe Ribbed Knit Lounge Crop Top',
+                'slug' => 'chloe-ribbed-knit-lounge-crop-top',
+                'category_id' => $categories['crop-tops']->id,
+                'price' => 36.00,
+                'original_price' => 45.00,
+                'stock' => 16,
+                'is_featured' => true,
+                'is_active' => true,
+                'badge' => '-20%',
+                'sales_count' => 112,
+                'description' => 'Crop top santai berpotongan leher scoop neck dalam balutan rajut katun bernuansa ivory lembut. Sangat cocok dipadukan dengan loungewear bawahan serasi atau celana denim santai.',
+                'images' => ['images/product-3.png', 'images/product-4.png'],
+                'video_url' => null,
+            ],
+            [
+                'sku' => 'SKU-CRP-004',
+                'name' => 'Noemi Minimalist Cami Crop Top',
+                'slug' => 'noemi-minimalist-cami-crop-top',
+                'category_id' => $categories['crop-tops']->id,
+                'price' => 29.00,
+                'original_price' => null,
+                'stock' => 20,
+                'is_featured' => false,
+                'is_active' => true,
+                'badge' => 'New Arrival',
+                'sales_count' => 88,
+                'description' => 'Atasan kamisol crop hitam klasik bergaris leher square modern. Dibuat dari bahan katun stretch bernapas yang nyaman untuk iklim tropis maupun dalam paduan blazer formal.',
+                'images' => ['images/product-4.png', 'images/product-1.png'],
+                'video_url' => null,
+            ],
+
             // ================= DRESSES =================
             [
                 'sku' => 'SKU-DRS-001',
@@ -45,9 +111,9 @@ Spesifikasi Produk:
 Gaun ini dilengkapi furing lembut di bagian dada untuk kenyamanan ekstra dan tidak jiplak. Pilihan sempurna untuk menciptakan penampilan elegan yang timeless dan memikat di setiap momen spesial Anda!
 
 <div class="desc-banner-img">
-  <img src="/images/product-1.png" alt="Keanggunan Siluet & Material Silk-Blend Premium">
+  <img src="/images/product-5.png" alt="Keanggunan Siluet & Material Silk-Blend Premium">
 </div>',
-                'images' => ['images/product-1.png', 'images/product-2.png'],
+                'images' => ['images/product-5.png', 'images/product-1.png'],
                 'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
             ],
             [
@@ -168,18 +234,18 @@ Gaun ini dilengkapi furing lembut di bagian dada untuk kenyamanan ekstra dan tid
             // ================= OUTERWEAR & BLAZERS =================
             [
                 'sku' => 'SKU-OUT-001',
-                'name' => 'Valerie Tailored Double-Breasted Blazer',
-                'slug' => 'valerie-tailored-double-breasted-blazer',
+                'name' => 'Valerie Tailored Linen Blazer & Crop Set',
+                'slug' => 'valerie-tailored-linen-blazer-and-crop-set',
                 'category_id' => $categories['outerwear-blazers']->id,
-                'price' => 78.00,
-                'original_price' => 98.00,
+                'price' => 95.00,
+                'original_price' => 125.00,
                 'stock' => 14,
                 'is_featured' => true,
                 'is_active' => true,
-                'badge' => 'Best Seller',
+                'badge' => 'Atelier Set',
                 'sales_count' => 120,
-                'description' => 'Blazer formal struktural kancing ganda dengan bantalan bahu presisi dan kerah lapel tajam. Menggunakan furing sutra lembut di bagian dalam untuk kenyamanan berpakaian seharian.',
-                'images' => ['images/product-3.png', 'images/product-4.png'],
+                'description' => 'Setelan blazer linen tailored oversized berkancing ganda warna beige natural, lengkap dengan crop top bandeau senada di bagian dalam. Pilihan sempurna untuk profesional modern yang percaya diri.',
+                'images' => ['images/product-6.png', 'images/product-2.png'],
                 'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
             ],
             [

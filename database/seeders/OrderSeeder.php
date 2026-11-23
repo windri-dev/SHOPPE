@@ -50,8 +50,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-EAR-001', 'qty' => 1],
-                    ['sku' => 'SKU-NEC-002', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-001', 'qty' => 1],
+                    ['sku' => 'SKU-DRS-002', 'qty' => 1],
                 ],
             ],
 
@@ -76,8 +76,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-BRC-002', 'qty' => 1],
-                    ['sku' => 'SKU-RNG-001', 'qty' => 1],
+                    ['sku' => 'SKU-TOP-002', 'qty' => 1],
+                    ['sku' => 'SKU-OUT-001', 'qty' => 1],
                 ],
             ],
 
@@ -127,8 +127,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-EAR-002', 'qty' => 2],
-                    ['sku' => 'SKU-HAR-001', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-002', 'qty' => 2],
+                    ['sku' => 'SKU-PNT-001', 'qty' => 1],
                 ],
             ],
 
@@ -153,7 +153,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-RNG-002', 'qty' => 1],
+                    ['sku' => 'SKU-OUT-002', 'qty' => 1],
                 ],
             ],
 
@@ -178,8 +178,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-HAR-001', 'qty' => 1],
-                    ['sku' => 'SKU-EAR-002', 'qty' => 1],
+                    ['sku' => 'SKU-PNT-001', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-002', 'qty' => 1],
                 ],
             ],
 
@@ -204,7 +204,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-WAT-001', 'qty' => 1],
+                    ['sku' => 'SKU-SKR-001', 'qty' => 1],
                 ],
             ],
 
@@ -254,8 +254,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-BRC-001', 'qty' => 1],
-                    ['sku' => 'SKU-PEN-001', 'qty' => 1],
+                    ['sku' => 'SKU-TOP-001', 'qty' => 1],
+                    ['sku' => 'SKU-DRS-001', 'qty' => 1],
                 ],
             ],
 
@@ -280,8 +280,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-EAR-003', 'qty' => 1],
-                    ['sku' => 'SKU-RNG-001', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-003', 'qty' => 1],
+                    ['sku' => 'SKU-OUT-001', 'qty' => 1],
                 ],
             ],
 
@@ -306,7 +306,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-BRO-001', 'qty' => 1],
+                    ['sku' => 'SKU-TOP-001', 'qty' => 1],
                 ],
             ],
 
@@ -331,8 +331,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-ANK-001', 'qty' => 2],
-                    ['sku' => 'SKU-ANK-002', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-001', 'qty' => 2],
+                    ['sku' => 'SKU-CRP-002', 'qty' => 1],
                 ],
             ],
 
@@ -357,7 +357,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-WAT-002', 'qty' => 1],
+                    ['sku' => 'SKU-SKR-002', 'qty' => 1],
                 ],
             ],
 
@@ -382,8 +382,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-NEC-003', 'qty' => 1],
-                    ['sku' => 'SKU-RNG-003', 'qty' => 1],
+                    ['sku' => 'SKU-DRS-003', 'qty' => 1],
+                    ['sku' => 'SKU-OUT-003', 'qty' => 1],
                 ],
             ],
 
@@ -408,8 +408,8 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-EAR-005', 'qty' => 1],
-                    ['sku' => 'SKU-HAR-002', 'qty' => 1],
+                    ['sku' => 'SKU-CRP-005', 'qty' => 1],
+                    ['sku' => 'SKU-PNT-002', 'qty' => 1],
                 ],
             ],
 
@@ -459,7 +459,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-HAR-003', 'qty' => 1],
+                    ['sku' => 'SKU-PNT-003', 'qty' => 1],
                 ],
             ],
 
@@ -484,7 +484,7 @@ class OrderSeeder extends Seeder
                     'country' => 'Indonesia',
                 ],
                 'items' => [
-                    ['sku' => 'SKU-NEC-004', 'qty' => 1],
+                    ['sku' => 'SKU-DRS-004', 'qty' => 1],
                 ],
             ],
         ];

@@ -10,33 +10,33 @@
       <div class="hero-slides">
         <!-- Slide 1 -->
         <div class="hero-slide active">
-          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Silk Wrap Crop Top" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
+          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Ruched Silk Crop Top" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h1 class="hero-title">Aurelia Silk Wrap Crop Top</h1>
+            <h1 class="hero-title">Aurelia Ruched Silk Crop Top</h1>
             <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(65) }}</div>
-            <a href="{{ route('shop.index') }}" class="btn">{{ __('Lihat Produk') }}</a>
+            <a href="{{ route('shop.index') }}" class="btn">{{ __('Lihat Koleksi') }}</a>
           </div>
         </div>
 
         <!-- Slide 2 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-1.jpg') }}" alt="Tailored Linen Crop Shirt" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-1.jpg') }}" alt="Valerie Tailored Linen Blazer Set" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Tailored Linen Crop Shirt</h2>
-            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(38) }}</div>
+            <h2 class="hero-title">Valerie Tailored Linen Blazer Set</h2>
+            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(95) }}</div>
             <a href="{{ route('shop.index') }}" class="btn">{{ __('Buka Koleksi') }}</a>
           </div>
         </div>
 
         <!-- Slide 3 -->
         <div class="hero-slide">
-          <img src="{{ asset('images/blog-2.jpg') }}" alt="Elise Ribbed Knit Halter Crop" class="hero-bg" loading="lazy" width="1200" height="600">
+          <img src="{{ asset('images/blog-2.jpg') }}" alt="Bianca Cold-Shoulder Ribbed Crop" class="hero-bg" loading="lazy" width="1200" height="600">
           <div class="hero-overlay"></div>
           <div class="hero-content">
-            <h2 class="hero-title">Elise Ribbed Knit Halter Crop</h2>
-            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(78) }}</div>
+            <h2 class="hero-title">Bianca Cold-Shoulder Ribbed Crop</h2>
+            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(42) }}</div>
             <a href="{{ route('shop.index') }}" class="btn">{{ __('Eksplorasi Koleksi') }}</a>
           </div>
         </div>

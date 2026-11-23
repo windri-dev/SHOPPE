@@ -15,17 +15,12 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'Crop Tops',
                 'slug' => 'crop-tops',
-                'description' => 'Koleksi atasan crop top wanita modis: ribbed knit crop, linen button-up crop, halter tank crop, dan basic cotton crop.',
+                'description' => 'Koleksi atasan crop top wanita modis: ruched silk crop, cold-shoulder ribbed crop, halter crop, dan minimalist cami crop.',
             ],
             [
                 'name' => 'Blouses & Tops',
                 'slug' => 'blouses-tops',
                 'description' => 'Koleksi atasan wanita elegan, kemeja relaxed linen, satin drape blouse, dan kemeja katun berkancing.',
-            ],
-            [
-                'name' => 'Accessories',
-                'slug' => 'accessories',
-                'description' => 'Pelengkap gaya wanita modern: perhiasan anting, kalung, hair clip, sabuk, dan tas pilihan.',
             ],
             [
                 'name' => 'Dresses',
