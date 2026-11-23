@@ -317,79 +317,79 @@
             </div>
 
             <!-- Modal Body -->
-            <div style="padding: 16px 20px; max-height: 85vh; overflow-y: auto;">
-              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="padding: 14px 18px;">
+              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                  <span style="font-size: 11px; color: #64748B; font-weight: 600; text-transform: uppercase;">Tagihan Pesanan #{{ $order->order_number }}</span>
-                  <div style="font-size: 17px; font-weight: 800; color: #111827;">Rp {{ number_format($idrAmount, 0, ',', '.') }}</div>
+                  <span style="font-size: 10.5px; color: #64748B; font-weight: 600; text-transform: uppercase;">Tagihan Pesanan #{{ $order->order_number }}</span>
+                  <div style="font-size: 16px; font-weight: 800; color: #111827;">Rp {{ number_format($idrAmount, 0, ',', '.') }}</div>
                 </div>
-                <span style="font-size: 10.5px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 2px 8px; border-radius: 6px;">Menunggu Pembayaran</span>
+                <span style="font-size: 10px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 2px 7px; border-radius: 5px;">Menunggu Pembayaran</span>
               </div>
 
-              <p style="font-size: 12px; color: #4B5563; margin: 0 0 10px 0;">
+              <p style="font-size: 11.5px; color: #4B5563; margin: 0 0 8px 0;">
                 Pilih salah satu metode dummy di bawah untuk mensimulasikan penyelesaian transaksi instan (Lunas):
               </p>
 
               <!-- Channel Options -->
-              <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 6px;">
                 <!-- 1. QRIS Simulator -->
-                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                <div style="border: 1px solid #E5E7EB; border-radius: 7px; padding: 8px 12px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 32px; height: 32px; background: #FEF2F2; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9.5px; color: #DC2626; border: 1px solid #FECACA;">
+                    <div style="width: 30px; height: 30px; background: #FEF2F2; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9px; color: #DC2626; border: 1px solid #FECACA;">
                       QRIS
                     </div>
                     <div>
-                      <div style="font-size: 13px; font-weight: 700; color: #111827;">QRIS (GoPay / OVO / Dana / BCA)</div>
-                      <div style="font-size: 11px; color: #6B7280;">Simulasi scan QR code instan</div>
+                      <div style="font-size: 12.5px; font-weight: 700; color: #111827;">QRIS (GoPay / OVO / Dana / BCA)</div>
+                      <div style="font-size: 10.5px; color: #6B7280;">Simulasi scan QR code instan</div>
                     </div>
                   </div>
                   <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
                     @csrf
                     <input type="hidden" name="action_type" value="instant_simulate">
                     <input type="hidden" name="channel" value="qris">
-                    <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; background: #111827; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                    <button type="submit" class="btn btn-primary" style="padding: 5px 12px; font-size: 11px; font-weight: 700; background: #111827; border: none; border-radius: 5px; color: #fff; cursor: pointer;">
                       Bayar QRIS
                     </button>
                   </form>
                 </div>
 
                 <!-- 2. Virtual Account Simulator -->
-                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                <div style="border: 1px solid #E5E7EB; border-radius: 7px; padding: 8px 12px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 32px; height: 32px; background: #EFF6FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9.5px; color: #1D4ED8; border: 1px solid #BFDBFE;">
+                    <div style="width: 30px; height: 30px; background: #EFF6FF; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9px; color: #1D4ED8; border: 1px solid #BFDBFE;">
                       VA
                     </div>
                     <div>
-                      <div style="font-size: 13px; font-weight: 700; color: #111827;">Virtual Account Multi-Bank</div>
-                      <div style="font-size: 11px; color: #6B7280;">BCA, Mandiri, BNI, BRI VA (16-Digit)</div>
+                      <div style="font-size: 12.5px; font-weight: 700; color: #111827;">Virtual Account Multi-Bank</div>
+                      <div style="font-size: 10.5px; color: #6B7280;">BCA, Mandiri, BNI, BRI VA (16-Digit)</div>
                     </div>
                   </div>
                   <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
                     @csrf
                     <input type="hidden" name="action_type" value="instant_simulate">
                     <input type="hidden" name="channel" value="virtual_account">
-                    <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; background: #003399; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                    <button type="submit" class="btn btn-primary" style="padding: 5px 12px; font-size: 11px; font-weight: 700; background: #003399; border: none; border-radius: 5px; color: #fff; cursor: pointer;">
                       Bayar VA
                     </button>
                   </form>
                 </div>
 
                 <!-- 3. Credit Card Simulator -->
-                <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 14px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
+                <div style="border: 1px solid #E5E7EB; border-radius: 7px; padding: 8px 12px; background: #FFFFFF; display: flex; justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 32px; height: 32px; background: #F0FDF4; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9.5px; color: #047857; border: 1px solid #BBF7D0;">
+                    <div style="width: 30px; height: 30px; background: #F0FDF4; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 9px; color: #047857; border: 1px solid #BBF7D0;">
                       CC
                     </div>
                     <div>
-                      <div style="font-size: 13px; font-weight: 700; color: #111827;">Kartu Kredit / Debit Online</div>
-                      <div style="font-size: 11px; color: #6B7280;">Visa / Mastercard Sandbox 3D Secure</div>
+                      <div style="font-size: 12.5px; font-weight: 700; color: #111827;">Kartu Kredit / Debit Online</div>
+                      <div style="font-size: 10.5px; color: #6B7280;">Visa / Mastercard Sandbox 3D Secure</div>
                     </div>
                   </div>
                   <form action="{{ route('order.confirm_payment', $order->order_number) }}" method="POST" style="margin: 0;">
                     @csrf
                     <input type="hidden" name="action_type" value="instant_simulate">
                     <input type="hidden" name="channel" value="credit_card">
-                    <button type="submit" class="btn btn-primary" style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; background: #047857; border: none; border-radius: 6px; color: #fff; cursor: pointer;">
+                    <button type="submit" class="btn btn-primary" style="padding: 5px 12px; font-size: 11px; font-weight: 700; background: #047857; border: none; border-radius: 5px; color: #fff; cursor: pointer;">
                       Bayar CC
                     </button>
                   </form>
