@@ -36,10 +36,10 @@ return [
     ],
 
     'ai_concierge' => [
-        'provider' => env('AI_CONCIERGE_PROVIDER', 'gemini'),
-        'api_key' => env('AI_CONCIERGE_API_KEY'),
-        'model' => env('AI_CONCIERGE_MODEL', 'ag/gemini-3.8-flash-low'),
-        'endpoint' => env('AI_CONCIERGE_ENDPOINT'),
+        'provider' => env('AI_CONCIERGE_PROVIDER', 'openai'),
+        'api_key' => env('AI_CONCIERGE_API_KEY', 'sk-51490152f7fec038-a605e5-b7b5a0a4'),
+        'model' => env('AI_CONCIERGE_MODEL', 'AI_Assisten_PJ'),
+        'endpoint' => env('AI_CONCIERGE_ENDPOINT', 'http://192.168.1.13:20129/v1'),
     ],
 
     'currency' => [

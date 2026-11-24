@@ -820,7 +820,7 @@ class AiConciergeService
             .'3. Jika pelanggan membutuhkan bantuan pesanan atau komplain, arahkan untuk menghubungi Customer Service kami.';
 
         try {
-            $httpClient = Http::timeout(12);
+            $httpClient = Http::timeout(25);
             if (app()->environment('local', 'testing')) {
                 $httpClient = $httpClient->withoutVerifying();
             }
@@ -898,8 +898,8 @@ class AiConciergeService
             $response = $httpClient->withToken($apiKey)->post($url, [
                 'model' => $model,
                 'messages' => $messagesPayload,
-                'temperature' => 0.5,
-                'max_tokens' => 180,
+                'temperature' => 0.6,
+                'max_tokens' => 1000,
                 'stream' => false,
             ]);
 
