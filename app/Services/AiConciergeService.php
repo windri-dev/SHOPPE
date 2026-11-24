@@ -466,99 +466,126 @@ class AiConciergeService
      */
     protected function checkProductAndPriceCatalog(string $q, ?int $productId = null): ?array
     {
-        if ($productId) {
-            /** @var ?Product $targetProduct */
-            $targetProduct = Product::with('category')->find($productId);
-            if ($targetProduct) {
-                $priceText = $targetProduct->formatted_price;
-                if ($targetProduct->original_price && (float) $targetProduct->original_price > (float) $targetProduct->price) {
-                    $priceText .= " *(Harga normal: {$targetProduct->formatted_original_price})*";
-                }
-
-                // Cek apakah user menanyakan ukuran spesifik (S, M, L, XL)
-                $requestedSize = null;
-                if (preg_match('/\b(?:ukuran|size|sz)\s*[:=\-]?\s*([sml]|xl|xxl)\b/i', $q, $matches)) {
-                    $requestedSize = strtoupper($matches[1]);
-                } elseif (preg_match('/\b([sml]|xl|xxl)\b/i', $q, $matches) && (str_contains($q, 'ukuran') || str_contains($q, 'size') || str_contains($q, 'ready') || str_contains($q, 'stok') || str_contains($q, 'ada') || str_contains($q, 'habis') || str_contains($q, 'kosong'))) {
-                    $requestedSize = strtoupper($matches[1]);
-                }
-
-                if ($requestedSize) {
-                    $sizeQty = $targetProduct->getStockForSize($requestedSize);
-                    if ($sizeQty > 0) {
-                        $reply = "Kabar baik Kak! Untuk busana **{$targetProduct->name}** ({$targetProduct->sku}) ukuran **{$requestedSize}** saat ini **tersedia ({$sizeQty} pcs siap kirim)** dengan harga resmi **{$priceText}** ✨.\n\n"
-                            ."• **Status:** Siap Kirim\n"
-                            .'• **Kategori:** '.($targetProduct->category->name ?? 'Busana & Pakaian')."\n\n"
-                            .'Apakah Kakak ingin langsung memesan ukuran ini sekarang?';
-                    } else {
-                        $otherSizes = [];
-                        foreach (['S', 'M', 'L', 'XL'] as $sz) {
-                            $otherQty = $targetProduct->getStockForSize($sz);
-                            if ($otherQty > 0) {
-                                $otherSizes[] = "• **Ukuran {$sz}:** Tersedia (**{$otherQty} pcs**)";
-                            }
-                        }
-
-                        $otherText = count($otherSizes) > 0
-                            ? "Namun untuk ukuran lain masih tersedia siap kirim:\n".implode("\n", $otherSizes)
-                            : 'Saat ini seluruh ukuran untuk busana ini sedang habis.';
-
-                        $reply = "Mohon maaf Kak, untuk busana **{$targetProduct->name}** ukuran **{$requestedSize}** saat ini sedang **kosong / habis** 😔.\n\n"
-                            ."{$otherText}\n\n"
-                            .'Apakah Kakak ingin memilih ukuran lain yang masih tersedia, atau dibantu dicarikan model serupa?';
-                    }
-                } else {
-                    $sizeBreakdown = [];
-                    foreach (['S', 'M', 'L', 'XL'] as $sz) {
-                        $szQty = $targetProduct->getStockForSize($sz);
-                        if ($szQty > 0) {
-                            $sizeBreakdown[] = "• **Ukuran {$sz}:** Tersedia (**{$szQty} pcs** siap kirim)";
-                        } else {
-                            $sizeBreakdown[] = "• **Ukuran {$sz}:** **Kosong (Habis)**";
-                        }
-                    }
-
-                    $stockSummary = $targetProduct->stock > 0
-                        ? "Tersedia total **{$targetProduct->stock} pcs** siap kirim"
-                        : '**Stok Habis (Sold Out)**';
-
-                    $reply = "Halo Kak! Berikut pengecekan ketersediaan stok & ukuran real-time untuk **{$targetProduct->name}** ({$targetProduct->sku}):\n"
-                        ."• **Harga Resmi:** **{$priceText}**\n"
-                        ."• **Status Total:** {$stockSummary}\n"
-                        .'• **Kategori:** '.($targetProduct->category->name ?? 'Busana & Pakaian')."\n\n"
-                        ."**Rincian Ketersediaan Ukuran:**\n"
-                        .implode("\n", $sizeBreakdown)."\n\n"
-                        .($targetProduct->stock > 0 ? 'Kakak berminat untuk ukuran yang mana? Silakan tanyakan jika butuh panduan ukuran (size chart) ✨' : 'Model ini saat ini sedang habis, tim kami siap merekomendasikan pilihan busana serupa yang ready stock.');
-                }
-
-                return [
-                    'reply' => $reply,
-                    'action_btn' => [
-                        'label' => "Lihat {$targetProduct->name} ({$targetProduct->formatted_price})",
-                        'url' => route('shop.show', $targetProduct->slug),
-                        'external' => false,
-                    ],
-                    'matched_products' => [
-                        [
-                            'id' => $targetProduct->id,
-                            'name' => $targetProduct->name,
-                            'sku' => $targetProduct->sku,
-                            'price' => $targetProduct->formatted_price,
-                            'stock' => $targetProduct->stock,
-                            'url' => route('shop.show', $targetProduct->slug),
-                        ],
-                    ],
-                ];
-            }
-        }
-
         /** @var Collection<int, Product> $allProducts */
         $allProducts = Product::with('category')->where('is_active', true)->get();
         if ($allProducts->isEmpty()) {
             return null;
         }
 
-        // A. Cek apakah pelanggan menyebut nama produk spesifik atau SKU
+        // 1. Cek apakah ada produk di katalog yang secara spesifik disebut namanya / SKU di pesan pelanggan
+        $mentionedProduct = null;
+        foreach ($allProducts as $p) {
+            $nameLower = strtolower($p->name);
+            $skuLower = strtolower((string) $p->sku);
+            if ($skuLower !== '' && str_contains($q, $skuLower)) {
+                $mentionedProduct = $p;
+                break;
+            }
+            if (str_contains($q, $nameLower)) {
+                $mentionedProduct = $p;
+                break;
+            }
+            // Cek kata kunci spesifik unik
+            $genericWords = ['dress', 'gaun', 'midi', 'maxi', 'baju', 'atasan', 'blouse', 'top', 'shirt', 'kemeja', 'celana', 'pants', 'rok', 'skirt', 'linen', 'silk', 'katun', 'cotton', 'outer', 'blazer', 'set', 'with', 'yang', 'ini', 'ada', 'ka', 'kak', 'min'];
+            $words = preg_split('/\s+/', $nameLower) ?: [];
+            foreach ($words as $word) {
+                $cleanWord = preg_replace('/[^a-z0-9]/', '', $word) ?? '';
+                if (strlen($cleanWord) >= 4 && ! in_array($cleanWord, $genericWords, true) && preg_match('/\b'.preg_quote($cleanWord, '/').'\b/', $q)) {
+                    $mentionedProduct = $p;
+                    break 2;
+                }
+            }
+        }
+
+        // Tentukan target produk:
+        // Utamakan produk yang spesifik disebut di pesan teks pelanggan.
+        // Jika tidak ada nama produk di teks, gunakan $productId terlampir.
+        /** @var ?Product $targetProduct */
+        $targetProduct = $mentionedProduct ?? ($productId ? $allProducts->firstWhere('id', $productId) : null);
+
+        if ($targetProduct) {
+            $priceText = $targetProduct->formatted_price;
+
+            // Cek apakah user menanyakan ukuran spesifik (S, M, L, XL)
+            $requestedSize = null;
+            if (preg_match('/\b(?:ukuran|size|sz)\s*[:=\-]?\s*([sml]|xl|xxl)\b/i', $q, $matches)) {
+                $requestedSize = strtoupper($matches[1]);
+            } elseif (preg_match('/\b([sml]|xl|xxl)\b/i', $q, $matches) && (str_contains($q, 'ukuran') || str_contains($q, 'size') || str_contains($q, 'ready') || str_contains($q, 'stok') || str_contains($q, 'ada') || str_contains($q, 'habis') || str_contains($q, 'kosong'))) {
+                $requestedSize = strtoupper($matches[1]);
+            }
+
+            if ($requestedSize) {
+                $sizeQty = $targetProduct->getStockForSize($requestedSize);
+                if ($sizeQty > 0) {
+                    $reply = "Iya Kak! Untuk busana **{$targetProduct->name}** ukuran **{$requestedSize}** saat ini **tersedia ({$sizeQty} pcs)** siap kirim dengan harga **{$priceText}** ✨.\n\n"
+                        .'Apakah Kakak ingin kami bantu langsung proses pemesanannya?';
+                } else {
+                    $otherSizes = [];
+                    foreach (['S', 'M', 'L', 'XL'] as $sz) {
+                        $otherQty = $targetProduct->getStockForSize($sz);
+                        if ($otherQty > 0) {
+                            $otherSizes[] = "**{$sz} ({$otherQty} pcs)**";
+                        }
+                    }
+
+                    $otherText = count($otherSizes) > 0
+                        ? 'Namun untuk ukuran lain masih tersedia: '.implode(', ', $otherSizes).' siap kirim.'
+                        : 'Saat ini seluruh ukuran untuk busana ini sedang kosong.';
+
+                    $reply = "Mohon maaf Kak, untuk busana **{$targetProduct->name}** ukuran **{$requestedSize}** saat ini sedang **kosong / habis** 😔.\n\n"
+                        ."{$otherText}\n\n"
+                        .'Apakah Kakak berminat dengan ukuran yang masih tersedia, atau dibantu dicarikan model serupa?';
+                }
+            } else {
+                if ($targetProduct->stock <= 0) {
+                    $reply = "Mohon maaf Kak, busana **{$targetProduct->name}** saat ini sedang **Habis (Sold Out)** 😔.\n\n"
+                        .'Apakah Kakak berkenan jika kami bantu rekomendasikan koleksi busana serupa yang ready stock?';
+                } else {
+                    $readySizes = [];
+                    $emptySizes = [];
+                    foreach (['S', 'M', 'L', 'XL'] as $sz) {
+                        $szQty = $targetProduct->getStockForSize($sz);
+                        if ($szQty > 0) {
+                            $readySizes[] = "**{$sz}** ({$szQty} pcs)";
+                        } else {
+                            $emptySizes[] = "**{$sz}**";
+                        }
+                    }
+
+                    if (count($emptySizes) === 0) {
+                        $sizeStatus = 'Ukuran **S, M, L, dan XL** semuanya ready stock siap kirim.';
+                    } else {
+                        $sizeStatus = 'Ukuran yang ready: '.implode(', ', $readySizes).' siap kirim'
+                            .(count($emptySizes) > 0 ? ', sedangkan ukuran '.implode(', ', $emptySizes).' sedang kosong.' : '.');
+                    }
+
+                    $reply = "Iya Kak, busana **{$targetProduct->name}** saat ini **tersedia ({$targetProduct->stock} pcs siap kirim)** dengan harga **{$priceText}** ✨.\n\n"
+                        ."{$sizeStatus}\n\n"
+                        .'Kakak sedang mencari ukuran yang mana? Silakan tanyakan jika butuh panduan ukuran (size chart) ya!';
+                }
+            }
+
+            return [
+                'reply' => $reply,
+                'action_btn' => [
+                    'label' => "Lihat {$targetProduct->name} ({$targetProduct->formatted_price})",
+                    'url' => route('shop.show', $targetProduct->slug),
+                    'external' => false,
+                ],
+                'matched_products' => [
+                    [
+                        'id' => $targetProduct->id,
+                        'name' => $targetProduct->name,
+                        'sku' => $targetProduct->sku,
+                        'price' => $targetProduct->formatted_price,
+                        'stock' => $targetProduct->stock,
+                        'url' => route('shop.show', $targetProduct->slug),
+                    ],
+                ],
+            ];
+        }
+
+        // A. Cek apakah pelanggan menyebut nama produk spesifik atau SKU (fallback jika bukan targetProduct langsung)
         /** @var Collection<int, Product> $directMatches */
         $directMatches = $allProducts->filter(function (Product $product) use ($q): bool {
             $nameLower = strtolower($product->name);

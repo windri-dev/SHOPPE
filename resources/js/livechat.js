@@ -410,6 +410,7 @@ class LiveChatManager {
     if (!val) return;
 
     const attached = this.currentInquiryProduct;
+    this.clearAttachedProduct();
     this.input.value = '';
     this.sendBtn.disabled = true;
 
@@ -420,31 +421,7 @@ class LiveChatManager {
     if (!product || !product.id) return;
 
     this.setAttachedProduct(product);
-
-    // Kirim kartu cuplikan produk ke ruang obrolan terlebih dahulu
-    const introText = `Anda sedang menanyakan ketersediaan busana **${product.name}** (${product.price}). Silakan ketik pertanyaan Anda seputar ketersediaan ukuran (S, M, L, XL) atau stok di bawah ini ✨`;
-
-    // Hindari duplikasi jika baru saja mengklik produk yang sama
-    const lastMsg = this.messages[this.messages.length - 1];
-    if (!lastMsg || lastMsg.productCard?.id !== product.id || Date.now() - (lastMsg.timestamp || 0) > 8000) {
-      const msg = {
-        sender: 'agent',
-        senderBadge: 'Aria AI Stylist',
-        text: introText,
-        productCard: product,
-        actionBtn: product.url ? {
-          label: `Buka ${product.name}`,
-          url: product.url,
-          external: false
-        } : null,
-        timestamp: Date.now(),
-        time: this.getCurrentTime()
-      };
-      this.messages.push(msg);
-      this.saveHistory();
-      this.appendMessageElement(msg, true);
-      this.scrollToBottom();
-    }
+    this.openChat();
 
     setTimeout(() => {
       this.input?.focus();
