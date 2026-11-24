@@ -197,6 +197,11 @@
   transform: translateY(0) scale(1);
 }
 
+/* Drag handle for mobile bottom-sheet */
+.shoppe-livechat-drag-handle {
+  display: none;
+}
+
 /* --------------------------------------------------------------------------
    3. Chat Header (Clean, Single-Line, Non-Wrapping)
    -------------------------------------------------------------------------- */
@@ -718,26 +723,58 @@
     transform: scale(0.8);
   }
 
+  .shoppe-livechat-drag-handle {
+    display: block;
+    width: 38px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 99px;
+    margin: 8px auto 2px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .shoppe-livechat-drag-handle:active {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+  }
+
   .shoppe-livechat-window {
     bottom: 0;
     right: 0;
     left: 0;
     width: 100%;
     max-width: 100%;
-    height: 86dvh;
-    max-height: 86dvh;
-    border-radius: 18px 18px 0 0;
+    height: 60dvh;
+    max-height: 62dvh;
+    border-radius: 20px 20px 0 0;
     box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25);
     transform: translateY(100%);
     transform-origin: bottom center;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .shoppe-livechat-wrapper.is-open .shoppe-livechat-window {
     transform: translateY(0);
   }
 
+  .shoppe-livechat-wrapper.is-expanded .shoppe-livechat-window {
+    height: 84dvh;
+    max-height: 84dvh;
+  }
+
   .shoppe-livechat-header {
-    padding: 13px 14px;
+    padding: 8px 14px 10px;
+  }
+
+  .shoppe-livechat-notice {
+    display: none !important;
+  }
+
+  .shoppe-livechat-body {
+    padding: 10px 12px 8px;
+    gap: 8px;
   }
 
   .shoppe-livechat-msg {

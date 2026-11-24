@@ -52,6 +52,7 @@ class LiveChatManager {
     this.attachedProductName = document.getElementById('shoppeLiveChatAttachedName');
     this.attachedProductPrice = document.getElementById('shoppeLiveChatAttachedPrice');
     this.attachedProductRemove = document.getElementById('shoppeLiveChatAttachedRemove');
+    this.dragHandle = document.getElementById('shoppeLiveChatDragHandle');
     this.currentInquiryProduct = null;
 
     this.loadHistory();
@@ -108,6 +109,10 @@ class LiveChatManager {
 
     this.attachedProductRemove?.addEventListener('click', () => {
       this.clearAttachedProduct();
+    });
+
+    this.dragHandle?.addEventListener('click', () => {
+      this.wrapper?.classList.toggle('is-expanded');
     });
 
     document.addEventListener('keydown', (e) => {

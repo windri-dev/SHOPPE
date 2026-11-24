@@ -33,6 +33,7 @@
   </button>
 
   <div class="shoppe-livechat-window" id="shoppeLiveChatWindow" role="region" aria-label="Jendela Live Chat">
+    <div class="shoppe-livechat-drag-handle" id="shoppeLiveChatDragHandle" title="Ketuk untuk ubah ukuran"></div>
     <header class="shoppe-livechat-header">
       <div class="shoppe-livechat-agent">
         <div class="shoppe-livechat-avatar-wrap">
