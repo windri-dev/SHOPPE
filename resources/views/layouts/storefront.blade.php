@@ -102,10 +102,8 @@
     </div>
   </div>
 
-  <!-- LiveChat Concierge Component (Hanya tampil di Halaman Depan / Home) -->
-  @if(request()->routeIs('home'))
-    <x-livechat />
-  @endif
+  <!-- LiveChat Concierge Component -->
+  <x-livechat />
 
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
