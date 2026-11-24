@@ -222,6 +222,19 @@
             </label>
             <input type="email" name="store_email" value="{{ old('store_email', $social['email']) }}" placeholder="concierge@wn-cdn.net" class="chat-search-input" style="width: 100%; font-size: 13px;">
           </div>
+
+          <!-- Anti-Spam Rate Limit per IP -->
+          <div>
+            <label style="display: block; font-size: 12.5px; font-weight: 700; color: #374151; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              Batas Pesan Live Chat per IP (Anti-Spam)
+            </label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="number" name="livechat_rate_limit_per_minute" value="{{ old('livechat_rate_limit_per_minute', \App\Models\StoreSetting::get('livechat_rate_limit_per_minute', 10)) }}" min="1" max="100" class="chat-search-input" style="width: 120px; font-size: 13px; font-weight: 700;">
+              <span style="font-size: 12.5px; color: #4B5563; font-weight: 600;">pesan / menit per IP</span>
+            </div>
+            <span style="font-size: 11px; color: #6B7280; margin-top: 3px; display: block;">Maksimal pesan AI livechat dari 1 IP per menit sebelum dibatasi otomatis (default: 10).</span>
+          </div>
         </div>
 
         <!-- Store Address -->

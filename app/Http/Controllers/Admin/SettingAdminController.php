@@ -44,11 +44,12 @@ class SettingAdminController extends Controller
             'store_email' => ['nullable', 'email', 'max:255'],
             'store_phone' => ['nullable', 'string', 'max:50'],
             'store_address' => ['nullable', 'string', 'max:500'],
+            'livechat_rate_limit_per_minute' => ['nullable', 'integer', 'min:1', 'max:120'],
         ]);
 
         foreach ($validated as $key => $val) {
-            $group = str_starts_with($key, 'social_') ? 'social' : 'contact';
-            StoreSetting::set($key, $val, $group);
+            $group = str_starts_with($key, 'social_') ? 'social' : (str_starts_with($key, 'livechat_') ? 'security' : 'contact');
+            StoreSetting::set($key, (string) $val, $group);
         }
 
         return redirect()->route('admin.settings.index', ['tab' => 'social'])

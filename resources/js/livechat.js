@@ -365,6 +365,14 @@ class LiveChatManager {
         })
       });
 
+      if (response.status === 429) {
+        this.removeTypingIndicator();
+        const errPayload = await response.json().catch(() => ({}));
+        const limitMsg = errPayload.message || 'Mohon maaf, Anda mengirim pesan terlalu cepat. Silakan tunggu sejenak sebelum mengirim pesan baru.';
+        this.sendAgentMessage(limitMsg, null, 'Proteksi Anti-Spam');
+        return;
+      }
+
       const payload = await response.json();
       this.removeTypingIndicator();
 

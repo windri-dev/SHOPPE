@@ -66,7 +66,7 @@ Route::get('/faq', [StaticPageController::class, 'faq'])->name('faq');
 Route::get('/privacy-policy', [StaticPageController::class, 'privacy'])->name('privacy');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::post('/livechat/message', [ContactController::class, 'livechatSubmit'])->name('livechat.send');
+Route::post('/livechat/message', [ContactController::class, 'livechatSubmit'])->middleware('throttle:livechat-ip')->name('livechat.send');
 Route::get('/livechat/thread/{ticketNumber}', [ContactController::class, 'livechatThread'])->name('livechat.thread');
 
 // Default Login & Register route aliases
