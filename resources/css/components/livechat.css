@@ -16,26 +16,25 @@
 
 .shoppe-livechat-trigger {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-full);
   background: var(--color-black);
-  border: 2px solid var(--color-accent);
+  border: 2.5px solid var(--color-accent);
   color: var(--color-white);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22), 0 0 18px rgba(161, 138, 104, 0.32);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 20px rgba(161, 138, 104, 0.4);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+  transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
   outline: none;
   padding: 0;
 }
 
 .shoppe-livechat-trigger:hover {
-  transform: translateY(-2px) scale(1.04);
-  background: #1a1a1a;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28), 0 0 24px rgba(161, 138, 104, 0.48);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3), 0 0 26px rgba(161, 138, 104, 0.55);
 }
 
 .shoppe-livechat-trigger:focus-visible {
@@ -43,27 +42,67 @@
   outline-offset: 3px;
 }
 
-.shoppe-livechat-icon-chat,
+.shoppe-livechat-trigger-avatar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shoppe-livechat-trigger-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+.shoppe-livechat-trigger-mini-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: #A18A68;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+
+.shoppe-livechat-trigger-mini-icon svg {
+  width: 10px;
+  height: 10px;
+}
+
+.shoppe-livechat-avatar-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
 .shoppe-livechat-icon-close {
   position: absolute;
   width: 24px;
   height: 24px;
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
   transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.shoppe-livechat-icon-chat {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-
-.shoppe-livechat-icon-close {
-  opacity: 0;
-  transform: scale(0.5) rotate(-90deg);
-}
-
-.shoppe-livechat-wrapper.is-open .shoppe-livechat-icon-chat {
+.shoppe-livechat-wrapper.is-open .shoppe-livechat-trigger-avatar {
   opacity: 0;
   transform: scale(0.5) rotate(90deg);
+  pointer-events: none;
 }
 
 .shoppe-livechat-wrapper.is-open .shoppe-livechat-icon-close {

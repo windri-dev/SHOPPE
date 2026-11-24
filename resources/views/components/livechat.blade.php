@@ -10,11 +10,11 @@
 >
   <div class="shoppe-livechat-teaser" id="shoppeLiveChatTeaser" style="display: none;">
     <span class="shoppe-livechat-teaser-text" style="display: inline-flex; align-items: center; gap: 6px;">
-      Butuh rekomendasi busana? Chat kami di sini
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="#A18A68" aria-hidden="true"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      <span>Tanya ukuran atau koleksi ke Aria ✨</span>
     </span>
     <button type="button" class="shoppe-livechat-teaser-close" id="shoppeLiveChatTeaserClose" aria-label="Tutup notifikasi">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
@@ -22,9 +22,14 @@
   </div>
 
   <button type="button" class="shoppe-livechat-trigger" id="shoppeLiveChatTrigger" aria-expanded="false" aria-label="Buka Live Chat PUTRIJALVA">
-    <svg class="shoppe-livechat-icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
+    <div class="shoppe-livechat-trigger-avatar">
+      <img src="{{ asset('images/aria-concierge.webp') }}" alt="Aria Concierge" class="shoppe-livechat-trigger-img" width="58" height="58">
+      <div class="shoppe-livechat-trigger-mini-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+    </div>
     <svg class="shoppe-livechat-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line x1="18" y1="6" x2="6" y2="18"></line>
       <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -37,11 +42,11 @@
     <header class="shoppe-livechat-header">
       <div class="shoppe-livechat-agent">
         <div class="shoppe-livechat-avatar-wrap">
-          <span id="shoppeLiveChatAvatarText">PJ</span>
+          <img src="{{ asset('images/aria-concierge.webp') }}" alt="Aria" class="shoppe-livechat-avatar-photo">
           <span class="shoppe-livechat-avatar-status"></span>
         </div>
         <div class="shoppe-livechat-agent-info">
-          <h4>PUTRIJALVA Concierge</h4>
+          <h4>Aria &bull; Fashion Concierge</h4>
           <span id="shoppeLiveChatModeLabel">{{ __('Online') }} &bull; {{ app()->getLocale() === 'en' ? 'Ready to Assist' : 'Siap Membantu' }}</span>
         </div>
       </div>
