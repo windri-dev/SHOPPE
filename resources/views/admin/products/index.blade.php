@@ -352,6 +352,17 @@
       </div>
 
       <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Pilih Target Ukuran *</label>
+        <select name="target_size" id="adjustStockTargetSize" class="chat-search-input" style="width: 100%; font-size: 13px; background: #fff;">
+          <option value="ALL">Semua Ukuran (Total Stok Proporsional)</option>
+          <option value="S">Khusus Ukuran S</option>
+          <option value="M">Khusus Ukuran M</option>
+          <option value="L">Khusus Ukuran L</option>
+          <option value="XL">Khusus Ukuran XL</option>
+        </select>
+      </div>
+
+      <div>
         <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Jenis Penyesuaian *</label>
         <select name="adjustment_type" id="adjustStockType" class="chat-search-input" style="width: 100%; font-size: 13px; background: #fff;">
           <option value="add">+ Tambah Stok Masuk (Restock Produksi / Kiriman Supplier)</option>

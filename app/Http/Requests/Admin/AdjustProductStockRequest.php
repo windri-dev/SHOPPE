@@ -20,6 +20,7 @@ class AdjustProductStockRequest extends FormRequest
     {
         return [
             'adjustment_type' => ['required', 'string', 'in:add,subtract,set'],
+            'target_size' => ['nullable', 'string', 'in:ALL,S,M,L,XL'],
             'quantity' => ['required', 'integer', 'min:0'],
             'reason' => ['nullable', 'string', 'max:255'],
         ];

@@ -338,12 +338,40 @@ class ProductAdminController extends Controller
         $qty = (int) $validated['quantity'];
         $oldStock = $product->stock;
         $type = $validated['adjustment_type'];
+        $targetSize = ! empty($validated['target_size']) ? strtoupper($validated['target_size']) : 'ALL';
 
-        $newStock = match ($type) {
-            'add' => $oldStock + $qty,
-            'subtract' => max(0, $oldStock - $qty),
-            'set' => max(0, $qty),
-        };
+        if (in_array($targetSize, ['S', 'M', 'L', 'XL'], true)) {
+            $matrix = $product->size_stocks;
+            $oldSizeStock = (int) ($matrix[$targetSize] ?? 0);
+            $newSizeStock = match ($type) {
+                'add' => $oldSizeStock + $qty,
+                'subtract' => max(0, $oldSizeStock - $qty),
+                'set' => max(0, $qty),
+            };
+            $matrix[$targetSize] = $newSizeStock;
+            $newStock = array_sum($matrix);
+            $sizeStocks = $matrix;
+            $sizeLabel = " (Ukuran {$targetSize})";
+        } else {
+            $newStock = match ($type) {
+                'add' => $oldStock + $qty,
+                'subtract' => max(0, $oldStock - $qty),
+                'set' => max(0, $qty),
+            };
+            if ($newStock <= 0) {
+                $sizeStocks = ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0];
+            } else {
+                $q = (int) floor($newStock / 4);
+                $rem = $newStock % 4;
+                $sizeStocks = [
+                    'S' => $q + ($rem > 0 ? 1 : 0),
+                    'M' => $q + ($rem > 1 ? 1 : 0),
+                    'L' => $q + ($rem > 2 ? 1 : 0),
+                    'XL' => $q,
+                ];
+            }
+            $sizeLabel = '';
+        }
 
         $badge = $product->badge;
         if ($newStock <= 0) {
@@ -354,6 +382,7 @@ class ProductAdminController extends Controller
 
         $product->update([
             'stock' => $newStock,
+            'size_stocks' => $sizeStocks,
             'badge' => $badge,
         ]);
 
@@ -365,7 +394,7 @@ class ProductAdminController extends Controller
 
         $reasonText = ! empty($validated['reason']) ? " (Alasan: {$validated['reason']})" : '';
 
-        return back()->with('success', "Stok '{$product->name}' berhasil diubah {$deltaText}{$reasonText}. Stok terkini: {$newStock} pcs.");
+        return back()->with('success', "Stok{$sizeLabel} '{$product->name}' berhasil diubah {$deltaText}{$reasonText}. Stok terkini: {$newStock} pcs.");
     }
 
     /**
@@ -397,9 +426,13 @@ class ProductAdminController extends Controller
     {
         $newStock = $product->stock > 0 ? 0 : 15;
         $badge = $newStock === 0 ? 'Sold out' : null;
+        $sizeStocks = $newStock === 0
+            ? ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0]
+            : ['S' => 4, 'M' => 4, 'L' => 4, 'XL' => 3];
 
         $product->update([
             'stock' => $newStock,
+            'size_stocks' => $sizeStocks,
             'badge' => $badge,
         ]);
 
