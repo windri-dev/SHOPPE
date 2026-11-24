@@ -1,7 +1,11 @@
 @extends('layouts.storefront')
 
 @section('title', $product->name . ' - PUTRIJALVA')
-@section('meta_description', \Illuminate\Support\Str::limit($product->description, 155))
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description), 155))
+@section('og_type', 'product')
+@section('og_title', $product->name . ' - PUTRIJALVA')
+@section('og_description', \Illuminate\Support\Str::limit(strip_tags($product->description), 155))
+@section('og_image', asset($product->primary_image))
 
 @section('content')
 <div class="container product-detail-page">
@@ -1129,6 +1133,34 @@
       });
     });
   });
+</script>
+
+<script type="application/ld+json">
+{!! json_encode([
+  chr(64).'context' => 'https://schema.org/',
+  chr(64).'type' => 'Product',
+  'name' => $product->name,
+  'image' => [asset($product->primary_image)],
+  'description' => strip_tags($product->description),
+  'sku' => $product->sku,
+  'brand' => [
+    chr(64).'type' => 'Brand',
+    'name' => 'PUTRIJALVA',
+  ],
+  'offers' => [
+    chr(64).'type' => 'Offer',
+    'url' => url()->current(),
+    'priceCurrency' => 'IDR',
+    'price' => (int) round((float)$product->price * (float)app(\App\Services\CurrencyService::class)->getUsdToIdrRate()),
+    'priceValidUntil' => now()->addYear()->format('Y-m-d'),
+    'itemCondition' => 'https://schema.org/NewCondition',
+    'availability' => $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    'seller' => [
+      chr(64).'type' => 'Organization',
+      'name' => 'PUTRIJALVA',
+    ],
+  ],
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endpush
 @endsection

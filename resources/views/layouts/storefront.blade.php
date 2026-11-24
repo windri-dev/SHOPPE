@@ -50,6 +50,41 @@
   <link rel="canonical" href="{{ url()->current() }}">
   <meta name="robots" content="@yield('robots', 'index, follow')">
 
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="@yield('og_type', 'website')">
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:title" content="@yield('og_title', View::yieldContent('title', 'PUTRIJALVA - Contemporary Ready-to-Wear Fashion & Apparel'))">
+  <meta property="og:description" content="@yield('og_description', View::yieldContent('meta_description', 'Koleksi busana kontemporer, midi dress elegan, atasan sutra, blazer tailored, dan pakaian wanita modern dari butik PUTRIJALVA.'))">
+  <meta property="og:image" content="@yield('og_image', asset('images/hero-1.png'))">
+  <meta property="og:site_name" content="PUTRIJALVA">
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="@yield('og_title', View::yieldContent('title', 'PUTRIJALVA - Contemporary Ready-to-Wear Fashion & Apparel'))">
+  <meta name="twitter:description" content="@yield('og_description', View::yieldContent('meta_description', 'Koleksi busana kontemporer, midi dress elegan, atasan sutra, blazer tailored, dan pakaian wanita modern dari butik PUTRIJALVA.'))">
+  <meta name="twitter:image" content="@yield('og_image', asset('images/hero-1.png'))">
+
+  <!-- Structured Data: Organization & ClothingStore -->
+  <script type="application/ld+json">
+  {!! json_encode([
+    chr(64).'context' => 'https://schema.org',
+    chr(64).'type' => 'ClothingStore',
+    'name' => 'PUTRIJALVA',
+    'url' => url('/'),
+    'logo' => asset('images/logo.png'),
+    'image' => asset('images/hero-1.png'),
+    'description' => 'Butik busana wanita kontemporer premium: ready-to-wear, midi dress sutra, blazer set, dan cami crop top eksklusif.',
+    'priceRange' => '$$',
+    'currenciesAccepted' => 'IDR, USD',
+    'paymentAccepted' => 'Bank Transfer, QRIS, Credit Card, COD',
+    'address' => [
+      chr(64).'type' => 'PostalAddress',
+      'addressLocality' => 'Jakarta',
+      'addressCountry' => 'ID',
+    ],
+  ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+  </script>
+
   <!-- Google Fonts: DM Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,12 +127,12 @@
         </button>
       </div>
       <div class="modal-info-col">
-        <h2 class="modal-product-title" id="modalProductTitle">Apparel Piece</h2>
-        <div class="modal-product-price" id="modalProductPrice">$ 20.00</div>
+        <h2 class="modal-product-title" id="modalProductTitle">{{ __('Busana') }}</h2>
+        <div class="modal-product-price" id="modalProductPrice">-</div>
         <p class="modal-product-desc" id="modalProductDesc"></p>
         <div class="modal-actions">
-          <button type="button" class="btn btn-primary" id="modalAddToCartBtn">Add To Cart</button>
-          <a href="{{ route('shop.index') }}" class="btn btn-outline" id="modalViewDetailLink">View Details</a>
+          <button type="button" class="btn btn-primary" id="modalAddToCartBtn">{{ __('Tambah ke Keranjang') }}</button>
+          <a href="{{ route('shop.index') }}" class="btn btn-outline" id="modalViewDetailLink">{{ __('Lihat Detail') }}</a>
         </div>
       </div>
     </div>

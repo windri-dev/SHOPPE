@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /account/
+Disallow: /password/
+
+Sitemap: https://shoppe-staging.wn-cdn.net/sitemap.xml
