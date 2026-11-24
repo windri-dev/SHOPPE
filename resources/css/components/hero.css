@@ -11,8 +11,17 @@
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  height: 620px;
+  height: var(--slider-desktop-h, 580px);
   background-color: var(--color-light-gray);
+}
+
+.hero-bg-picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
 }
 
 .hero-slides {

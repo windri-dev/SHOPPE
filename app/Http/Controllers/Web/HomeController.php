@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\BlogPost;
 use App\Models\Product;
+use App\Models\StoreSetting;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -15,6 +16,8 @@ class HomeController extends Controller
     public function index(): View
     {
         $heroBanners = Banner::active()->ordered()->get();
+        $sliderDesktopHeight = (int) StoreSetting::get('slider_desktop_height', '580');
+        $sliderMobileHeight = (int) StoreSetting::get('slider_mobile_height', '400');
 
         $featuredProducts = Product::with('category')
             ->where('is_active', true)
@@ -30,6 +33,6 @@ class HomeController extends Controller
 
         $latestPosts = BlogPost::latest()->take(3)->get();
 
-        return view('pages.home', compact('heroBanners', 'featuredProducts', 'latestProducts', 'latestPosts'));
+        return view('pages.home', compact('heroBanners', 'sliderDesktopHeight', 'sliderMobileHeight', 'featuredProducts', 'latestProducts', 'latestPosts'));
     }
 }

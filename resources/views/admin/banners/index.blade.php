@@ -19,7 +19,7 @@
         Manajemen Banner &amp; Slider Beranda
       </h2>
       <p style="font-size: 13px; color: #6B7280; margin: 0;">
-        Atur slide promosi, foto model, judul busana, harga promo, dan link tombol pada slider halaman depan toko.
+        Atur banner responsif khusus Desktop &amp; Mobile, posisi fokus gambar, dan tinggi slider toko.
       </p>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
@@ -36,6 +36,75 @@
       <a href="{{ route('home') }}" target="_blank" class="btn-outline" style="font-size: 12px; padding: 8px 14px; text-decoration: none; border: 1px solid #D1D5DB; border-radius: 6px; color: #374151; display: inline-flex; align-items: center; gap: 6px;">
         Lihat Slider Beranda &rarr;
       </a>
+    </div>
+  </div>
+
+  <!-- Responsive Banner Size Guide & Height Configuration Card -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+    <!-- Panduan Ukuran & Resolusi -->
+    <div class="admin-card" style="padding: 18px 22px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #FAF7F2; color: #A18A68; border: 1px solid #EFE8DC;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        </span>
+        <h3 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0;">Panduan Rekomendasi Ukuran Banner</h3>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px;">
+        <div style="background: #F9FAFB; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #111827;">
+          <div style="font-weight: 700; color: #111827; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            Layar Komputer / Desktop:
+          </div>
+          <div style="color: #4B5563; margin-top: 3px;">
+            Rasio Lanskap <strong>16:9</strong> atau <strong>2:1</strong>. Rekomendasi: <strong>1920 &times; 650 px</strong> (atau 1200 &times; 500 px).
+          </div>
+        </div>
+        <div style="background: #FAF7F2; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #A18A68;">
+          <div style="font-weight: 700; color: #8F7655; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            Layar Ponsel / Mobile (Opsional):
+          </div>
+          <div style="color: #4B5563; margin-top: 3px;">
+            Rasio Tegak / Portrait <strong>3:4</strong> atau <strong>4:5</strong>. Rekomendasi: <strong>750 &times; 950 px</strong> (atau 600 &times; 800 px). Bila tidak diisi, otomatis menggunakan foto desktop.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pengaturan Tinggi Slider Toko -->
+    <div class="admin-card" style="padding: 18px 22px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <span style="display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </span>
+        <h3 style="font-size: 14px; font-weight: 700; color: #111827; margin: 0;">Pengaturan Tinggi Slider Toko (Height)</h3>
+      </div>
+      <form action="{{ route('admin.banners.slider_settings') }}" method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+        @csrf
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Tinggi Desktop (px)</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="number" name="desktop_height" value="{{ $sliderSettings['desktop_height'] ?? 580 }}" min="350" max="800" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+              <span style="font-size: 12px; color: #6B7280;">px</span>
+            </div>
+            <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Standar: 580 px</div>
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Tinggi Mobile (px)</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="number" name="mobile_height" value="{{ $sliderSettings['mobile_height'] ?? 400 }}" min="250" max="650" required class="chat-search-input" style="width: 100%; font-size: 13px;">
+              <span style="font-size: 12px; color: #6B7280;">px</span>
+            </div>
+            <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Standar: 400 px</div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+          <button type="submit" class="table-action-btn" style="background: #A18A68; color: #FFFFFF; border: none; padding: 7px 16px; font-weight: 600; font-size: 12px; border-radius: 6px; cursor: pointer;">
+            Simpan Ukuran Slider
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -74,7 +143,7 @@
         <thead>
           <tr>
             <th style="width: 60px; text-align: center;">Urutan</th>
-            <th style="width: 140px;">Preview Banner</th>
+            <th style="width: 170px;">Preview Gambar</th>
             <th>Judul &amp; Subtitle / Harga</th>
             <th>Tombol CTA &amp; Link</th>
             <th>Badge Promo</th>
@@ -89,8 +158,25 @@
                 #{{ $banner->sort_order }}
               </td>
               <td>
-                <div style="position: relative; width: 120px; height: 60px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB; background: #111827;">
-                  <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="position: relative; width: 140px; height: 65px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB; background: #111827;">
+                    <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" style="width: 100%; height: 100%; object-fit: cover; object-position: {{ $banner->image_position ?? 'center' }};">
+                    <span style="position: absolute; bottom: 3px; left: 4px; font-size: 9px; font-weight: 700; background: rgba(0,0,0,0.65); color: #FFF; padding: 1px 5px; border-radius: 4px;">Desktop</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 6px; font-size: 10.5px;">
+                    @if($banner->image_mobile)
+                      <span style="color: #047857; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Foto HP Tersedia
+                      </span>
+                    @else
+                      <span style="color: #6B7280; font-style: italic;">
+                        HP: Auto Desktop
+                      </span>
+                    @endif
+                    <span style="color: #9CA3AF;">&bull;</span>
+                    <span style="color: #4B5563; text-transform: capitalize;">{{ $banner->image_position ?? 'center' }}</span>
+                  </div>
                 </div>
               </td>
               <td>
@@ -150,6 +236,10 @@
                       'badge_text' => $banner->badge_text ?? '',
                       'sort_order' => $banner->sort_order,
                       'image_url' => $banner->image_url,
+                      'image_raw' => $banner->image,
+                      'image_mobile_url' => $banner->image_mobile_url ?? '',
+                      'image_mobile_raw' => $banner->image_mobile ?? '',
+                      'image_position' => $banner->image_position ?? 'center',
                       'is_active' => $banner->is_active,
                     ];
                   @endphp
@@ -194,7 +284,7 @@
 
 <!-- ================= MODAL: TAMBAH BANNER BARU ================= -->
 <div id="createBannerModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-  <div style="background: #FFFFFF; width: 100%; max-width: 600px; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;">
+  <div style="background: #FFFFFF; width: 100%; max-width: 650px; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
       <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">+ Tambah Banner Slider Baru</h3>
       <button type="button" onclick="closeCreateBannerModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
@@ -247,12 +337,34 @@
         </div>
       </div>
 
-      <!-- Upload Foto Banner -->
+      <!-- FOTO BANNER DESKTOP -->
       <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 4px;">Foto / Gambar Banner * (Rekomendasi rasio 2:1, misal 1200x600 px)</label>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 2px;">
+          1. Foto Banner Desktop * (Rasio Lanskap 16:9 / 2:1, Rekomendasi 1920&times;650 px atau 1200&times;500 px)
+        </label>
         <input type="file" name="image" accept="image/png,image/jpeg,image/jpg,image/webp" class="chat-search-input" style="width: 100%; font-size: 12px; background: #fff;">
         <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Atau masukkan path gambar internal (misal: <code>images/hero-1.png</code>):</div>
         <input type="text" name="image_url" placeholder="images/hero-1.png" class="chat-search-input" style="width: 100%; font-size: 12px; margin-top: 4px;">
+      </div>
+
+      <!-- FOTO BANNER MOBILE (OPSIONAL) -->
+      <div style="background: #FAF7F2; border: 1px solid #EFE8DC; border-radius: 8px; padding: 12px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #8F7655; margin-bottom: 2px;">
+          2. Foto Banner Khusus Mobile / HP (Opsional, Rasio Portrait 3:4 / 4:5, Rekomendasi 750&times;950 px)
+        </label>
+        <input type="file" name="image_mobile" accept="image/png,image/jpeg,image/jpg,image/webp" class="chat-search-input" style="width: 100%; font-size: 12px; background: #fff;">
+        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Atau masukkan path/URL foto khusus mobile:</div>
+        <input type="text" name="image_mobile_url" placeholder="images/hero-1-mobile.png" class="chat-search-input" style="width: 100%; font-size: 12px; margin-top: 4px;">
+      </div>
+
+      <!-- POSISI FOKUS GAMBAR -->
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Posisi Fokus Gambar (Object Position)</label>
+        <select name="image_position" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <option value="center" selected>Tengah / Center (Fokus Seluruh Tubuh)</option>
+          <option value="top">Atas / Top (Fokus Wajah / Atasan Model)</option>
+          <option value="bottom">Bawah / Bottom (Fokus Bawahan / Sepatu)</option>
+        </select>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -272,7 +384,7 @@
 
 <!-- ================= MODAL: EDIT BANNER ================= -->
 <div id="editBannerModalBackdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-  <div style="background: #FFFFFF; width: 100%; max-width: 600px; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;">
+  <div style="background: #FFFFFF; width: 100%; max-width: 650px; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; border-bottom: 1px solid #E5E7EB; background: #FAF9F6;">
       <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Edit Banner Slider</h3>
       <button type="button" onclick="closeEditBannerModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: #6B7280;">&times;</button>
@@ -326,16 +438,42 @@
         </div>
       </div>
 
-      <!-- Preview & Ganti Foto Banner -->
+      <!-- EDIT FOTO BANNER DESKTOP -->
       <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 6px;">Foto Banner Saat Ini:</label>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 6px;">
+          Foto Desktop Saat Ini (Lanskap 16:9 / 2:1):
+        </label>
         <div style="width: 100%; height: 110px; border-radius: 6px; overflow: hidden; background: #111827; margin-bottom: 8px;">
-          <img id="editBannerCurrentImg" src="" alt="Preview Banner" style="width: 100%; height: 100%; object-fit: cover;">
+          <img id="editBannerCurrentImg" src="" alt="Preview Desktop" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
-        <label style="display: block; font-size: 11.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Ganti Foto (Upload File Baru):</label>
+        <label style="display: block; font-size: 11.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Ganti Foto Desktop (Upload File Baru):</label>
         <input type="file" name="image" accept="image/png,image/jpeg,image/jpg,image/webp" class="chat-search-input" style="width: 100%; font-size: 12px; background: #fff;">
-        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Atau ubah path gambar:</div>
+        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Atau ubah path/URL gambar desktop:</div>
         <input type="text" name="image_url" id="editBannerImageUrl" class="chat-search-input" style="width: 100%; font-size: 12px; margin-top: 4px;">
+      </div>
+
+      <!-- EDIT FOTO BANNER MOBILE -->
+      <div style="background: #FAF7F2; border: 1px solid #EFE8DC; border-radius: 8px; padding: 12px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #8F7655; margin-bottom: 6px;">
+          Foto Versi Mobile / HP (Opsional, Portrait 3:4 / 4:5):
+        </label>
+        <div id="editBannerMobilePreviewWrap" style="width: 90px; height: 120px; border-radius: 6px; overflow: hidden; background: #111827; margin-bottom: 8px; display: none;">
+          <img id="editBannerCurrentMobileImg" src="" alt="Preview Mobile" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <label style="display: block; font-size: 11.5px; font-weight: 600; color: #374151; margin-bottom: 4px;">Upload Foto Khusus Mobile:</label>
+        <input type="file" name="image_mobile" accept="image/png,image/jpeg,image/jpg,image/webp" class="chat-search-input" style="width: 100%; font-size: 12px; background: #fff;">
+        <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">Atau masukkan path/URL gambar mobile:</div>
+        <input type="text" name="image_mobile_url" id="editBannerImageMobileUrl" class="chat-search-input" style="width: 100%; font-size: 12px; margin-top: 4px;">
+      </div>
+
+      <!-- EDIT POSISI FOKUS GAMBAR -->
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Posisi Fokus Gambar (Object Position)</label>
+        <select name="image_position" id="editBannerImagePosition" class="chat-search-input" style="width: 100%; font-size: 13px;">
+          <option value="center">Tengah / Center (Fokus Seluruh Tubuh)</option>
+          <option value="top">Atas / Top (Fokus Wajah / Atasan Model)</option>
+          <option value="bottom">Bawah / Bottom (Fokus Bawahan / Sepatu)</option>
+        </select>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -378,7 +516,24 @@ function openEditBannerModal(btn) {
     document.getElementById('editBannerBadge').value = b.badge_text || '';
     document.getElementById('editBannerSortOrder').value = b.sort_order ?? 0;
     document.getElementById('editBannerCurrentImg').src = b.image_url || '';
-    document.getElementById('editBannerImageUrl').value = b.image_url || '';
+    document.getElementById('editBannerImageUrl').value = b.image_raw || b.image_url || '';
+    
+    // Mobile image
+    const mobileImgWrap = document.getElementById('editBannerMobilePreviewWrap');
+    const mobileImg = document.getElementById('editBannerCurrentMobileImg');
+    const mobileUrlInput = document.getElementById('editBannerImageMobileUrl');
+    if (b.image_mobile_url) {
+      mobileImg.src = b.image_mobile_url;
+      mobileImgWrap.style.display = 'block';
+      mobileUrlInput.value = b.image_mobile_raw || b.image_mobile_url || '';
+    } else {
+      mobileImgWrap.style.display = 'none';
+      mobileUrlInput.value = '';
+    }
+
+    // Position
+    document.getElementById('editBannerImagePosition').value = b.image_position || 'center';
+
     document.getElementById('editBannerActive').checked = Boolean(b.is_active);
 
     document.getElementById('editBannerModalBackdrop').style.display = 'flex';

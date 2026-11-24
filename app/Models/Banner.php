@@ -22,6 +22,8 @@ class Banner extends Model
         'button_text_en',
         'button_link',
         'image',
+        'image_mobile',
+        'image_position',
         'badge_text',
         'sort_order',
         'is_active',
@@ -93,5 +95,18 @@ class Banner extends Model
         }
 
         return asset($img);
+    }
+
+    public function getImageMobileUrlAttribute(): ?string
+    {
+        if (empty($this->image_mobile)) {
+            return null;
+        }
+
+        if (Str::startsWith($this->image_mobile, ['http://', 'https://'])) {
+            return $this->image_mobile;
+        }
+
+        return asset($this->image_mobile);
     }
 }

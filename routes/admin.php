@@ -75,6 +75,7 @@ Route::middleware(['role:admin,store_admin,store_staff'])->group(function () {
     // 8. Manajemen Banner & Slider Carousel Beranda
     Route::get('/banners', [BannerAdminController::class, 'index'])->name('banners.index');
     Route::post('/banners', [BannerAdminController::class, 'store'])->name('banners.store');
+    Route::post('/banners/slider-settings', [BannerAdminController::class, 'updateSliderSettings'])->name('banners.slider_settings');
     Route::put('/banners/{banner}', [BannerAdminController::class, 'update'])->name('banners.update');
     Route::delete('/banners/{banner}', [BannerAdminController::class, 'destroy'])->name('banners.destroy');
     Route::post('/banners/{banner}/toggle', [BannerAdminController::class, 'toggle'])->name('banners.toggle');

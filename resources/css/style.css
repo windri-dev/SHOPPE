@@ -670,7 +670,7 @@ body {
   }
 
   .hero-slider-container {
-    height: 350px;
+    height: var(--slider-mobile-h, 400px);
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }

@@ -4,6 +4,16 @@
 
 @section('content')
 <!-- Hero Section Carousel -->
+<style>
+  #heroSlider {
+    height: {{ $sliderDesktopHeight ?? 580 }}px;
+  }
+  @media (max-width: 768px) {
+    #heroSlider {
+      height: {{ $sliderMobileHeight ?? 400 }}px;
+    }
+  }
+</style>
 <section class="hero-section" aria-label="Hero Carousel">
   <div class="container">
     <div class="hero-slider-container" id="heroSlider">
@@ -11,7 +21,12 @@
         @if(isset($heroBanners) && $heroBanners->isNotEmpty())
           @foreach($heroBanners as $idx => $banner)
             <div class="hero-slide {{ $idx === 0 ? 'active' : '' }}">
-              <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" class="hero-bg" {!! $idx === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"' !!} width="1200" height="600">
+              <picture class="hero-bg-picture">
+                @if($banner->image_mobile_url)
+                  <source media="(max-width: 768px)" srcset="{{ $banner->image_mobile_url }}">
+                @endif
+                <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" class="hero-bg" style="object-position: {{ $banner->image_position ?? 'center' }};" {!! $idx === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"' !!} width="1200" height="600">
+              </picture>
               <div class="hero-overlay"></div>
               <div class="hero-content">
                 @if($banner->badge_text)

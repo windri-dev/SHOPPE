@@ -8,9 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreBannerRequest;
 use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Models\Banner;
+use App\Models\StoreSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -26,7 +26,12 @@ class BannerAdminController extends Controller
             'inactive' => $banners->where('is_active', false)->count(),
         ];
 
-        return view('admin.banners.index', compact('banners', 'stats'));
+        $sliderSettings = [
+            'desktop_height' => (int) StoreSetting::get('slider_desktop_height', '580'),
+            'mobile_height' => (int) StoreSetting::get('slider_mobile_height', '400'),
+        ];
+
+        return view('admin.banners.index', compact('banners', 'stats', 'sliderSettings'));
     }
 
     public function store(StoreBannerRequest $request): RedirectResponse
@@ -43,6 +48,16 @@ class BannerAdminController extends Controller
             $imagePath = $validated['image_url'];
         }
 
+        $imageMobilePath = null;
+        if ($request->hasFile('image_mobile')) {
+            $file = $request->file('image_mobile');
+            $filename = 'banner_mobile_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('banners', $filename, 'public');
+            $imageMobilePath = 'storage/' . $path;
+        } elseif (! empty($validated['image_mobile_url'])) {
+            $imageMobilePath = $validated['image_mobile_url'];
+        }
+
         Banner::create([
             'title' => $validated['title'],
             'title_en' => $validated['title_en'] ?? null,
@@ -52,6 +67,8 @@ class BannerAdminController extends Controller
             'button_text_en' => ! empty($validated['button_text_en']) ? $validated['button_text_en'] : 'Shop Collection',
             'button_link' => ! empty($validated['button_link']) ? $validated['button_link'] : '/shop',
             'image' => $imagePath,
+            'image_mobile' => $imageMobilePath,
+            'image_position' => $validated['image_position'] ?? 'center',
             'badge_text' => $validated['badge_text'] ?? null,
             'sort_order' => (int) ($validated['sort_order'] ?? 0),
             'is_active' => $request->boolean('is_active', true),
@@ -74,6 +91,16 @@ class BannerAdminController extends Controller
             $imagePath = $validated['image_url'];
         }
 
+        $imageMobilePath = $banner->image_mobile;
+        if ($request->hasFile('image_mobile')) {
+            $file = $request->file('image_mobile');
+            $filename = 'banner_mobile_' . time() . '_' . Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('banners', $filename, 'public');
+            $imageMobilePath = 'storage/' . $path;
+        } elseif (array_key_exists('image_mobile_url', $validated)) {
+            $imageMobilePath = $validated['image_mobile_url'] ?: null;
+        }
+
         $banner->update([
             'title' => $validated['title'],
             'title_en' => $validated['title_en'] ?? null,
@@ -83,6 +110,8 @@ class BannerAdminController extends Controller
             'button_text_en' => ! empty($validated['button_text_en']) ? $validated['button_text_en'] : 'Shop Collection',
             'button_link' => ! empty($validated['button_link']) ? $validated['button_link'] : '/shop',
             'image' => $imagePath,
+            'image_mobile' => $imageMobilePath,
+            'image_position' => $validated['image_position'] ?? ($banner->image_position ?? 'center'),
             'badge_text' => $validated['badge_text'] ?? null,
             'sort_order' => (int) ($validated['sort_order'] ?? 0),
             'is_active' => $request->has('is_active') ? $request->boolean('is_active') : $banner->is_active,
@@ -108,5 +137,18 @@ class BannerAdminController extends Controller
         $statusText = $banner->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('success', "Status banner '{$banner->title}' berhasil {$statusText}.");
+    }
+
+    public function updateSliderSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'desktop_height' => ['required', 'integer', 'min:350', 'max:800'],
+            'mobile_height' => ['required', 'integer', 'min:250', 'max:650'],
+        ]);
+
+        StoreSetting::set('slider_desktop_height', (string) $validated['desktop_height'], 'slider');
+        StoreSetting::set('slider_mobile_height', (string) $validated['mobile_height'], 'slider');
+
+        return back()->with('success', "Ukuran tinggi slider berhasil diperbarui (Desktop: {$validated['desktop_height']}px, Mobile: {$validated['mobile_height']}px).");
     }
 }
