@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Dynamic Rate Limiter per IP untuk Live Chat AI
         RateLimiter::for('livechat-ip', function (Request $request) {
-            $limitPerMinute = (int) StoreSetting::get('livechat_rate_limit_per_minute', env('LIVECHAT_RATE_LIMIT_PER_MINUTE', 10));
+            $limitPerMinute = (int) StoreSetting::get('livechat_rate_limit_per_minute', (string) env('LIVECHAT_RATE_LIMIT_PER_MINUTE', '10'));
             $clientIp = $request->ip() ?: '127.0.0.1';
 
             return Limit::perMinute(max(1, $limitPerMinute))

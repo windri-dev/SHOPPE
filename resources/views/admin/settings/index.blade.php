@@ -230,7 +230,7 @@
               Batas Pesan Live Chat per IP (Anti-Spam)
             </label>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <input type="number" name="livechat_rate_limit_per_minute" value="{{ old('livechat_rate_limit_per_minute', \App\Models\StoreSetting::get('livechat_rate_limit_per_minute', 10)) }}" min="1" max="100" class="chat-search-input" style="width: 120px; font-size: 13px; font-weight: 700;">
+              <input type="number" name="livechat_rate_limit_per_minute" value="{{ old('livechat_rate_limit_per_minute', \App\Models\StoreSetting::get('livechat_rate_limit_per_minute', '10')) }}" min="1" max="100" class="chat-search-input" style="width: 120px; font-size: 13px; font-weight: 700;">
               <span style="font-size: 12.5px; color: #4B5563; font-weight: 600;">pesan / menit per IP</span>
             </div>
             <span style="font-size: 11px; color: #6B7280; margin-top: 3px; display: block;">Maksimal pesan AI livechat dari 1 IP per menit sebelum dibatasi otomatis (default: 10).</span>
