@@ -39,11 +39,13 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
-        // Pengecualian CSRF untuk endpoint callback Webhook Payment Gateway & Shipping Calculation
+        // Pengecualian CSRF untuk endpoint callback Webhook Payment Gateway, Shipping & LiveChat
         $middleware->validateCsrfTokens(except: [
             'payment/webhook',
             'payment/webhook/*',
             'shipping/calculate',
+            'livechat/message',
+            'livechat/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
