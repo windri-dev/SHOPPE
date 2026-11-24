@@ -138,7 +138,7 @@
               <td style="text-align: right;">
                 <div style="display: inline-flex; gap: 6px; align-items: center;">
                   @php
-                    $bannerJson = json_encode([
+                    $bannerData = [
                       'id' => $banner->id,
                       'title' => $banner->getRawTitle(),
                       'title_en' => $banner->title_en ?? '',
@@ -151,11 +151,11 @@
                       'sort_order' => $banner->sort_order,
                       'image_url' => $banner->image_url,
                       'is_active' => $banner->is_active,
-                    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                    ];
                   @endphp
                   <button
                     type="button"
-                    data-banner="{!! $bannerJson !!}"
+                    data-banner="{{ json_encode($bannerData) }}"
                     onclick="openEditBannerModal(this)"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 9px; font-size: 11px;"

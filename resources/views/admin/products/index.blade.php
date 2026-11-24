@@ -232,16 +232,16 @@
 
                   <!-- Tombol Edit Produk -->
                   @php
-                    $prodJson = json_encode([
+                    $prodData = [
                       'id' => $product->id,
-                      'name' => $product->getRawName(),
+                      'name' => $product->name,
                       'name_en' => $product->name_en ?? '',
                       'sku' => $product->sku,
                       'category_id' => $product->category_id,
-                      'price' => $product->price,
-                      'original_price' => $product->original_price ?? '',
-                      'stock' => $product->stock,
-                      'size_stocks' => $product->size_stocks,
+                      'price' => (float) $product->price,
+                      'original_price' => (float) ($product->original_price ?? 0),
+                      'stock' => (int) $product->stock,
+                      'size_stocks' => $product->size_stocks ?? ['S' => 0, 'M' => 0, 'L' => 0, 'XL' => 0],
                       'badge' => $product->badge ?? '',
                       'image_url' => $product->first_image_url,
                       'description' => $product->getRawDescription() ?? '',
@@ -249,11 +249,11 @@
                       'video_url' => $product->video_url ?? '',
                       'video_asset' => $product->video_url_asset ?? '',
                       'video_type' => $product->video_type ?? 'none',
-                    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                    ];
                   @endphp
                   <button
                     type="button"
-                    data-product="{!! $prodJson !!}"
+                    data-product="{{ json_encode($prodData) }}"
                     onclick="openEditProductModalFromData(this)"
                     class="table-action-btn"
                     style="background: #F3F4F6; color: #374151; padding: 5px 9px; font-size: 11px;"
