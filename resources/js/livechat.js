@@ -349,13 +349,12 @@ class LiveChatManager {
       `;
     }
 
-    let contentHtml = `${badgeHtml}${productCardHtml}<div>${this.formatSafeBubbleHtml(msg.text || '')}</div>`;
-
+    let actionBtnHtml = '';
     if (msg.actionBtn && msg.actionBtn.url && msg.actionBtn.label) {
       const safeUrl = this.escapeHtml(msg.actionBtn.url);
       const safeLabel = this.escapeHtml(msg.actionBtn.label);
       const safeClass = this.escapeHtml(msg.actionBtn.className || '');
-      contentHtml += `
+      actionBtnHtml = `
         <a href="${safeUrl}" ${msg.actionBtn.external ? 'target="_blank" rel="noopener noreferrer"' : ''} class="shoppe-livechat-btn-action ${safeClass}">
           ${safeLabel}
         </a>
@@ -363,11 +362,17 @@ class LiveChatManager {
     }
 
     div.innerHTML = `
-      <div class="shoppe-livechat-bubble">${contentHtml}</div>
+      <div class="shoppe-livechat-bubble">
+        ${badgeHtml}
+        ${productCardHtml}
+        <div class="shoppe-livechat-bubble-body">${this.formatSafeBubbleHtml(msg.text || '')}</div>
+        ${actionBtnHtml}
+      </div>
       <span class="shoppe-livechat-time">${this.escapeHtml(msg.time || '')}</span>
     `;
 
     this.messagesContainer.appendChild(div);
+    return div;
   }
 
   scrollToBottom() {
@@ -440,6 +445,7 @@ class LiveChatManager {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
     try {
+      const startTime = Date.now();
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -461,11 +467,19 @@ class LiveChatManager {
         this.removeTypingIndicator();
         const errPayload = await response.json().catch(() => ({}));
         const limitMsg = errPayload.message || 'Mohon maaf, Anda mengirim pesan terlalu cepat. Silakan tunggu sejenak sebelum mengirim pesan baru.';
-        this.sendAgentMessage(limitMsg, null, 'Proteksi Anti-Spam');
+        this.sendAgentMessage(limitMsg, null, 'Proteksi Anti-Spam', false);
         return;
       }
 
       const payload = await response.json();
+
+      // Berikan jeda efek typing nyata (minimal 850ms) agar indikator mengetik terlihat natural
+      const elapsed = Date.now() - startTime;
+      const minTypingDelay = 850;
+      if (elapsed < minTypingDelay) {
+        await new Promise((r) => setTimeout(r, minTypingDelay - elapsed));
+      }
+
       this.removeTypingIndicator();
 
       if (payload && payload.success && payload.data) {
@@ -482,9 +496,9 @@ class LiveChatManager {
         if (data.ai_reply) {
           const badge = data.handled_by === 'handoff'
             ? 'Customer Service'
-            : (data.handled_by === 'ai_boundary' ? 'Informasi Layanan' : 'PUTRIJALVA Assistant');
+            : (data.handled_by === 'ai_boundary' ? 'Informasi Layanan' : 'Aria AI Stylist');
 
-          this.sendAgentMessage(data.ai_reply, data.action_btn || null, badge);
+          this.sendAgentMessage(data.ai_reply, data.action_btn || null, badge, true);
         }
         return;
       }
@@ -582,21 +596,74 @@ class LiveChatManager {
     }
   }
 
-  sendAgentMessage(text, actionBtn = null, senderBadge = 'PUTRIJALVA Assistant') {
+  sendAgentMessage(text, actionBtn = null, senderBadge = 'Aria AI Stylist', typewriter = false) {
     this.removeTypingIndicator();
 
+    if (!typewriter) {
+      const msg = {
+        sender: 'agent',
+        senderBadge: senderBadge,
+        text: text,
+        actionBtn: actionBtn,
+        time: this.getCurrentTime()
+      };
+
+      this.messages.push(msg);
+      this.saveHistory();
+      this.appendMessageElement(msg);
+      this.scrollToBottom();
+      return;
+    }
+
+    // Typewriter effect untuk respons AI baru
     const msg = {
       sender: 'agent',
       senderBadge: senderBadge,
-      text: text,
-      actionBtn: actionBtn,
+      text: '',
+      actionBtn: null,
       time: this.getCurrentTime()
     };
 
     this.messages.push(msg);
-    this.saveHistory();
-    this.appendMessageElement(msg);
-    this.scrollToBottom();
+    const div = this.appendMessageElement(msg, true);
+    const bodyEl = div.querySelector('.shoppe-livechat-bubble-body');
+
+    const words = String(text || '').split(' ');
+    let wordIdx = 0;
+    let accumulated = '';
+
+    const interval = setInterval(() => {
+      if (wordIdx < words.length) {
+        accumulated += (wordIdx === 0 ? '' : ' ') + words[wordIdx];
+        msg.text = accumulated;
+        if (bodyEl) {
+          bodyEl.innerHTML = this.formatSafeBubbleHtml(accumulated);
+        }
+        this.scrollToBottom();
+        wordIdx++;
+      } else {
+        clearInterval(interval);
+        msg.text = text;
+        msg.actionBtn = actionBtn;
+        this.saveHistory();
+
+        if (actionBtn && actionBtn.url && actionBtn.label) {
+          const bubble = div.querySelector('.shoppe-livechat-bubble');
+          if (bubble && !bubble.querySelector('.shoppe-livechat-btn-action')) {
+            const btnEl = document.createElement('a');
+            btnEl.href = actionBtn.url;
+            if (actionBtn.external) {
+              btnEl.target = '_blank';
+              btnEl.rel = 'noopener noreferrer';
+            }
+            btnEl.className = 'shoppe-livechat-btn-action ' + (actionBtn.className || '');
+            btnEl.textContent = actionBtn.label;
+            bubble.appendChild(btnEl);
+          }
+        }
+        this.scrollToBottom();
+      }
+    }, 22);
   }
 
   escapeHtml(str) {
