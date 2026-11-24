@@ -209,9 +209,11 @@ class AiConciergeService
         $totalActive = Product::where('is_active', true)->where('stock', '>', 0)->count();
         $minPrice = (float) (Product::where('is_active', true)->min('price') ?? 18);
         $maxPrice = (float) (Product::where('is_active', true)->max('price') ?? 120);
+        $minFormatted = CurrencyService::formatPrice($minPrice);
+        $maxFormatted = CurrencyService::formatPrice($maxPrice);
 
         $customerGreeting = $user ? "Halo Kak **{$user->name}**!" : 'Halo Kak!';
-        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRIJALVA** ✨\n\nSaat ini tersedia **{$totalActive} koleksi busana pilihan** siap kirim dengan rentang harga **$ ".number_format($minPrice, 2).' – $ '.number_format($maxPrice, 2)."**.\n\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
+        $fallbackReply = "{$customerGreeting} Selamat datang di **PUTRIJALVA** ✨\n\nSaat ini tersedia **{$totalActive} koleksi busana pilihan** siap kirim dengan rentang harga **{$minFormatted} – {$maxFormatted}**.\n\nAda yang bisa kami bantu seputar koleksi busana, ukuran (size), atau pesanan Anda hari ini? Anda juga dapat mengetik **\"Hubungi CS\"** kapan saja jika ingin berbicara langsung dengan tim kami.";
 
         $externalReply = $this->callExternalAiApi($cleanMessage, $fallbackReply, $user, $inquiry);
         $defaultReply = $externalReply ?? $fallbackReply;
@@ -580,7 +582,14 @@ class AiConciergeService
             }
         }
 
-        $isRecommendationIntent = $this->containsAny($q, [
+        $isBudgetIntent = $this->containsAny($q, [
+            'ramah di kantong', 'ramah kantong', 'kantong', 'murah', 'termurah', 'paling murah',
+            'terjangkau', 'hemat', 'budget', 'ekonomis', 'paling hemat', 'low budget',
+            'miring', 'murmer', 'murah meriah', 'affordable', 'cheapest', 'cheap',
+            'kantong pelajar', 'harga miring',
+        ]);
+
+        $isRecommendationIntent = $isBudgetIntent || $this->containsAny($q, [
             'rekomendasi', 'cocok', 'saran', 'pilihkan', 'carikan', 'kado', 'hadiah', 'bagus yang mana', 'tips', 'ide',
             'pas untuk', 'buat acara', 'kondangan', 'pesta', 'wisuda', 'lamaran', 'ulang tahun',
         ]);
@@ -588,7 +597,7 @@ class AiConciergeService
         $isPriceOrCatalogIntent = $isRecommendationIntent || $matchedCategorySlug !== null || $this->containsAny($q, [
             'harga', 'price', 'berapa', 'cek barang', 'cek stok', 'stok', 'stock', 'katalog',
             'koleksi', 'produk', 'barang', 'termurah', 'termahal', 'best seller',
-            'terlaris', 'promo', 'diskon', 'discount', 'ready',
+            'terlaris', 'promo', 'diskon', 'discount', 'ready', 'minta list', 'list', 'daftar',
         ]);
 
         if (! $isPriceOrCatalogIntent) {
@@ -611,16 +620,9 @@ class AiConciergeService
             $query->where('stock', '>', 0);
         }
 
-        // Cek filter batas harga (misal: "di bawah 30" atau "dibawah $25" atau "maksimal 50")
-        if (preg_match('/(?:di\s*bawah|dibawah|under|kurang\s*dari|maksimal|max)\s*\$?\s*(\d+(?:\.\d+)?)/i', $q, $m)) {
-            $maxPrice = (float) $m[1];
-            $query->where('price', '<=', $maxPrice);
-            $filterLabel .= ' (Di Bawah $ '.number_format($maxPrice, 2).')';
-        }
-
-        if (str_contains($q, 'termurah') || str_contains($q, 'paling murah')) {
+        if ($isBudgetIntent || str_contains($q, 'termurah') || str_contains($q, 'paling murah')) {
             $query->orderBy('price', 'asc');
-            $filterLabel .= ' — Urutan Termurah';
+            $filterLabel = 'Koleksi Busana Paling Ramah di Kantong (Harga Terjangkau)';
         } elseif (str_contains($q, 'termahal') || str_contains($q, 'mewah') || str_contains($q, 'premium')) {
             $query->orderBy('price', 'desc');
             $filterLabel .= ' — Koleksi Premium';
@@ -648,7 +650,17 @@ class AiConciergeService
             ];
         }
 
-        if ($isRecommendationIntent) {
+        if ($isBudgetIntent) {
+            $lines = ['Tentu Kak! Berikut pilihan koleksi busana kami yang paling ramah di kantong (*best value* & harga paling terjangkau) di butik **PUTRIJALVA** yang siap kirim (*ready stock*):'];
+            foreach ($results as $p) {
+                $stockBadge = $p->stock > 0 ? "Ready {$p->stock} pcs" : 'Habis';
+                $promoInfo = ($p->original_price && (float) $p->original_price > (float) $p->price)
+                    ? " *(dari {$p->formatted_original_price})*"
+                    : '';
+                $lines[] = "✨ **{$p->name}** — **{$p->formatted_price}**{$promoInfo} | {$stockBadge}";
+            }
+            $lines[] = "\nSemua koleksi di atas menggunakan material premium yang adem dan bergaransi tukar ukuran (*size exchange*). Apakah ada model yang Kakak taksir?";
+        } elseif ($isRecommendationIntent) {
             $lines = ['Tentu Kak! Untuk melengkapi gaya Kakak agar semakin anggun dan memukau, berikut rekomendasi busana pilihan terfavorit di butik **PUTRIJALVA** yang siap kirim (*ready stock*):'];
             foreach ($results as $p) {
                 $descClean = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $p->description)));
