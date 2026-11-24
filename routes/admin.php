@@ -61,6 +61,7 @@ Route::middleware(['role:admin,store_admin,store_staff'])->group(function () {
 
     // 7. Live Chat & AI Concierge Hybrid (Mode AI / Admin Manusia & Knowledge Base)
     Route::get('/livechat', [LivechatAdminController::class, 'index'])->name('livechat');
+    Route::get('/inquiries/{inquiry}/messages', [LivechatAdminController::class, 'messages'])->name('inquiries.messages');
     Route::post('/inquiries/{inquiry}/reply', [LivechatAdminController::class, 'reply'])->name('inquiries.reply');
     Route::post('/inquiries/{inquiry}/status', [LivechatAdminController::class, 'updateStatus'])->name('inquiries.status');
     Route::post('/inquiries/{inquiry}/mode', [LivechatAdminController::class, 'toggleMode'])->name('inquiries.mode');

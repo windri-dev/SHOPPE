@@ -48,11 +48,6 @@ class LiveChatManager {
     this.noticeText = document.getElementById('shoppeLiveChatNoticeText');
     this.ticketInfo = document.getElementById('shoppeLiveChatTicketInfo');
 
-    const waHeaderBtn = this.wrapper.querySelector('.shoppe-livechat-btn-whatsapp');
-    if (waHeaderBtn) {
-      waHeaderBtn.href = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent('Halo PUTRIJALVA Concierge, saya ingin konsultasi produk busana.')}`;
-    }
-
     this.loadHistory();
     this.updateModeUI(this.handlingMode);
     this.attachEvents();
@@ -202,7 +197,7 @@ class LiveChatManager {
       if (this.isOpen() && this.ticketNumber) {
         this.syncThreadFromServer();
       }
-    }, 8000);
+    }, 3000);
   }
 
   stopPolling() {

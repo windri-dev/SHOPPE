@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\ToggleInquiryModeRequest;
 use App\Http\Requests\Admin\UpdateInquiryStatusRequest;
 use App\Models\AiKnowledgeEntry;
 use App\Models\Inquiry;
+use App\Models\Order;
 use App\Services\AiConciergeService;
 use App\Services\InquiryService;
 use Illuminate\Http\JsonResponse;
@@ -33,6 +34,57 @@ class LivechatAdminController extends Controller
         $knowledgeEntries = AiKnowledgeEntry::latest()->get();
 
         return view('admin.livechat', compact('inquiries', 'unreadCount', 'knowledgeEntries'));
+    }
+
+    public function messages(Inquiry $inquiry): JsonResponse
+    {
+        $messages = $inquiry->messages()->orderBy('created_at', 'asc')->get()->map(function ($m) {
+            return [
+                'id' => $m->id,
+                'sender_type' => $m->sender_type,
+                'message' => $m->message,
+                'created_at' => $m->created_at?->format('H:i') ?? '',
+                'created_at_full' => $m->created_at?->format('d M Y H:i') ?? '',
+            ];
+        });
+
+        // Find customer orders by user_id or email
+        $orders = collect();
+        if ($inquiry->user_id) {
+            $orders = Order::where('user_id', $inquiry->user_id)->latest()->take(3)->get();
+        } elseif ($inquiry->email) {
+            $orders = Order::where('customer_email', $inquiry->email)->latest()->take(3)->get();
+        }
+
+        $formattedOrders = $orders->map(function ($o) {
+            return [
+                'order_number' => $o->order_number,
+                'status' => $o->status->value,
+                'status_label' => $o->status->label(),
+                'grand_total_formatted' => $o->formatted_grand_total,
+                'items_count' => $o->items->count(),
+                'created_at' => $o->created_at?->format('d M Y') ?? '',
+                'url' => route('admin.orders.index', ['search' => $o->order_number]),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $inquiry->id,
+                'ticket_number' => $inquiry->ticket_number,
+                'name' => $inquiry->name,
+                'email' => $inquiry->email,
+                'phone' => $inquiry->phone,
+                'subject' => $inquiry->subject,
+                'channel' => $inquiry->channel,
+                'status' => $inquiry->status->value,
+                'status_label' => $inquiry->status->label(),
+                'handling_mode' => $inquiry->handling_mode,
+                'messages' => $messages,
+                'recent_orders' => $formattedOrders,
+            ],
+        ]);
     }
 
     public function reply(ReplyInquiryRequest $request, Inquiry $inquiry): RedirectResponse|JsonResponse

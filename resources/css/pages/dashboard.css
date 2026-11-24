@@ -1392,9 +1392,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: #F9FAFB;
-  background-image: radial-gradient(#E5E7EB 0.75px, transparent 0.75px);
-  background-size: 16px 16px;
+  background: #F8FAFC;
 }
 
 .chat-date-separator {

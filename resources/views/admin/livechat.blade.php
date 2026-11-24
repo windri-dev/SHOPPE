@@ -177,18 +177,6 @@
               <option value="responded" {{ $firstInq->status->value === 'responded' ? 'selected' : '' }}>Sudah Dibalas</option>
               <option value="resolved" {{ $firstInq->status->value === 'resolved' ? 'selected' : '' }}>Selesai (Resolved)</option>
             </select>
-
-            <a
-              href="https://wa.me/{{ preg_replace('/[^0-9]/', '', (string)$firstInq->phone) }}"
-              target="_blank"
-              class="btn-chat-wa"
-              id="activeChatWaLink"
-              title="Buka Chat WhatsApp"
-              style="{{ $firstInq->phone ? '' : 'display: none;' }}"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 00-3.48-8.413z"/></svg>
-              WhatsApp
-            </a>
           </div>
         </header>
 
@@ -267,6 +255,60 @@
         </div>
       @endif
     </main>
+
+    <!-- 3. RIGHT PANEL: Customer Details & Order Context Drawer (Like Intercom/Crisp/Zendesk) -->
+    <aside class="chat-info-sidebar" id="chatInfoSidebar" style="width: 290px; min-width: 270px; border-left: 1px solid #E5E7EB; background: #FAF9F6; display: flex; flex-direction: column; overflow-y: auto;">
+      <!-- Profile Box -->
+      <div style="padding: 18px; border-bottom: 1px solid #E5E7EB; text-align: center; background: #FFFFFF;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #111827; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; margin: 0 auto 10px;" id="sidebarCustomerAvatar">
+          {{ $firstInitials ?? 'CS' }}
+        </div>
+        <h4 style="margin: 0 0 2px 0; font-size: 15px; font-weight: 700; color: #111827;" id="sidebarCustomerName">
+          {{ $firstInq->name ?? 'Tamu Live Chat' }}
+        </h4>
+        <div style="font-size: 11.5px; color: #6B7280;" id="sidebarCustomerEmail">
+          {{ $firstInq->email ?? '-' }}
+        </div>
+        <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;" id="sidebarCustomerPhone">
+          {{ $firstInq->phone ?: 'Tidak ada No. Telepon' }}
+        </div>
+      </div>
+
+      <!-- Quick Context Box -->
+      <div style="padding: 16px; border-bottom: 1px solid #E5E7EB;">
+        <h5 style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; font-weight: 700;">
+          Status Penanganan & AI
+        </h5>
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+            <span style="color: #6B7280;">Tiket:</span>
+            <strong style="color: #111827;" id="sidebarTicketNumber">{{ $firstInq->ticket_number ?? '-' }}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+            <span style="color: #6B7280;">Kanal:</span>
+            <span style="background: #ECFDF5; color: #047857; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;" id="sidebarChannelBadge">
+              {{ ($firstInq->channel ?? '') === 'contact_form' ? 'Formulir Kontak' : 'Live Chat Toko' }}
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+            <span style="color: #6B7280;">Mode:</span>
+            <span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; {{ ($firstInq->handling_mode ?? 'ai') === 'human' ? 'background: #FEF3C7; color: #92400E;' : 'background: #F3E8FF; color: #6B21A8;' }}" id="sidebarModeBadge">
+              {{ ($firstInq->handling_mode ?? 'ai') === 'human' ? 'Admin Manusia' : 'AI Agent Aktif' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Recent Orders -->
+      <div style="padding: 16px; flex: 1;">
+        <h5 style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; font-weight: 700;">
+          Riwayat Pesanan Pelanggan
+        </h5>
+        <div id="sidebarCustomerOrdersList" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; color: #9CA3AF; text-align: center; padding: 12px;">Memuat riwayat belanja...</div>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <!-- 3. MODAL: AI KNOWLEDGE BASE, GUARDRAIL BOUNDARIES & RESPONSE RULES -->
@@ -718,14 +760,25 @@
       }
     }
 
-    if (headerWa) {
-      if (inquiry.phone) {
-        const cleanPhone = inquiry.phone.replace(/[^0-9]/g, '');
-        headerWa.href = `https://wa.me/${cleanPhone}`;
-        headerWa.style.display = 'inline-flex';
-      } else {
-        headerWa.style.display = 'none';
-      }
+    // Update Right Panel Customer Profile
+    const sAvatar = document.getElementById('sidebarCustomerAvatar');
+    const sName = document.getElementById('sidebarCustomerName');
+    const sEmail = document.getElementById('sidebarCustomerEmail');
+    const sPhone = document.getElementById('sidebarCustomerPhone');
+    const sTicket = document.getElementById('sidebarTicketNumber');
+    const sChannel = document.getElementById('sidebarChannelBadge');
+    const sMode = document.getElementById('sidebarModeBadge');
+    const sOrders = document.getElementById('sidebarCustomerOrdersList');
+
+    if (sAvatar) sAvatar.textContent = getInitials(inquiry.name);
+    if (sName) sName.textContent = inquiry.name;
+    if (sEmail) sEmail.textContent = inquiry.email;
+    if (sPhone) sPhone.textContent = inquiry.phone || 'Tidak ada No. Telepon';
+    if (sTicket) sTicket.textContent = inquiry.ticket_number;
+    if (sChannel) {
+      sChannel.textContent = inquiry.channel === 'contact_form' ? 'Formulir Kontak' : 'Live Chat Toko';
+      sChannel.style.background = inquiry.channel === 'contact_form' ? '#EFF6FF' : '#ECFDF5';
+      sChannel.style.color = inquiry.channel === 'contact_form' ? '#1D4ED8' : '#047857';
     }
 
     if (statusSelect) {
@@ -739,8 +792,47 @@
     }
     updateModeBanner(modeVal);
 
+    if (sMode) {
+      sMode.textContent = modeVal === 'human' ? 'Admin Manusia' : 'AI Agent Aktif';
+      sMode.style.background = modeVal === 'human' ? '#FEF3C7' : '#F3E8FF';
+      sMode.style.color = modeVal === 'human' ? '#92400E' : '#6B21A8';
+    }
+
     renderMessages(inquiry);
     if (chatInput) chatInput.focus();
+
+    // Fetch fresh messages & recent orders from server
+    fetch(`/admin/inquiries/${id}/messages`, {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (!res.success || !res.data) return;
+      const d = res.data;
+      if (Array.isArray(d.messages)) {
+        inquiry.messages = d.messages;
+        renderMessages(inquiry);
+      }
+      if (sOrders && Array.isArray(d.recent_orders)) {
+        if (d.recent_orders.length === 0) {
+          sOrders.innerHTML = '<div style="font-size: 11.5px; color: #9CA3AF; text-align: center; padding: 12px; background: #FFF; border: 1px dashed #E2E8F0; border-radius: 6px;">Belum ada riwayat pesanan</div>';
+        } else {
+          sOrders.innerHTML = d.recent_orders.map(o => `
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px; font-size: 11.5px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <a href="${o.url}" style="font-weight: 700; color: #111827; text-decoration: none;" title="Lihat Pesanan">${o.order_number}</a>
+                <span style="font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #ECFDF5; color: #047857;">${o.status_label}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; color: #6B7280; font-size: 11px;">
+                <span>${o.created_at}</span>
+                <strong style="color: #111827;">${o.grand_total_formatted}</strong>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    })
+    .catch(e => console.warn('Fetch messages error:', e));
   }
 
   if (conversationsList) {
@@ -1004,6 +1096,42 @@
       badge.textContent = `${unreadCount} Pesan Belum Dibaca`;
     }
   }
+
+  // Live auto-polling every 3.5 seconds for instant real-time synchronization
+  setInterval(function() {
+    if (!currentInquiryId) return;
+    const inquiry = inquiriesData.find(i => i.id == currentInquiryId);
+    if (!inquiry) return;
+
+    fetch(`/admin/inquiries/${currentInquiryId}/messages`, {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (!res.success || !res.data) return;
+      const d = res.data;
+      if (Array.isArray(d.messages)) {
+        const prevCount = (inquiry.messages || []).length;
+        if (d.messages.length !== prevCount) {
+          inquiry.messages = d.messages;
+          renderMessages(inquiry);
+
+          // Update sidebar snippet
+          const lastMsg = d.messages[d.messages.length - 1];
+          if (lastMsg) {
+            const sidebarItem = document.querySelector(`.chat-conversation-item[data-inquiry-id="${currentInquiryId}"]`);
+            if (sidebarItem) {
+              const snipEl = sidebarItem.querySelector('.chat-item-snippet');
+              const timeEl = sidebarItem.querySelector('.chat-item-time');
+              if (snipEl) snipEl.textContent = (lastMsg.sender_type === 'customer' ? '' : (lastMsg.sender_type === 'ai' ? 'AI: ' : 'Admin: ')) + lastMsg.message;
+              if (timeEl) timeEl.textContent = lastMsg.created_at || 'Baru saja';
+            }
+          }
+        }
+      }
+    })
+    .catch(e => {});
+  }, 3500);
 
   if (inquiriesData.length > 0) {
     selectInquiry(inquiriesData[0].id);
