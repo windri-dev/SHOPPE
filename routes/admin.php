@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\BannerAdminController;
 use App\Http\Controllers\Admin\BlogAdminController;
 use App\Http\Controllers\Admin\CategoryAdminController;
 use App\Http\Controllers\Admin\CustomerAdminController;
@@ -71,7 +72,14 @@ Route::middleware(['role:admin,store_admin,store_staff'])->group(function () {
     Route::put('/ai-knowledge/{entry}', [LivechatAdminController::class, 'updateKnowledge'])->name('ai_knowledge.update');
     Route::delete('/ai-knowledge/{entry}', [LivechatAdminController::class, 'destroyKnowledge'])->name('ai_knowledge.destroy');
 
-    // 8. Pengaturan Toko: Rekening Bank Pembayaran & Akun Sosial Media
+    // 8. Manajemen Banner & Slider Carousel Beranda
+    Route::get('/banners', [BannerAdminController::class, 'index'])->name('banners.index');
+    Route::post('/banners', [BannerAdminController::class, 'store'])->name('banners.store');
+    Route::put('/banners/{banner}', [BannerAdminController::class, 'update'])->name('banners.update');
+    Route::delete('/banners/{banner}', [BannerAdminController::class, 'destroy'])->name('banners.destroy');
+    Route::post('/banners/{banner}/toggle', [BannerAdminController::class, 'toggle'])->name('banners.toggle');
+
+    // 9. Pengaturan Toko: Rekening Bank Pembayaran & Akun Sosial Media
     Route::get('/settings', [SettingAdminController::class, 'index'])->name('settings.index');
     Route::post('/settings/social', [SettingAdminController::class, 'updateSocial'])->name('settings.social');
     Route::post('/settings/banks', [SettingAdminController::class, 'storeBank'])->name('settings.banks.store');

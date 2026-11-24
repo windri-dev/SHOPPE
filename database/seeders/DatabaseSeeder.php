@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             BlogPostSeeder::class,
             AiKnowledgeSeeder::class,
             StoreSettingSeeder::class,
+            BannerSeeder::class,
         ]);
     }
 }

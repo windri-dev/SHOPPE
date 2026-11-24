@@ -8,38 +8,55 @@
   <div class="container">
     <div class="hero-slider-container" id="heroSlider">
       <div class="hero-slides">
-        <!-- Slide 1 -->
-        <div class="hero-slide active">
-          <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Ruched Silk Crop Top" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            <h1 class="hero-title">Aurelia Ruched Silk Crop Top</h1>
-            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(65) }}</div>
-            <a href="{{ route('shop.index') }}" class="btn">{{ __('Lihat Koleksi') }}</a>
+        @if(isset($heroBanners) && $heroBanners->isNotEmpty())
+          @foreach($heroBanners as $idx => $banner)
+            <div class="hero-slide {{ $idx === 0 ? 'active' : '' }}">
+              <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" class="hero-bg" {!! $idx === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"' !!} width="1200" height="600">
+              <div class="hero-overlay"></div>
+              <div class="hero-content">
+                @if($banner->badge_text)
+                  <span style="display: inline-block; padding: 4px 12px; background: rgba(161, 138, 104, 0.9); color: #FFFFFF; font-size: 11px; font-weight: 700; border-radius: 99px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+                    {{ $banner->badge_text }}
+                  </span>
+                @endif
+                <h{{ $idx === 0 ? '1' : '2' }} class="hero-title">{{ $banner->title }}</h{{ $idx === 0 ? '1' : '2' }}>
+                @if($banner->subtitle)
+                  <div class="hero-price">{{ $banner->subtitle }}</div>
+                @endif
+                <a href="{{ $banner->button_link ?: route('shop.index') }}" class="btn">{{ $banner->button_text ?: __('Lihat Koleksi') }}</a>
+              </div>
+            </div>
+          @endforeach
+        @else
+          <!-- Default Fallback Slides -->
+          <div class="hero-slide active">
+            <img src="{{ asset('images/hero-1.png') }}" alt="Aurelia Ruched Silk Crop Top" class="hero-bg" fetchpriority="high" loading="eager" width="1200" height="600">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h1 class="hero-title">Aurelia Ruched Silk Crop Top</h1>
+              <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(65) }}</div>
+              <a href="{{ route('shop.index') }}" class="btn">{{ __('Lihat Koleksi') }}</a>
+            </div>
           </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="hero-slide">
-          <img src="{{ asset('images/blog-1.jpg') }}" alt="Valerie Tailored Linen Blazer Set" class="hero-bg" loading="lazy" width="1200" height="600">
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            <h2 class="hero-title">Valerie Tailored Linen Blazer Set</h2>
-            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(95) }}</div>
-            <a href="{{ route('shop.index') }}" class="btn">{{ __('Buka Koleksi') }}</a>
+          <div class="hero-slide">
+            <img src="{{ asset('images/blog-1.jpg') }}" alt="Valerie Tailored Linen Blazer Set" class="hero-bg" loading="lazy" width="1200" height="600">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h2 class="hero-title">Valerie Tailored Linen Blazer Set</h2>
+              <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(95) }}</div>
+              <a href="{{ route('shop.index') }}" class="btn">{{ __('Buka Koleksi') }}</a>
+            </div>
           </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="hero-slide">
-          <img src="{{ asset('images/blog-2.jpg') }}" alt="Bianca Cold-Shoulder Ribbed Crop" class="hero-bg" loading="lazy" width="1200" height="600">
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            <h2 class="hero-title">Bianca Cold-Shoulder Ribbed Crop</h2>
-            <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(42) }}</div>
-            <a href="{{ route('shop.index') }}" class="btn">{{ __('Eksplorasi Koleksi') }}</a>
+          <div class="hero-slide">
+            <img src="{{ asset('images/blog-2.jpg') }}" alt="Bianca Cold-Shoulder Ribbed Crop" class="hero-bg" loading="lazy" width="1200" height="600">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h2 class="hero-title">Bianca Cold-Shoulder Ribbed Crop</h2>
+              <div class="hero-price">{{ app(\App\Services\CurrencyService::class)->format(42) }}</div>
+              <a href="{{ route('shop.index') }}" class="btn">{{ __('Eksplorasi Koleksi') }}</a>
+            </div>
           </div>
-        </div>
+        @endif
       </div>
 
       <!-- Prev & Next Arrows -->
@@ -55,10 +72,13 @@
       </button>
 
       <!-- Pagination Dots -->
+      @php
+        $slideCount = (isset($heroBanners) && $heroBanners->isNotEmpty()) ? $heroBanners->count() : 3;
+      @endphp
       <div class="hero-pagination">
-        <button type="button" class="slider-dot active" aria-label="Slide 1"></button>
-        <button type="button" class="slider-dot" aria-label="Slide 2"></button>
-        <button type="button" class="slider-dot" aria-label="Slide 3"></button>
+        @for($i = 0; $i < $slideCount; $i++)
+          <button type="button" class="slider-dot {{ $i === 0 ? 'active' : '' }}" aria-label="Slide {{ $i + 1 }}"></button>
+        @endfor
       </div>
     </div>
   </div>

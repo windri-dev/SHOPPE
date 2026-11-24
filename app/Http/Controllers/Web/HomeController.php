@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\BlogPost;
 use App\Models\Product;
 use Illuminate\View\View;
@@ -13,6 +14,8 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        $heroBanners = Banner::active()->ordered()->get();
+
         $featuredProducts = Product::with('category')
             ->where('is_active', true)
             ->where('is_featured', true)
@@ -27,6 +30,6 @@ class HomeController extends Controller
 
         $latestPosts = BlogPost::latest()->take(3)->get();
 
-        return view('pages.home', compact('featuredProducts', 'latestProducts', 'latestPosts'));
+        return view('pages.home', compact('heroBanners', 'featuredProducts', 'latestProducts', 'latestPosts'));
     }
 }
