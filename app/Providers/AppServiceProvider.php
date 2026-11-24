@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\Inquiry;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as ViewInstance;
@@ -30,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('staging', 'production') || request()->header('X-Forwarded-Proto') === 'https') {
+            URL::forceScheme('https');
+        }
         View::composer('layouts.admin', function (ViewInstance $view): void {
             $view->with('sidebarMetrics', [
                 'pending_orders' => Order::query()->where('status', OrderStatus::PENDING)->count(),
