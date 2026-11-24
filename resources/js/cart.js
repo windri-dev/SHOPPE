@@ -202,8 +202,41 @@ class CartManager {
     return this.items.reduce((total, item) => total + (Number(item.quantity) || 0), 0);
   }
 
+  getCartCount() {
+    return this.getTotalCount();
+  }
+
   getSubtotal() {
     return this.items.reduce((total, item) => total + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+  }
+
+  getCartSubtotal() {
+    return this.getSubtotal();
+  }
+
+  updateTotals() {
+    const subtotal = this.getSubtotal();
+    const count = this.getTotalCount();
+
+    if (this.badgeEl) {
+      this.badgeEl.textContent = count;
+      this.badgeEl.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    if (this.itemCountEl) {
+      this.itemCountEl.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+    }
+
+    if (this.subtotalLabelEl) {
+      this.subtotalLabelEl.textContent = `Subtotal (${count} ${count === 1 ? 'item' : 'items'})`;
+    }
+
+    if (this.subtotalEl) {
+      this.subtotalEl.textContent = this.formatPrice(subtotal);
+    }
+
+    this.renderCartPage(subtotal);
+    this.renderCheckoutSummary(subtotal);
   }
 
   formatPrice(num) {
@@ -293,8 +326,11 @@ class CartManager {
     const pageTotal = document.getElementById('cartPageTotal');
     const t = window.__trans || {};
 
+    const shippingFee = Number(this.currentShippingCost) || 0;
+    const grandTotal = subtotal + shippingFee;
+
     if (pageSubtotal) pageSubtotal.textContent = this.formatPrice(subtotal);
-    if (pageTotal) pageTotal.textContent = this.formatPrice(subtotal);
+    if (pageTotal) pageTotal.textContent = this.formatPrice(grandTotal);
 
     if (!tableContainer) return;
 

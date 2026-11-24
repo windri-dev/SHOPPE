@@ -41,7 +41,8 @@
       items: "{{ __('items') }}",
       item: "{{ __('item') }}",
       remove: "{{ __('Hapus') }}",
-      qty: "{{ __('Qty') }}"
+      qty: "{{ __('Qty') }}",
+      freeShipping: "{{ __('Gratis Ongkir') }}"
     };
   </script>
 
