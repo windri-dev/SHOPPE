@@ -29,11 +29,80 @@ class LivechatAdminController extends Controller
 
     public function index(): View
     {
-        $inquiries = Inquiry::with('messages')->latest()->get();
+        $inquiries = Inquiry::with('messages')
+            ->select('inquiries.*')
+            ->selectSub(function ($query) {
+                $query->from('inquiry_messages')
+                    ->whereColumn('inquiry_messages.inquiry_id', 'inquiries.id')
+                    ->selectRaw('max(created_at)');
+            }, 'latest_message_at')
+            ->orderByRaw('COALESCE(latest_message_at, inquiries.created_at) DESC')
+            ->get();
         $unreadCount = Inquiry::where('status', InquiryStatus::UNREAD)->count();
         $knowledgeEntries = AiKnowledgeEntry::latest()->get();
 
         return view('admin.livechat', compact('inquiries', 'unreadCount', 'knowledgeEntries'));
+    }
+
+    public function inquiries(): JsonResponse
+    {
+        $inquiries = Inquiry::with('messages')
+            ->select('inquiries.*')
+            ->selectSub(function ($query) {
+                $query->from('inquiry_messages')
+                    ->whereColumn('inquiry_messages.inquiry_id', 'inquiries.id')
+                    ->selectRaw('max(created_at)');
+            }, 'latest_message_at')
+            ->orderByRaw('COALESCE(latest_message_at, inquiries.created_at) DESC')
+            ->get()
+            ->map(function ($inq) {
+                $lastMsg = $inq->messages->last();
+                $lastCustomerMsg = $inq->messages->whereIn('sender_type', ['customer', 'user'])->last();
+                $preview = ($lastMsg && $lastMsg->sender_type === 'admin')
+                    ? 'Admin: ' . $lastMsg->message
+                    : ($lastCustomerMsg ? $lastCustomerMsg->message : ($lastMsg ? $lastMsg->message : 'Belum ada pesan'));
+                $timeObj = $lastMsg ? $lastMsg->created_at : $inq->created_at;
+                $formattedTime = $timeObj ? ($timeObj instanceof \Carbon\Carbon ? $timeObj->format('H:i') : \Carbon\Carbon::parse($timeObj)->format('H:i')) : '';
+
+                return [
+                    'id' => $inq->id,
+                    'ticket_number' => $inq->ticket_number,
+                    'name' => $inq->name,
+                    'email' => $inq->email,
+                    'phone' => $inq->phone ?? '',
+                    'channel' => $inq->channel,
+                    'status' => $inq->status->value,
+                    'status_label' => $inq->status->label(),
+                    'handling_mode' => $inq->handling_mode ?? 'ai',
+                    'subject' => $inq->subject,
+                    'preview' => $preview,
+                    'last_sender' => $lastMsg?->sender_type ?? '',
+                    'last_time' => $formattedTime,
+                    'messages_count' => $inq->messages->count(),
+                    'messages' => $inq->messages->map(function ($m) {
+                        return [
+                            'id' => $m->id,
+                            'sender_type' => $m->sender_type,
+                            'message' => $m->message,
+                            'created_at' => $m->created_at?->format('H:i') ?? '',
+                            'created_at_full' => $m->created_at?->format('d M Y H:i') ?? '',
+                        ];
+                    }),
+                    'reply_url' => route('admin.inquiries.reply', $inq),
+                    'status_url' => route('admin.inquiries.status', $inq),
+                    'mode_url' => route('admin.inquiries.mode', $inq),
+                ];
+            });
+
+        $unreadCount = Inquiry::where('status', InquiryStatus::UNREAD)->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'inquiries' => $inquiries,
+                'unread_count' => $unreadCount,
+            ],
+        ]);
     }
 
     public function messages(Inquiry $inquiry): JsonResponse

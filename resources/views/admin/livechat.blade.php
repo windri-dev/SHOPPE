@@ -73,10 +73,14 @@
           @php
             $initials = strtoupper(substr($inq->name, 0, 2));
             $lastMsg = $inq->messages->last();
+            $lastCustomerMsg = $inq->messages->whereIn('sender_type', ['customer', 'user'])->last();
             $msgTimeObj = $lastMsg ? $lastMsg->created_at : $inq->created_at;
             $lastTime = $msgTimeObj ? ($msgTimeObj instanceof \Carbon\Carbon ? $msgTimeObj->format('H:i') : \Carbon\Carbon::parse($msgTimeObj)->format('H:i')) : now()->format('H:i');
             $isActive = $idx === 0;
             $modeVal = $inq->handling_mode ?? 'ai';
+            $previewSnippet = ($lastMsg && $lastMsg->sender_type === 'admin') 
+                ? 'Admin: ' . $lastMsg->message 
+                : ($lastCustomerMsg ? $lastCustomerMsg->message : ($lastMsg ? $lastMsg->message : 'Belum ada pesan'));
           @endphp
           <div
             class="chat-conversation-item {{ $isActive ? 'active' : '' }}"
@@ -118,8 +122,8 @@
                 </span>
               </div>
               <div class="chat-item-preview-row">
-                <span class="chat-item-snippet">
-                  {{ $lastMsg ? $lastMsg->message : 'Belum ada pesan' }}
+                <span class="chat-item-snippet" title="{{ $previewSnippet }}">
+                  {{ $previewSnippet }}
                 </span>
                 @if($inq->status->value === 'unread')
                   <span class="chat-unread-dot" title="Belum Dibaca"></span>
@@ -476,7 +480,7 @@
 @push('scripts')
 <script>
 (function() {
-  const inquiriesData = @json($inquiries->load('messages'));
+  let inquiriesData = @json($inquiries->load('messages'));
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
   let currentInquiryId = inquiriesData.length > 0 ? inquiriesData[0].id : null;
@@ -677,7 +681,14 @@
     inquiry.messages.forEach(msg => {
       const isCustomer = msg.sender_type === 'customer';
       const isAi = msg.sender_type === 'ai';
-      const timeStr = msg.created_at ? (typeof msg.created_at === 'string' ? msg.created_at.substring(11, 16) : new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})) : '';
+      let timeStr = '';
+      if (msg.created_at) {
+        if (typeof msg.created_at === 'string') {
+          timeStr = msg.created_at.length >= 16 ? msg.created_at.substring(11, 16) : msg.created_at;
+        } else {
+          timeStr = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+      }
 
       const bubbleRow = document.createElement('div');
       bubbleRow.className = `chat-bubble-row ${isCustomer ? 'customer' : 'admin'}`;
@@ -1097,8 +1108,120 @@
     }
   }
 
+  function renderSidebarConversations() {
+    if (!conversationsList) return;
+    if (inquiriesData.length === 0) {
+      conversationsList.innerHTML = '<div class="chat-empty-sidebar">Belum ada percakapan pelanggan.</div>';
+      return;
+    }
+
+    conversationsList.innerHTML = inquiriesData.map((inq) => {
+      const isActive = inq.id == currentInquiryId;
+      const initials = getInitials(inq.name);
+      const isForm = inq.channel === 'contact_form';
+      const modeVal = inq.handling_mode || 'ai';
+      const statusVal = typeof inq.status === 'object' ? inq.status.value : inq.status;
+      const previewText = inq.preview || (inq.messages && inq.messages.length > 0 ? inq.messages[inq.messages.length - 1].message : 'Belum ada pesan');
+      const lastTime = inq.last_time || 'Baru saja';
+
+      const iconSvg = isForm
+        ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>'
+        : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+
+      return `
+        <div
+          class="chat-conversation-item ${isActive ? 'active' : ''}"
+          data-inquiry-id="${inq.id}"
+          data-ticket="${escapeHtml(inq.ticket_number || '')}"
+          data-name="${escapeHtml(inq.name || '')}"
+          data-email="${escapeHtml(inq.email || '')}"
+          data-phone="${escapeHtml(inq.phone || '')}"
+          data-channel="${escapeHtml(inq.channel || 'livechat')}"
+          data-status="${escapeHtml(statusVal)}"
+          data-mode="${escapeHtml(modeVal)}"
+          data-subject="${escapeHtml(inq.subject || '')}"
+          data-reply-url="${inq.reply_url || ''}"
+          data-status-url="${inq.status_url || ''}"
+          data-mode-url="${inq.mode_url || ''}"
+        >
+          <div class="chat-item-avatar-wrap">
+            <div class="chat-item-avatar">${escapeHtml(initials)}</div>
+            <span class="chat-channel-badge ${isForm ? 'form' : ''}" title="${isForm ? 'Formulir Kontak' : 'Livechat Toko'}">
+              ${iconSvg}
+            </span>
+          </div>
+          <div class="chat-item-content">
+            <div class="chat-item-top">
+              <span class="chat-item-name">${escapeHtml(inq.name || '')}</span>
+              <span class="chat-item-time">${escapeHtml(lastTime)}</span>
+            </div>
+            <div class="chat-item-subject" style="display: flex; align-items: center; gap: 6px;">
+              <span>${escapeHtml(inq.subject || '')}</span>
+              <span
+                class="chat-item-mode-pill"
+                style="font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 99px; text-transform: uppercase; ${modeVal === 'human' ? 'background: #FEF3C7; color: #92400E;' : 'background: #F3E8FF; color: #6B21A8;'}"
+              >
+                ${modeVal === 'human' ? 'Admin Manual' : 'AI Hybrid'}
+              </span>
+            </div>
+            <div class="chat-item-preview-row">
+              <span class="chat-item-snippet" title="${escapeHtml(previewText)}">
+                ${escapeHtml(previewText)}
+              </span>
+              ${statusVal === 'unread' ? '<span class="chat-unread-dot" title="Belum Dibaca"></span>' : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    applySidebarFilter();
+  }
+
   // Live auto-polling every 3.5 seconds for instant real-time synchronization
   setInterval(function() {
+    // 1. Polling daftar percakapan terbaru untuk sidebar Inbox Obrolan
+    fetch('/admin/livechat/inquiries', {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (!res.success || !res.data) return;
+      const latestInquiries = res.data.inquiries || [];
+      const unreadCount = res.data.unread_count ?? 0;
+
+      const badge = document.getElementById('chatUnreadCountBadge');
+      if (badge) badge.textContent = `${unreadCount} Pesan Belum Dibaca`;
+
+      const totalCountText = document.getElementById('chatTotalCountText');
+      if (totalCountText) totalCountText.textContent = `${latestInquiries.length} Tiket`;
+
+      // Cek apakah ada tiket baru, perubahan urutan, atau cuplikan pesan berubah
+      const currentIds = inquiriesData.map(i => i.id).join(',');
+      const newIds = latestInquiries.map(i => i.id).join(',');
+      const currentSnap = inquiriesData.map(i => `${i.id}:${i.preview || ''}:${i.status || ''}`).join('|');
+      const newSnap = latestInquiries.map(i => `${i.id}:${i.preview || ''}:${i.status || ''}`).join('|');
+
+      if (currentIds !== newIds || currentSnap !== newSnap) {
+        // Gabungkan messages detail lama agar tidak hilang jika belum di-fetch ulang
+        inquiriesData = latestInquiries.map(newInq => {
+          const old = inquiriesData.find(o => o.id === newInq.id);
+          if (old && old.messages && (!newInq.messages || newInq.messages.length < old.messages.length)) {
+            newInq.messages = old.messages;
+          }
+          return newInq;
+        });
+
+        renderSidebarConversations();
+      }
+
+      if (!currentInquiryId && inquiriesData.length > 0) {
+        selectInquiry(inquiriesData[0].id);
+      }
+    })
+    .catch(e => {});
+
+    // 2. Polling pesan percakapan aktif yang sedang dibuka
     if (!currentInquiryId) return;
     const inquiry = inquiriesData.find(i => i.id == currentInquiryId);
     if (!inquiry) return;
@@ -1116,7 +1239,7 @@
           inquiry.messages = d.messages;
           renderMessages(inquiry);
 
-          // Update sidebar snippet
+          // Update sidebar snippet langsung
           const lastMsg = d.messages[d.messages.length - 1];
           if (lastMsg) {
             const sidebarItem = document.querySelector(`.chat-conversation-item[data-inquiry-id="${currentInquiryId}"]`);
