@@ -47,6 +47,12 @@ class LiveChatManager {
     this.avatarText = document.getElementById('shoppeLiveChatAvatarText');
     this.noticeText = document.getElementById('shoppeLiveChatNoticeText');
     this.ticketInfo = document.getElementById('shoppeLiveChatTicketInfo');
+    this.attachedProductBox = document.getElementById('shoppeLiveChatAttachedProduct');
+    this.attachedProductImg = document.getElementById('shoppeLiveChatAttachedImg');
+    this.attachedProductName = document.getElementById('shoppeLiveChatAttachedName');
+    this.attachedProductPrice = document.getElementById('shoppeLiveChatAttachedPrice');
+    this.attachedProductRemove = document.getElementById('shoppeLiveChatAttachedRemove');
+    this.currentInquiryProduct = null;
 
     this.loadHistory();
     this.updateModeUI(this.handlingMode);
@@ -97,6 +103,11 @@ class LiveChatManager {
 
     this.resetBtn?.addEventListener('click', () => {
       this.clearHistory();
+      this.clearAttachedProduct();
+    });
+
+    this.attachedProductRemove?.addEventListener('click', () => {
+      this.clearAttachedProduct();
     });
 
     document.addEventListener('keydown', (e) => {
@@ -367,28 +378,77 @@ class LiveChatManager {
     });
   }
 
+  setAttachedProduct(product) {
+    if (!product || !product.id) return;
+    this.currentInquiryProduct = product;
+
+    if (this.attachedProductBox) {
+      if (this.attachedProductImg) this.attachedProductImg.src = product.image || '';
+      if (this.attachedProductName) this.attachedProductName.textContent = product.name || '';
+      if (this.attachedProductPrice) this.attachedProductPrice.textContent = product.price || '';
+      this.attachedProductBox.style.display = 'flex';
+    }
+
+    if (this.input) {
+      this.input.placeholder = `Tanyakan ketersediaan ukuran atau stok busana ini...`;
+      this.input.focus();
+    }
+  }
+
+  clearAttachedProduct() {
+    this.currentInquiryProduct = null;
+    if (this.attachedProductBox) {
+      this.attachedProductBox.style.display = 'none';
+    }
+    if (this.input) {
+      this.input.placeholder = 'Ketik pertanyaan Anda...';
+    }
+  }
+
   handleUserSend() {
     const val = this.input.value.trim();
     if (!val) return;
 
+    const attached = this.currentInquiryProduct;
     this.input.value = '';
     this.sendBtn.disabled = true;
 
-    this.submitMessage(val, false);
+    this.submitMessage(val, false, attached);
   }
 
   inquireProduct(product) {
     if (!product || !product.id) return;
 
-    const queryText = `Halo Aria, apakah busana "${product.name}" (${product.price}) ini masih ready stock / tersedia?`;
+    this.setAttachedProduct(product);
 
-    // Anti-spam quick double-click protection
+    // Kirim kartu cuplikan produk ke ruang obrolan terlebih dahulu
+    const introText = `Anda sedang menanyakan ketersediaan busana **${product.name}** (${product.price}). Silakan ketik pertanyaan Anda seputar ketersediaan ukuran (S, M, L, XL) atau stok di bawah ini ✨`;
+
+    // Hindari duplikasi jika baru saja mengklik produk yang sama
     const lastMsg = this.messages[this.messages.length - 1];
-    if (lastMsg && lastMsg.text === queryText && Date.now() - (lastMsg.timestamp || 0) < 4000) {
-      return;
+    if (!lastMsg || lastMsg.productCard?.id !== product.id || Date.now() - (lastMsg.timestamp || 0) > 8000) {
+      const msg = {
+        sender: 'agent',
+        senderBadge: 'Aria AI Stylist',
+        text: introText,
+        productCard: product,
+        actionBtn: product.url ? {
+          label: `Buka ${product.name}`,
+          url: product.url,
+          external: false
+        } : null,
+        timestamp: Date.now(),
+        time: this.getCurrentTime()
+      };
+      this.messages.push(msg);
+      this.saveHistory();
+      this.appendMessageElement(msg, true);
+      this.scrollToBottom();
     }
 
-    this.submitMessage(queryText, false, product);
+    setTimeout(() => {
+      this.input?.focus();
+    }, 200);
   }
 
   async submitMessage(text, requestHuman = false, productData = null) {

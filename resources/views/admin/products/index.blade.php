@@ -208,6 +208,14 @@
                     {{ $product->stock }} pcs
                   </span>
                 @endif
+                <div style="display: flex; gap: 3px; margin-top: 5px; flex-wrap: wrap;">
+                  @foreach(['S', 'M', 'L', 'XL'] as $sz)
+                    @php $szQty = $product->getStockForSize($sz); @endphp
+                    <span style="font-size: 9.5px; font-weight: 700; padding: 1px 4px; border-radius: 4px; {{ $szQty > 0 ? 'background: #EFF6FF; color: #1D4ED8;' : 'background: #FEE2E2; color: #DC2626; border: 1px dashed #FCA5A5;' }}" title="Stok ukuran {{ $sz }}: {{ $szQty }} pcs">
+                      {{ $sz }}: {{ $szQty > 0 ? $szQty : 'Habis' }}
+                    </span>
+                  @endforeach
+                </div>
               </td>
               <td style="text-align: right;">
                 <div style="display: inline-flex; gap: 5px; align-items: center; justify-content: flex-end;">
@@ -233,6 +241,7 @@
                       'price' => $product->price,
                       'original_price' => $product->original_price ?? '',
                       'stock' => $product->stock,
+                      'size_stocks' => $product->size_stocks,
                       'badge' => $product->badge ?? '',
                       'image_url' => $product->first_image_url,
                       'description' => $product->getRawDescription() ?? '',
@@ -436,9 +445,38 @@
           <div id="editOrigPriceUsdPreview" style="font-size: 11px; color: #9CA3AF; margin-top: 3px;"></div>
         </div>
         <div>
-          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Stok (pcs) *</label>
-          <input type="number" name="stock" id="editProductStock" required min="0" class="chat-search-input" style="width: 100%; font-size: 13px;">
-          <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Kuantitas stok siap kirim</div>
+          <label style="display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px;">Total Stok (pcs) *</label>
+          <input type="number" name="stock" id="editProductStock" required min="0" class="chat-search-input" style="width: 100%; font-size: 13px; font-weight: 700; background: #FAF9F6;" readonly>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 3px;">Otomatis dihitung dari rincian ukuran di bawah</div>
+        </div>
+      </div>
+
+      <!-- Ketersediaan Stok Per Ukuran (S, M, L, XL) -->
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1E293B; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+            Ketersediaan Stok Per Ukuran (S, M, L, XL) *
+          </label>
+          <span style="font-size: 11px; color: #64748B;">Isi <strong>0</strong> jika ukuran tersebut kosong / habis</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px; text-align: center;">Size S</label>
+            <input type="number" name="size_stocks[S]" id="editSizeStockS" min="0" required oninput="calcEditTotalStock()" class="chat-search-input" style="width: 100%; text-align: center; font-size: 13.5px; font-weight: 700; padding: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px; text-align: center;">Size M</label>
+            <input type="number" name="size_stocks[M]" id="editSizeStockM" min="0" required oninput="calcEditTotalStock()" class="chat-search-input" style="width: 100%; text-align: center; font-size: 13.5px; font-weight: 700; padding: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px; text-align: center;">Size L</label>
+            <input type="number" name="size_stocks[L]" id="editSizeStockL" min="0" required oninput="calcEditTotalStock()" class="chat-search-input" style="width: 100%; text-align: center; font-size: 13.5px; font-weight: 700; padding: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 3px; text-align: center;">Size XL</label>
+            <input type="number" name="size_stocks[XL]" id="editSizeStockXL" min="0" required oninput="calcEditTotalStock()" class="chat-search-input" style="width: 100%; text-align: center; font-size: 13.5px; font-weight: 700; padding: 6px;">
+          </div>
         </div>
       </div>
 
@@ -736,19 +774,44 @@ function openEditProductModalFromData(btn) {
       p.video_url,
       p.image_url,
       p.video_asset,
-      p.video_type
+      p.video_type,
+      p.size_stocks
     );
   } catch (err) {
     console.error('Error parsing product data:', err);
   }
 }
 
-function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl, imageUrl, videoAsset, videoType) {
+function calcEditTotalStock() {
+  const s = parseInt(document.getElementById('editSizeStockS')?.value || 0, 10);
+  const m = parseInt(document.getElementById('editSizeStockM')?.value || 0, 10);
+  const l = parseInt(document.getElementById('editSizeStockL')?.value || 0, 10);
+  const xl = parseInt(document.getElementById('editSizeStockXL')?.value || 0, 10);
+  const total = Math.max(0, (isNaN(s) ? 0 : s) + (isNaN(m) ? 0 : m) + (isNaN(l) ? 0 : l) + (isNaN(xl) ? 0 : xl));
+  const stockEl = document.getElementById('editProductStock');
+  if (stockEl) stockEl.value = total;
+}
+
+function openEditProductModal(id, name, nameEn, sku, categoryId, price, originalPrice, stock, badge, desc, descEn, videoUrl, imageUrl, videoAsset, videoType, sizeStocks) {
   document.getElementById('editProductForm').action = '/admin/products/' + id;
   document.getElementById('editProductName').value = name;
   document.getElementById('editProductNameEn').value = nameEn || '';
   document.getElementById('editProductSku').value = sku;
   document.getElementById('editProductCategory').value = categoryId;
+  document.getElementById('editProductPrice').value = price;
+  document.getElementById('editProductOriginalPrice').value = originalPrice || '';
+  document.getElementById('editProductStock').value = stock;
+
+  const sInput = document.getElementById('editSizeStockS');
+  const mInput = document.getElementById('editSizeStockM');
+  const lInput = document.getElementById('editSizeStockL');
+  const xlInput = document.getElementById('editSizeStockXL');
+
+  if (sInput) sInput.value = (sizeStocks && sizeStocks.S !== undefined) ? sizeStocks.S : Math.floor(stock / 4);
+  if (mInput) mInput.value = (sizeStocks && sizeStocks.M !== undefined) ? sizeStocks.M : Math.floor(stock / 4);
+  if (lInput) lInput.value = (sizeStocks && sizeStocks.L !== undefined) ? sizeStocks.L : Math.floor(stock / 4);
+  if (xlInput) xlInput.value = (sizeStocks && sizeStocks.XL !== undefined) ? sizeStocks.XL : Math.floor(stock / 4);
+  calcEditTotalStock();
 
   // Handle current image preview & reset file input
   clearSelectedImage('editProdImageFile', 'editImgPreviewWrap');

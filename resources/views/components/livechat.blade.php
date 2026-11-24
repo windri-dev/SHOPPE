@@ -94,6 +94,19 @@
     <div class="shoppe-livechat-body" id="shoppeLiveChatBody" tabindex="0"></div>
 
     <footer class="shoppe-livechat-footer">
+      <!-- Context Produk Terlampir yang Sedang Ditanyakan -->
+      <div id="shoppeLiveChatAttachedProduct" style="display: none; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; margin-bottom: 8px; background: #FAF9F6; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 11.5px;">
+        <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+          <img id="shoppeLiveChatAttachedImg" src="" alt="" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px; flex-shrink: 0; background: #FFF;">
+          <div style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span style="font-size: 10px; color: #6B7280; display: block; line-height: 1.1;">Menanyakan Produk:</span>
+            <strong id="shoppeLiveChatAttachedName" style="color: #111827; font-size: 11.5px;"></strong>
+            <span id="shoppeLiveChatAttachedPrice" style="color: #A18A68; margin-left: 4px; font-weight: 700; font-size: 11px;"></span>
+          </div>
+        </div>
+        <button type="button" id="shoppeLiveChatAttachedRemove" style="background: none; border: none; font-size: 18px; color: #9CA3AF; cursor: pointer; padding: 0 4px; line-height: 1;" title="{{ __('Batalkan kaitan produk') }}">&times;</button>
+      </div>
+
       <form class="shoppe-livechat-form" id="shoppeLiveChatForm">
         <input
           type="text"
