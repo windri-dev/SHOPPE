@@ -9,8 +9,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Contact\SubmitInquiryRequest;
 use App\Http\Requests\Contact\SubmitLivechatMessageRequest;
 use App\Models\Inquiry;
+use App\Models\Product;
 use App\Services\AiConciergeService;
 use App\Services\InquiryService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -47,6 +49,9 @@ class ContactController extends Controller
         $email = $user ? $user->email : (! empty($validated['email']) ? $validated['email'] : 'guest@shoppe.com');
         $ticketNumber = $validated['ticket_number'] ?? null;
         $requestHuman = (bool) ($validated['request_human'] ?? false);
+        $productId = ! empty($validated['product_id']) ? (int) $validated['product_id'] : null;
+        $product = $productId ? Product::query()->find($productId) : null;
+        $subject = $product ? 'Tanya Produk: ' . $product->name : 'Live Chat Concierge Web';
 
         $inquiry = null;
         if ($ticketNumber) {
@@ -59,13 +64,19 @@ class ContactController extends Controller
                 'message' => $validated['message'],
                 'created_at' => now(),
             ]);
-            $inquiry->update(['status' => InquiryStatus::UNREAD]);
+            $inquiry->update([
+                'status' => InquiryStatus::UNREAD,
+                'updated_at' => now(),
+            ]);
+            if ($product && str_contains((string) $inquiry->subject, 'Live Chat Concierge Web')) {
+                $inquiry->update(['subject' => $subject]);
+            }
         } else {
             $inquiry = $this->inquiryService->createInquiry([
                 'name' => $name,
                 'email' => $email,
                 'phone' => $user?->phone,
-                'subject' => 'Live Chat Concierge Web',
+                'subject' => $subject,
                 'channel' => 'livechat',
                 'handling_mode' => $requestHuman ? 'human' : 'ai',
                 'message' => $validated['message'],
@@ -102,7 +113,8 @@ class ContactController extends Controller
         $aiResult = $this->aiConciergeService->handleCustomerMessage(
             $validated['message'],
             $inquiry,
-            $user
+            $user,
+            $productId
         );
 
         return response()->json([

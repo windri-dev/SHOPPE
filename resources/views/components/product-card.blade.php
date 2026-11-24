@@ -63,6 +63,24 @@
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
       </button>
+      <button
+        type="button"
+        class="action-icon-btn livechat-product-btn"
+        data-action="livechat-product-inquiry"
+        data-product-id="{{ $product->id }}"
+        data-product-name="{{ $product->name }}"
+        data-product-price="{{ $product->formatted_price }}"
+        data-product-image="{{ asset($product->primary_image) }}"
+        data-product-url="{{ route('shop.show', $product->slug) }}"
+        title="{{ __('Tanya Ketersediaan / Stok Produk via Livechat') }}"
+        aria-label="{{ __('Tanya Stok') }} {{ $product->name }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <path d="M8 9h8"></path>
+          <path d="M8 13h5"></path>
+        </svg>
+      </button>
     </div>
 
     @if($product->isInStock())

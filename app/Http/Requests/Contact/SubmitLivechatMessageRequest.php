@@ -24,6 +24,7 @@ class SubmitLivechatMessageRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:150'],
             'ticket_number' => ['nullable', 'string', 'max:60'],
             'request_human' => ['nullable', 'boolean'],
+            'product_id' => ['nullable', 'integer', 'exists:products,id'],
         ];
     }
 }

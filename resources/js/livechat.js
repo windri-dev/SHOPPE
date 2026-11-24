@@ -110,6 +110,26 @@ class LiveChatManager {
       if (trigger) {
         e.preventDefault();
         this.openChat();
+        return;
+      }
+
+      const pInquiryBtn = e.target.closest('[data-action="livechat-product-inquiry"], .livechat-product-btn');
+      if (pInquiryBtn) {
+        e.preventDefault();
+        const pId = pInquiryBtn.dataset.productId;
+        const pName = pInquiryBtn.dataset.productName || pInquiryBtn.dataset.productTitle || 'Produk';
+        const pPrice = pInquiryBtn.dataset.productPrice || '';
+        const pImage = pInquiryBtn.dataset.productImage || pInquiryBtn.dataset.productImg || '';
+        const pUrl = pInquiryBtn.dataset.productUrl || '';
+
+        this.openChat();
+        this.inquireProduct({
+          id: pId,
+          name: pName,
+          price: pPrice,
+          image: pImage,
+          url: pUrl
+        });
       }
     });
   }
@@ -298,7 +318,27 @@ class LiveChatManager {
       badgeHtml = `<div class="shoppe-livechat-sender-badge ${isHuman ? 'is-human' : ''}">${this.escapeHtml(msg.senderBadge)}</div>`;
     }
 
-    let contentHtml = `${badgeHtml}<div>${this.formatSafeBubbleHtml(msg.text || '')}</div>`;
+    let productCardHtml = '';
+    if (msg.productCard && msg.productCard.name) {
+      const p = msg.productCard;
+      const safeImg = this.escapeHtml(p.image || '');
+      const safeName = this.escapeHtml(p.name);
+      const safePrice = this.escapeHtml(p.price || '');
+      const safeUrl = this.escapeHtml(p.url || '#');
+
+      productCardHtml = `
+        <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 7px 10px; margin-bottom: 8px; text-decoration: none; color: inherit; transition: opacity 0.2s;">
+          ${safeImg ? `<img src="${safeImg}" alt="${safeName}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #FFF;">` : ''}
+          <div style="flex: 1; min-width: 0; text-align: left;">
+            <div style="font-weight: 700; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit;">${safeName}</div>
+            <div style="font-size: 11px; opacity: 0.9; color: inherit;">${safePrice}</div>
+          </div>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="flex-shrink: 0; opacity: 0.7;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      `;
+    }
+
+    let contentHtml = `${badgeHtml}${productCardHtml}<div>${this.formatSafeBubbleHtml(msg.text || '')}</div>`;
 
     if (msg.actionBtn && msg.actionBtn.url && msg.actionBtn.label) {
       const safeUrl = this.escapeHtml(msg.actionBtn.url);
@@ -337,8 +377,22 @@ class LiveChatManager {
     this.submitMessage(val, false);
   }
 
-  async submitMessage(text, requestHuman = false) {
-    this.sendUserMessage(text);
+  inquireProduct(product) {
+    if (!product || !product.id) return;
+
+    const queryText = `Halo Aria, apakah busana "${product.name}" (${product.price}) ini masih ready stock / tersedia?`;
+
+    // Anti-spam quick double-click protection
+    const lastMsg = this.messages[this.messages.length - 1];
+    if (lastMsg && lastMsg.text === queryText && Date.now() - (lastMsg.timestamp || 0) < 4000) {
+      return;
+    }
+
+    this.submitMessage(queryText, false, product);
+  }
+
+  async submitMessage(text, requestHuman = false, productData = null) {
+    this.sendUserMessage(text, productData);
     if (this.handlingMode !== 'human' || requestHuman) {
       this.showTypingIndicator();
     }
@@ -361,7 +415,8 @@ class LiveChatManager {
           email: customerEmail,
           message: text,
           ticket_number: this.ticketNumber,
-          request_human: requestHuman
+          request_human: requestHuman,
+          product_id: productData?.id || null
         })
       });
 
@@ -450,10 +505,12 @@ class LiveChatManager {
     }
   }
 
-  sendUserMessage(text) {
+  sendUserMessage(text, productCard = null) {
     const msg = {
       sender: 'user',
       text: text,
+      productCard: productCard,
+      timestamp: Date.now(),
       time: this.getCurrentTime()
     };
 

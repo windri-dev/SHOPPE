@@ -207,6 +207,25 @@
         </div>
       @endif
 
+      <button
+        type="button"
+        class="livechat-product-btn"
+        data-action="livechat-product-inquiry"
+        data-product-id="{{ $product->id }}"
+        data-product-name="{{ $product->name }}"
+        data-product-price="{{ $product->formatted_price }}"
+        data-product-image="{{ asset($product->primary_image) }}"
+        data-product-url="{{ route('shop.show', $product->slug) }}"
+        style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px 16px; background: #FAF9F6; border: 1px dashed #A18A68; border-radius: 8px; color: #1B1B18; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; margin-bottom: 12px;"
+      >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <path d="M8 9h8"></path>
+          <path d="M8 13h5"></path>
+        </svg>
+        <span>{{ __('Tanya Ketersediaan / Stok Busana via Livechat') }}</span>
+      </button>
+
       <div class="detail-meta-social">
         @php
           $isWishlisted = $product->isWishlistedBy(auth()->user());
@@ -221,6 +240,25 @@
         >
           <svg viewBox="0 0 24 24" fill="{{ $isWishlisted ? '#D82700' : 'none' }}" stroke="{{ $isWishlisted ? '#D82700' : 'currentColor' }}">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="wishlist-icon-btn livechat-product-btn"
+          data-action="livechat-product-inquiry"
+          data-product-id="{{ $product->id }}"
+          data-product-name="{{ $product->name }}"
+          data-product-price="{{ $product->formatted_price }}"
+          data-product-image="{{ asset($product->primary_image) }}"
+          data-product-url="{{ route('shop.show', $product->slug) }}"
+          title="{{ __('Tanya Ketersediaan / Stok Produk via Livechat') }}"
+          aria-label="{{ __('Tanya Ketersediaan') }}"
+          style="display: inline-flex; align-items: center; justify-content: center; margin-left: 6px;"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h5"></path>
           </svg>
         </button>
         <span class="meta-divider"></span>

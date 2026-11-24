@@ -30,7 +30,7 @@ class AiConciergeService
      *     rule_applied?: ?string
      * }
      */
-    public function handleCustomerMessage(string $rawMessage, ?Inquiry $inquiry = null, ?User $user = null): array
+    public function handleCustomerMessage(string $rawMessage, ?Inquiry $inquiry = null, ?User $user = null, ?int $productId = null): array
     {
         $cleanMessage = trim($rawMessage);
         $q = strtolower($cleanMessage);
@@ -146,7 +146,7 @@ class AiConciergeService
         }
 
         // 5. Cek Pengecekan Barang, Harga & Stok Real-Time dari Database Katalog (0 Token - Langsung Database)
-        $catalogResult = $this->checkProductAndPriceCatalog($q);
+        $catalogResult = $this->checkProductAndPriceCatalog($q, $productId);
         if ($catalogResult !== null) {
             $finalReply = $catalogResult['reply'];
 
@@ -464,8 +464,46 @@ class AiConciergeService
      *
      * @return ?array{reply: string, action_btn: array{label: string, url: string, external?: bool}, matched_products: array<int, array<string, mixed>>}
      */
-    protected function checkProductAndPriceCatalog(string $q): ?array
+    protected function checkProductAndPriceCatalog(string $q, ?int $productId = null): ?array
     {
+        if ($productId) {
+            /** @var ?Product $targetProduct */
+            $targetProduct = Product::with('category')->find($productId);
+            if ($targetProduct) {
+                $stockText = $targetProduct->stock > 0 ? "Tersedia (**{$targetProduct->stock} pcs** siap kirim)" : '**Stok Habis (Sold Out)**';
+                $priceText = $targetProduct->formatted_price;
+                if ($targetProduct->original_price && (float) $targetProduct->original_price > (float) $targetProduct->price) {
+                    $priceText .= " *(Harga normal: {$targetProduct->formatted_original_price})*";
+                }
+
+                $reply = "Berikut hasil pengecekan ketersediaan stok real-time untuk **{$targetProduct->name}** ({$targetProduct->sku}):\n"
+                    ."• **Status Stok:** {$stockText}\n"
+                    ."• **Harga Resmi:** **{$priceText}**\n"
+                    .'• **Kategori:** '.($targetProduct->category->name ?? 'Busana & Pakaian')."\n"
+                    .'• **Detail:** '.Str::limit((string) $targetProduct->description, 140)."\n\n"
+                    .($targetProduct->stock > 0 ? 'Apakah Kakak berminat memesan busana ini, atau ada yang ingin ditanyakan seputar ukuran?' : 'Produk ini sedang habis, tim kami siap merekomendasikan pilihan busana serupa yang ready stock.');
+
+                return [
+                    'reply' => $reply,
+                    'action_btn' => [
+                        'label' => "Lihat {$targetProduct->name} ({$targetProduct->formatted_price})",
+                        'url' => route('shop.show', $targetProduct->slug),
+                        'external' => false,
+                    ],
+                    'matched_products' => [
+                        [
+                            'id' => $targetProduct->id,
+                            'name' => $targetProduct->name,
+                            'sku' => $targetProduct->sku,
+                            'price' => $targetProduct->formatted_price,
+                            'stock' => $targetProduct->stock,
+                            'url' => route('shop.show', $targetProduct->slug),
+                        ],
+                    ],
+                ];
+            }
+        }
+
         /** @var Collection<int, Product> $allProducts */
         $allProducts = Product::with('category')->where('is_active', true)->get();
         if ($allProducts->isEmpty()) {
