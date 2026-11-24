@@ -7,6 +7,12 @@
 /* --------------------------------------------------------------------------
    1. GLOBAL FOUNDATIONS & APP WRAPPERS
    -------------------------------------------------------------------------- */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 .main-content {
   flex: 1;
   padding-bottom: 80px;

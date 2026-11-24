@@ -475,6 +475,8 @@
     height: 56px;
     padding: 0 10px;
     gap: 6px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .header-left {
@@ -594,6 +596,24 @@
   .header-actions .icon-btn:active {
     background-color: rgba(161, 138, 104, 0.12);
     transform: scale(0.94);
+  }
+
+  @media (max-width: 400px) {
+    .header-container {
+      padding: 0 6px !important;
+      gap: 4px !important;
+    }
+    .header-logo-image {
+      max-width: 120px !important;
+      height: 25px !important;
+    }
+    .header-actions {
+      gap: 1px !important;
+    }
+    .header-actions .icon-btn {
+      width: 28px !important;
+      height: 28px !important;
+    }
   }
 
   .header-actions .icon-btn svg {
