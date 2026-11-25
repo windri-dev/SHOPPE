@@ -230,77 +230,130 @@
 
         <!-- Payment Method Selection -->
         <div class="checkout-payment-methods" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-          <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin-bottom: 12px;">
-            {{ __('Pilihan Metode Pembayaran:') }}
-          </label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <label style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111827; margin: 0;">
+              {{ __('Pilihan Metode Pembayaran:') }}
+            </label>
+            <span style="font-size: 11px; color: #059669; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>{{ __('SSL 256-Bit Aman') }}</span>
+            </span>
+          </div>
+
           <div style="display: flex; flex-direction: column; gap: 10px;" id="paymentOptionsWrapper">
             @php
               $activeBanksList = \App\Models\BankAccount::active()->ordered()->get();
-              $activeBankNames = $activeBanksList->pluck('bank_name')->implode(', ');
             @endphp
+
             <!-- 1. Bank Transfer Manual -->
-            <label class="payment-method-label" style="display: block; border: 1.5px solid #111827; border-radius: 8px; padding: 12px 14px; background: #FAF9F6; cursor: pointer; transition: all 0.2s ease;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #111827;">
-                  <input type="radio" name="payment_method" value="bank_transfer" class="payment-method-radio" checked style="accent-color: #111827;">
-                  <span>{{ __('Transfer Bank Manual') }} ({{ $activeBankNames ?: 'BCA, Mandiri, BNI' }})</span>
+            <div class="payment-card-box" id="cardBankTransfer" style="border: 1.5px solid #111827; border-radius: 10px; background: #FAF9F6; transition: all 0.2s ease; overflow: hidden;">
+              <label class="payment-method-label" style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; margin: 0;">
+                <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700; color: #111827;">
+                  <input type="radio" name="payment_method" value="bank_transfer" class="payment-method-radio" checked style="accent-color: #111827; width: 16px; height: 16px;">
+                  <span>{{ __('Transfer Bank Manual (Rekening Butik)') }}</span>
                 </span>
-                <span style="font-size: 10.5px; background: #EFF6FF; color: #1D4ED8; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Manual</span>
+                <span style="font-size: 10.5px; background: #EFF6FF; color: #1D4ED8; font-weight: 700; padding: 2px 8px; border-radius: 99px;">Paling Populer</span>
+              </label>
+
+              <!-- Sub-section: Pilihan Rekening Bank Aktif -->
+              <div id="bankTransferDetails" style="padding: 0 16px 16px 16px; display: flex; flex-direction: column; gap: 10px;">
+                <p style="margin: 0 0 4px 0; font-size: 12px; color: #6B7280; line-height: 1.45;">
+                  {{ __('Pilih salah satu rekening bank tujuan. Nomor rekening dan instruksi pembayaran akan dicantumkan lengkap pada invoice pesanan:') }}
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;" id="bankItemsList">
+                  @forelse($activeBanksList as $idx => $bankItem)
+                    <label class="bank-account-item" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; background: #FFFFFF; border: 1.5px solid {{ $loop->first ? '#A18A68' : '#E5E7EB' }}; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">
+                      <!-- Baris 1: Radio + Logo + Nama Bank & Nama Pemilik -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                          <input type="radio" name="bank_account_id" value="{{ $bankItem->id }}" data-bank-name="{{ $bankItem->bank_name }}" class="bank-choice-radio" {{ $loop->first ? 'checked' : '' }} style="accent-color: #A18A68; width: 16px; height: 16px;">
+                          <div style="display: flex; align-items: center; gap: 8px;">
+                            {!! $bankItem->bank_icon_svg !!}
+                            <span style="font-size: 13.5px; font-weight: 700; color: #111827;">{{ $bankItem->bank_name }}</span>
+                          </div>
+                        </div>
+                        <span style="font-size: 11px; color: #6B7280;">a.n. <strong>{{ $bankItem->account_holder }}</strong></span>
+                      </div>
+
+                      <!-- Baris 2: Kotak Nomor Rekening & Tombol Salin -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; background: #FAF9F6; border: 1px solid #EFE8DC; border-radius: 6px; padding: 6px 10px; width: 100%; box-sizing: border-box; gap: 8px;">
+                        <span style="font-family: 'DM Mono', monospace, ui-monospace; font-size: 12.5px; font-weight: 700; color: #111827; white-space: nowrap;">{{ $bankItem->account_number }}</span>
+                        <button type="button" onclick="copyAccNumber('{{ $bankItem->clean_account_number }}', '{{ $bankItem->bank_name }}', event)" style="background: #FFFFFF; color: #8F7655; border: 1px solid #A18A68; padding: 2px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0;" title="Salin nomor rekening">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                          <span>Salin</span>
+                        </button>
+                      </div>
+                    </label>
+                  @empty
+                    <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 10px; font-size: 12px; color: #92400E;">
+                      Rekening butik sedang dalam pemeliharaan. Silakan hubungi Concierge via Livechat.
+                    </div>
+                  @endforelse
+                </div>
               </div>
-              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
-                {{ __('Transfer ke rekening butik a.n. PT PUTRIJALVA INDONESIA. Konfirmasi transfer diverifikasi finance 15-30 menit.') }}
-              </p>
-            </label>
+            </div>
 
             <!-- 2. QRIS Instant -->
-            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="payment-card-box" id="cardQris" style="border: 1px solid #E5E7EB; border-radius: 10px; background: #FFFFFF; transition: all 0.2s ease; overflow: hidden;">
+              <label class="payment-method-label" style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; margin: 0;">
                 <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
-                  <input type="radio" name="payment_method" value="qris" class="payment-method-radio" style="accent-color: #111827;">
+                  <input type="radio" name="payment_method" value="qris" class="payment-method-radio" style="accent-color: #111827; width: 16px; height: 16px;">
                   <span>{{ __('QRIS Instant Payment (Otomatis & Cepat)') }}</span>
                 </span>
-                <span style="font-size: 10.5px; background: #ECFDF5; color: #059669; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Instan</span>
+                <span style="font-size: 10.5px; background: #ECFDF5; color: #059669; font-weight: 700; padding: 2px 8px; border-radius: 99px;">Instan</span>
+              </label>
+              <div id="qrisDetails" style="padding: 0 16px 14px 16px; display: none;">
+                <div style="background: #FAF9F6; border: 1px dashed #D1D5DB; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #4B5563; line-height: 1.5;">
+                  <div style="font-weight: 700; color: #111827; margin-bottom: 2px; display: flex; align-items: center; gap: 6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A18A68" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Scan QRIS Instan</span>
+                  </div>
+                  {{ __('Kode QR dinamis akan langsung muncul di layar setelah Anda menekan tombol Buat Pesanan. Scan via BCA Mobile, Livin, BRImo, BNI, GoPay, OVO, ShopeePay, atau DANA. Terverifikasi detik itu juga tanpa upload bukti transfer.') }}
+                </div>
               </div>
-              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
-                {{ __('Scan QRIS via m-Banking (BCA, Mandiri, BRI, BNI) atau e-Wallet (GoPay, OVO, ShopeePay, DANA). Terverifikasi detik itu juga.') }}
-              </p>
-            </label>
+            </div>
 
             <!-- 3. Credit / Debit Card -->
-            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="payment-card-box" id="cardCreditCard" style="border: 1px solid #E5E7EB; border-radius: 10px; background: #FFFFFF; transition: all 0.2s ease; overflow: hidden;">
+              <label class="payment-method-label" style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; margin: 0;">
                 <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
-                  <input type="radio" name="payment_method" value="credit_card" class="payment-method-radio" style="accent-color: #111827;">
+                  <input type="radio" name="payment_method" value="credit_card" class="payment-method-radio" style="accent-color: #111827; width: 16px; height: 16px;">
                   <span>{{ __('Kartu Kredit / Debit Online (Visa / Mastercard)') }}</span>
                 </span>
-                <span style="font-size: 10.5px; background: #F3F4F6; color: #4B5563; font-weight: 700; padding: 2px 7px; border-radius: 4px;">3D Secure</span>
+                <span style="font-size: 10.5px; background: #F3F4F6; color: #4B5563; font-weight: 700; padding: 2px 8px; border-radius: 99px;">3D Secure</span>
+              </label>
+              <div id="creditCardDetails" style="padding: 0 16px 14px 16px; display: none;">
+                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #4B5563; line-height: 1.5;">
+                  {{ __('Pembayaran kartu aman standar internasional dengan enkripsi TLS 1.3 dan verifikasi kode OTP 3D Secure langsung dari bank penerbit kartu Anda.') }}
+                </div>
               </div>
-              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
-                {{ __('Pembayaran kartu aman standar internasional dengan verifikasi kode OTP 3D Secure bank Anda.') }}
-              </p>
-            </label>
+            </div>
 
             <!-- 4. Cash on Delivery (COD) -->
-            <label class="payment-method-label" style="display: block; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; background: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="payment-card-box" id="cardCod" style="border: 1px solid #E5E7EB; border-radius: 10px; background: #FFFFFF; transition: all 0.2s ease; overflow: hidden;">
+              <label class="payment-method-label" style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; margin: 0;">
                 <span style="display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #374151;">
-                  <input type="radio" name="payment_method" value="cod" class="payment-method-radio" style="accent-color: #111827;">
+                  <input type="radio" name="payment_method" value="cod" class="payment-method-radio" style="accent-color: #111827; width: 16px; height: 16px;">
                   <span>{{ __('Bayar di Tempat / COD (Cash on Delivery)') }}</span>
                 </span>
-                <span style="font-size: 10.5px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 2px 7px; border-radius: 4px;">Bayar di Tempat</span>
+                <span style="font-size: 10.5px; background: #FEF3C7; color: #92400E; font-weight: 700; padding: 2px 8px; border-radius: 99px;">Tunai</span>
+              </label>
+              <div id="codDetails" style="padding: 0 16px 14px 16px; display: none;">
+                <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400E; line-height: 1.5;">
+                  {{ __('Harap siapkan uang pas sebesar total pembayaran saat kurir ekspedisi mengantarkan paket busana ke alamat Anda.') }}
+                </div>
               </div>
-              <p style="margin: 6px 0 0 24px; font-size: 12px; color: #6B7280; line-height: 1.45;">
-                {{ __('Bayar tunai secara langsung kepada kurir ekspedisi saat paket busana telah sampai di alamat tujuan.') }}
-              </p>
-            </label>
+            </div>
           </div>
         </div>
 
         <!-- Hidden input for JSON cart items submitted by checkout form handler -->
         <div id="hiddenCartInputs"></div>
 
-        <button type="submit" class="btn-place-order">
-          {{ __('PLACE ORDER') }}
+        <button type="submit" class="btn-place-order" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>{{ __('KONFIRMASI & BUAT PESANAN') }}</span>
         </button>
       </div>
     </div>
@@ -453,27 +506,111 @@
     // Initial fetch on page load
     setTimeout(fetchShippingRates, 150);
 
-    // Payment Method Option Selection
-    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
-    const paymentLabels = document.querySelectorAll('.payment-method-label');
+    // Global copy function with toast
+    window.copyAccNumber = function (accountNumber, bankName, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      navigator.clipboard.writeText(accountNumber).then(function () {
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-success';
+        toast.style.cssText = 'position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #111827; color: #FFFFFF; padding: 11px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 99999; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;';
+        toast.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Nomor rekening ${bankName} (${accountNumber}) berhasil disalin!</span>`;
+        document.body.appendChild(toast);
+        setTimeout(function () {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.3s ease';
+          setTimeout(function () { toast.remove(); }, 300);
+        }, 2200);
+      }).catch(function () {
+        prompt('Salin nomor rekening:', accountNumber);
+      });
+    };
 
-    paymentRadios.forEach(function (radio) {
-      radio.addEventListener('change', function () {
-        paymentLabels.forEach(function (lbl) {
-          lbl.style.borderColor = '#E5E7EB';
-          lbl.style.background = '#FFFFFF';
-          const nameSpan = lbl.querySelector('span[style*="font-weight: 600"]');
-          if (nameSpan) nameSpan.style.color = '#374151';
+    // Bank Account Item Radio Selection
+    const bankItems = document.querySelectorAll('.bank-account-item');
+    bankItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        bankItems.forEach(function (b) {
+          b.style.borderColor = '#E5E7EB';
+          b.style.background = '#FFFFFF';
         });
-        const currentLabel = this.closest('.payment-method-label');
-        if (currentLabel) {
-          currentLabel.style.borderColor = '#111827';
-          currentLabel.style.background = '#FAF9F6';
-          const nameSpan = currentLabel.querySelector('span[style*="font-weight: 600"]');
-          if (nameSpan) nameSpan.style.color = '#111827';
-        }
+        this.style.borderColor = '#A18A68';
+        this.style.background = '#FAF7F2';
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
       });
     });
+
+    // Payment Method Option Selection
+    const paymentCards = document.querySelectorAll('.payment-card-box');
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+
+    function syncPaymentDisplay() {
+      const selected = document.querySelector('input[name="payment_method"]:checked')?.value || 'bank_transfer';
+      
+      paymentCards.forEach(function (card) {
+        card.style.borderColor = '#E5E7EB';
+        card.style.background = '#FFFFFF';
+        const nameSpan = card.querySelector('.payment-method-label span span');
+        if (nameSpan) nameSpan.style.color = '#374151';
+      });
+
+      const bankDetails = document.getElementById('bankTransferDetails');
+      const qrisDetails = document.getElementById('qrisDetails');
+      const ccDetails = document.getElementById('creditCardDetails');
+      const codDetails = document.getElementById('codDetails');
+
+      if (bankDetails) bankDetails.style.display = 'none';
+      if (qrisDetails) qrisDetails.style.display = 'none';
+      if (ccDetails) ccDetails.style.display = 'none';
+      if (codDetails) codDetails.style.display = 'none';
+
+      if (selected === 'bank_transfer') {
+        const c = document.getElementById('cardBankTransfer');
+        if (c) {
+          c.style.borderColor = '#111827';
+          c.style.background = '#FAF9F6';
+          const nameSpan = c.querySelector('.payment-method-label span span');
+          if (nameSpan) nameSpan.style.color = '#111827';
+        }
+        if (bankDetails) bankDetails.style.display = 'flex';
+      } else if (selected === 'qris') {
+        const c = document.getElementById('cardQris');
+        if (c) {
+          c.style.borderColor = '#111827';
+          c.style.background = '#FAF9F6';
+          const nameSpan = c.querySelector('.payment-method-label span span');
+          if (nameSpan) nameSpan.style.color = '#111827';
+        }
+        if (qrisDetails) qrisDetails.style.display = 'block';
+      } else if (selected === 'credit_card') {
+        const c = document.getElementById('cardCreditCard');
+        if (c) {
+          c.style.borderColor = '#111827';
+          c.style.background = '#FAF9F6';
+          const nameSpan = c.querySelector('.payment-method-label span span');
+          if (nameSpan) nameSpan.style.color = '#111827';
+        }
+        if (ccDetails) ccDetails.style.display = 'block';
+      } else if (selected === 'cod') {
+        const c = document.getElementById('cardCod');
+        if (c) {
+          c.style.borderColor = '#111827';
+          c.style.background = '#FAF9F6';
+          const nameSpan = c.querySelector('.payment-method-label span span');
+          if (nameSpan) nameSpan.style.color = '#111827';
+        }
+        if (codDetails) codDetails.style.display = 'block';
+      }
+    }
+
+    paymentRadios.forEach(function (radio) {
+      radio.addEventListener('change', syncPaymentDisplay);
+    });
+
+    syncPaymentDisplay();
 
     const selector = document.getElementById('savedAddressSelector');
     if (!selector) return;

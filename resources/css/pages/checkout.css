@@ -347,3 +347,41 @@
     padding: 24px 18px;
   }
 }
+
+/* Modern Luxury Sticky & Card Improvements */
+@media (min-width: 992px) {
+  .checkout-order-card {
+    position: sticky;
+    top: 90px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+  }
+}
+
+.payment-card-box {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bank-account-item {
+  transition: all 0.18s ease;
+}
+
+.bank-account-item:hover {
+  border-color: #A18A68 !important;
+}
+
+.btn-place-order {
+  height: 52px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.btn-place-order:hover {
+  background-color: #1F2937;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+}

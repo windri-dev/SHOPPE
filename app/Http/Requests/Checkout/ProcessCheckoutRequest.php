@@ -32,6 +32,7 @@ class ProcessCheckoutRequest extends FormRequest
             'address_label' => ['nullable', 'string', 'max:30'],
             'save_to_profile' => ['nullable', 'boolean'],
             'payment_method' => ['required', 'string', 'in:bank_transfer,qris,credit_card,cod'],
+            'bank_account_id' => ['nullable', 'integer', 'exists:bank_accounts,id'],
             'shipping_cost' => ['nullable', 'numeric', 'min:0'],
             'discount_amount' => ['nullable', 'numeric', 'min:0'],
             'order_notes' => ['nullable', 'string', 'max:1000'],

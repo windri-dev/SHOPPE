@@ -77,6 +77,21 @@ class CheckoutService
             $orderNumber = 'SHP-'.strtoupper(uniqid());
             $fullName = trim(($data['first_name'] ?? '').' '.(($data['last_name'] ?? '') !== '-' ? ($data['last_name'] ?? '') : ''));
 
+            $paymentMethod = $data['payment_method'] ?? 'bank_transfer';
+            $paymentChannel = null;
+            if ($paymentMethod === 'bank_transfer' && ! empty($data['bank_account_id'])) {
+                $bankObj = \App\Models\BankAccount::find($data['bank_account_id']);
+                if ($bankObj) {
+                    $paymentChannel = $bankObj->bank_name;
+                }
+            } elseif ($paymentMethod === 'qris') {
+                $paymentChannel = 'QRIS';
+            } elseif ($paymentMethod === 'credit_card') {
+                $paymentChannel = 'Credit Card';
+            } elseif ($paymentMethod === 'cod') {
+                $paymentChannel = 'COD';
+            }
+
             $order = Order::create([
                 'user_id' => $userId,
                 'order_number' => $orderNumber,
@@ -98,7 +113,8 @@ class CheckoutService
                     'street' => $data['street_address'] ?? '',
                     'street_address' => $data['street_address'] ?? '',
                 ],
-                'payment_method' => $data['payment_method'] ?? 'bank_transfer',
+                'payment_method' => $paymentMethod,
+                'payment_channel' => $paymentChannel,
                 'notes' => $data['order_notes'] ?? null,
             ]);
 
