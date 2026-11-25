@@ -138,13 +138,13 @@
     </aside>
 
     <!-- 2. RIGHT PANEL: Active Chat Room -->
+    @php
+      $firstInq = $inquiries->first();
+      $firstInitials = $firstInq ? strtoupper(substr($firstInq->name, 0, 2)) : null;
+      $firstMode = $firstInq?->handling_mode ?? 'ai';
+    @endphp
     <main class="chat-main-panel" id="chatMainPanel">
-      @if($inquiries->isNotEmpty())
-        @php
-          $firstInq = $inquiries->first();
-          $firstInitials = strtoupper(substr($firstInq->name, 0, 2));
-          $firstMode = $firstInq->handling_mode ?? 'ai';
-        @endphp
+      @if($firstInq)
         <!-- Header -->
         <header class="chat-main-header">
           <div class="chat-header-user">
@@ -268,13 +268,13 @@
           {{ $firstInitials ?? 'CS' }}
         </div>
         <h4 style="margin: 0 0 2px 0; font-size: 15px; font-weight: 700; color: #111827;" id="sidebarCustomerName">
-          {{ $firstInq->name ?? 'Tamu Live Chat' }}
+          {{ $firstInq?->name ?? 'Tamu Live Chat' }}
         </h4>
         <div style="font-size: 11.5px; color: #6B7280;" id="sidebarCustomerEmail">
-          {{ $firstInq->email ?? '-' }}
+          {{ $firstInq?->email ?? '-' }}
         </div>
         <div style="font-size: 11.5px; color: #6B7280; margin-top: 2px;" id="sidebarCustomerPhone">
-          {{ $firstInq->phone ?: 'Tidak ada No. Telepon' }}
+          {{ $firstInq?->phone ?: 'Tidak ada No. Telepon' }}
         </div>
       </div>
 
@@ -286,18 +286,18 @@
         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
             <span style="color: #6B7280;">Tiket:</span>
-            <strong style="color: #111827;" id="sidebarTicketNumber">{{ $firstInq->ticket_number ?? '-' }}</strong>
+            <strong style="color: #111827;" id="sidebarTicketNumber">{{ $firstInq?->ticket_number ?? '-' }}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
             <span style="color: #6B7280;">Kanal:</span>
             <span style="background: #ECFDF5; color: #047857; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;" id="sidebarChannelBadge">
-              {{ ($firstInq->channel ?? '') === 'contact_form' ? 'Formulir Kontak' : 'Live Chat Toko' }}
+              {{ $firstInq?->channel === 'contact_form' ? 'Formulir Kontak' : 'Live Chat Toko' }}
             </span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
             <span style="color: #6B7280;">Mode:</span>
-            <span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; {{ ($firstInq->handling_mode ?? 'ai') === 'human' ? 'background: #FEF3C7; color: #92400E;' : 'background: #F3E8FF; color: #6B21A8;' }}" id="sidebarModeBadge">
-              {{ ($firstInq->handling_mode ?? 'ai') === 'human' ? 'Admin Manusia' : 'AI Agent Aktif' }}
+            <span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; {{ $firstMode === 'human' ? 'background: #FEF3C7; color: #92400E;' : 'background: #F3E8FF; color: #6B21A8;' }}" id="sidebarModeBadge">
+              {{ $firstMode === 'human' ? 'Admin Manusia' : 'AI Agent Aktif' }}
             </span>
           </div>
         </div>

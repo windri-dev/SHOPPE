@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Services\CurrencyService;
 use App\Services\Shipping\ShippingCalculationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class ShippingCalculationTest extends TestCase
         $service = app(ShippingCalculationService::class);
         $services = $service->getAvailableServices('DKI Jakarta', 'Jakarta Selatan');
 
-        $codes = array_column($services, 'code');
+        $codes = array_column($services, 'service');
         $this->assertContains('reguler', $codes);
         $this->assertContains('express', $codes);
         $this->assertContains('sameday', $codes);
@@ -29,7 +30,7 @@ class ShippingCalculationTest extends TestCase
         $service = app(ShippingCalculationService::class);
         $services = $service->getAvailableServices('Bali', 'Denpasar');
 
-        $codes = array_column($services, 'code');
+        $codes = array_column($services, 'service');
         $this->assertContains('reguler', $codes);
         $this->assertContains('express', $codes);
         $this->assertNotContains('sameday', $codes);
@@ -50,7 +51,10 @@ class ShippingCalculationTest extends TestCase
         $service = app(ShippingCalculationService::class);
         $calc = $service->calculate('express', 'Jawa Timur', 'Surabaya', 40.0);
 
-        $this->assertEquals(2.0, $calc['cost_usd']);
+        $expectedUsd = round(28000 / app(CurrencyService::class)->getUsdToIdrRate(), 2);
+
+        $this->assertEquals(28000, $calc['cost_idr']);
+        $this->assertEquals($expectedUsd, $calc['cost_usd']);
         $this->assertFalse($calc['is_free']);
     }
 
@@ -68,6 +72,10 @@ class ShippingCalculationTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.service', 'express');
 
-        $this->assertEquals(2.0, (float) $response->json('data.cost_usd'));
+        // 1.5 kg dibulatkan ke 2 kg x Rp 18.000 (tarif express Jabodetabek).
+        $expectedUsd = round(36000 / app(CurrencyService::class)->getUsdToIdrRate(), 2);
+
+        $this->assertEquals(36000, (int) $response->json('data.cost_idr'));
+        $this->assertEquals($expectedUsd, (float) $response->json('data.cost_usd'));
     }
 }

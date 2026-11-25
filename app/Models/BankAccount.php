@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read string $bank_color
  * @property-read string $bank_bg_color
  * @property-read string $bank_icon_svg
+ * @property-read string|null $bank_logo_url
  */
 class BankAccount extends Model
 {
@@ -188,11 +189,47 @@ class BankAccount extends Model
         };
     }
 
+    public function getBankLogoKey(): ?string
+    {
+        $code = strtolower((string) ($this->bank_code ?: $this->bank_name));
+
+        return match (true) {
+            str_contains($code, 'bca') => 'bca',
+            str_contains($code, 'mandiri') => 'mandiri',
+            str_contains($code, 'bni') => 'bni',
+            str_contains($code, 'bri') => 'bri',
+            str_contains($code, 'seabank') => 'seabank',
+            str_contains($code, 'bsi') => 'bsi',
+            str_contains($code, 'cimb') => 'cimb',
+            str_contains($code, 'permata') => 'permata',
+            str_contains($code, 'danamon') => 'danamon',
+            str_contains($code, 'jago') => 'jago',
+            str_contains($code, 'btn') => 'btn',
+            str_contains($code, 'jenius') || str_contains($code, 'btpn') => 'jenius',
+            default => null,
+        };
+    }
+
+    public function getBankLogoUrlAttribute(): ?string
+    {
+        $key = $this->getBankLogoKey();
+        if ($key && file_exists(public_path("images/banks/{$key}.webp"))) {
+            return asset("images/banks/{$key}.webp");
+        }
+
+        return null;
+    }
+
     /**
-     * Get SVG icon or stylized badge for this bank.
+     * Get SVG icon or stylized badge for this bank (or .webp logo image if available).
      */
     public function getBankIconSvgAttribute(): string
     {
+        $logoUrl = $this->bank_logo_url;
+        if ($logoUrl) {
+            return '<span class="bank-logo-badge" style="display: inline-flex; align-items: center; justify-content: center; width: 66px; height: 30px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 6px; padding: 3px 6px; box-sizing: border-box; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.04);"><img src="'.e($logoUrl).'" alt="'.e($this->bank_name).'" style="max-height: 100%; max-width: 100%; width: auto; height: auto; object-fit: contain; display: block;" loading="lazy"></span>';
+        }
+
         $code = strtolower((string) ($this->bank_code ?: $this->bank_name));
         $color = $this->bank_color;
 

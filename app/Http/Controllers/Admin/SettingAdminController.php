@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BankAccount;
 use App\Models\StoreSetting;
+use Database\Seeders\StoreSettingSeeder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -16,6 +17,10 @@ class SettingAdminController extends Controller
     public function index(Request $request): View
     {
         $banks = BankAccount::ordered()->get();
+        if ($banks->isEmpty()) {
+            (new StoreSettingSeeder)->run();
+            $banks = BankAccount::ordered()->get();
+        }
 
         $social = [
             'instagram' => StoreSetting::get('social_instagram', 'https://instagram.com/putrijalva.official'),
